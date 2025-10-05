@@ -2,24 +2,36 @@ package com.vegas.sistema_gestion_operativa.aws.service;
 
 import com.vegas.sistema_gestion_operativa.aws.dto.CreateUserDto;
 import com.vegas.sistema_gestion_operativa.aws.dto.ListUsersDto;
+import com.vegas.sistema_gestion_operativa.aws.dto.ListUsersResponseDto;
+import com.vegas.sistema_gestion_operativa.aws.dto.UserDto;
 import com.vegas.sistema_gestion_operativa.aws.factory.CognitoIdentityRequestFactory;
+import com.vegas.sistema_gestion_operativa.aws.mapper.UserMapper;
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.*;
 
+import java.util.List;
+
 @Service
-public class CognitoIdentityService  {
+public class CognitoIdentityService {
 
     private CognitoIdentityProviderClient client;
+    private final UserMapper userMapper;
 
     @Value("${aws.cognito.userPoolId}")
     private String userPoolId;
 
     @Value("${aws.region}")
     private String region;
+
+    @Autowired
+    public CognitoIdentityService(UserMapper userMapper) {
+        this.userMapper = userMapper;
+    }
 
     @PostConstruct
     private void initializeClient() {
@@ -41,7 +53,7 @@ public class CognitoIdentityService  {
         return client.adminCreateUser(request);
     }
 
-    public ListUsersResponse listUsersPage(ListUsersDto dto) {
+    public ListUsersResponseDto listUsersPage(ListUsersDto dto) {
         ListUsersRequest.Builder requestBuilder = ListUsersRequest.builder()
                 .userPoolId(userPoolId)
                 .limit(Math.min(dto.pageSize(), 10));
@@ -50,9 +62,20 @@ public class CognitoIdentityService  {
             requestBuilder.paginationToken(dto.paginationToken());
         }
 
-        var users = client.listUsers(requestBuilder.build());
-        System.out.println(users.hasUsers());
-        users.users().forEach(System.out::println);
-        return users;
+        var response = client.listUsers(requestBuilder.build());
+
+        return mapToListUsersResponseDto(response);
+    }
+
+    private ListUsersResponseDto mapToListUsersResponseDto(ListUsersResponse response) {
+        List<UserDto> users = response.users().stream()
+                .map(userMapper::toUserDto)
+                .toList();
+
+        return new ListUsersResponseDto(
+                users,
+                response.paginationToken(),
+                response.paginationToken() != null
+        );
     }
 }
