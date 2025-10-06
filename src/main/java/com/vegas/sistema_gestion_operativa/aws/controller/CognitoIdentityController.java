@@ -27,7 +27,7 @@ public class CognitoIdentityController {
     }
 
     @GetMapping("/api/v1/users")
-    @PreAuthorize("hasRole('Administrador')")
+    @PreAuthorize("hasPermission(null, 'USERS_VIEW')")
     public ResponseEntity<ListUsersResponseDto> listUsers(
             @RequestParam(value = "pageSize") int pageSize,
             @RequestParam(value = "nextToken", required = false) String nextToken
