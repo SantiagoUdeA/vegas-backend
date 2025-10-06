@@ -1,6 +1,5 @@
 package com.vegas.sistema_gestion_operativa.aws.factory;
 
-import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.AdminCreateUserRequest;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.AttributeType;
 
