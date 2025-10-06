@@ -29,6 +29,8 @@ public interface UserMapper {
                 .findFirst()
                 .orElse(null);
 
+        String role = "ROL DE PRUEBA CAMBIAR ESTO";
+
         return new UserDto(
                 user.username(),
                 email,
@@ -37,8 +39,7 @@ public interface UserMapper {
                 user.userStatus().toString(),
                 user.enabled(),
                 user.userCreateDate(),
-                user.userLastModifiedDate(),
-                List.of() // Si necesitas grupos, requiere otra llamada a AWS
+                user.userLastModifiedDate()
         );
     }
 }

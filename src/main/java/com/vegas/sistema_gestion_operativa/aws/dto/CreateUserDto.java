@@ -9,4 +9,5 @@ public class CreateUserDto {
     String given_name;
     String family_name;
     String email;
+    String roleId;
 }
