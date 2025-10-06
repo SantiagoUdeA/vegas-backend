@@ -26,7 +26,7 @@ public class CognitoIdentityController {
         return ResponseEntity.ok(cognitoIdentityService.createUser(dto));
     }
 
-    @GetMapping("/api/v1/users")
+    @GetMapping("/api/v1/userss")
     @PreAuthorize("hasPermission(null, 'USERS_VIEW')")
     public ResponseEntity<ListUsersResponseDto> listUsers(
             @RequestParam(value = "pageSize") int pageSize,

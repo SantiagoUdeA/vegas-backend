@@ -1,11 +1,11 @@
-package com.vegas.sistema_gestion_operativa.usuarios.domain;
+package com.vegas.sistema_gestion_operativa.users.domain;
 
 import com.vegas.sistema_gestion_operativa.roles.domain.Rol;
 import com.vegas.sistema_gestion_operativa.branches.domain.Branch;
 import lombok.Data;
 
 @Data
-public class Usuario {
+public class User {
     private String id;
     private String email;
     private String givenName;
