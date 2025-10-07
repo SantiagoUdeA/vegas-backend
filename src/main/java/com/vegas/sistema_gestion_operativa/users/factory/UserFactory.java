@@ -3,8 +3,16 @@ package com.vegas.sistema_gestion_operativa.users.factory;
 import com.vegas.sistema_gestion_operativa.users.domain.User;
 import com.vegas.sistema_gestion_operativa.users.dto.CreateUserDto;
 
+/**
+ * Factory class for creating User instances from DTOs.
+ */
 public class UserFactory {
 
+    /**
+     * Creates a User instance from a CreateUserDto.
+     * @param user DTO containing user data
+     * @return User instance
+     */
     public static User createFromDto(CreateUserDto user) {
         return User.builder()
                 .email(user.email())

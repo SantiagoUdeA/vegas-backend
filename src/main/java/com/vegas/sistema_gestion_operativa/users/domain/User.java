@@ -4,6 +4,10 @@ import com.vegas.sistema_gestion_operativa.roles.domain.Rol;
 import com.vegas.sistema_gestion_operativa.branches.domain.Branch;
 import lombok.*;
 
+/**
+ * Represents a user in the system.
+ * Contains user details such as email, name, ID type, phone number, role, and branch.
+ */
 @Builder
 @Getter
 @Setter
