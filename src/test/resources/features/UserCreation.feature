@@ -13,3 +13,4 @@ Scenario: The user is already registered
   When the administrator enters the information of an already registered employee
   And creates a user, an error message is displayed "User already exists"
 
+
