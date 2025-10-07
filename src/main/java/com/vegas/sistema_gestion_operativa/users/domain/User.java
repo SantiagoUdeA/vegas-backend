@@ -2,10 +2,15 @@ package com.vegas.sistema_gestion_operativa.users.domain;
 
 import com.vegas.sistema_gestion_operativa.roles.domain.Rol;
 import com.vegas.sistema_gestion_operativa.branches.domain.Branch;
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Builder
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
+
     private String id;
     private String email;
     private String givenName;
