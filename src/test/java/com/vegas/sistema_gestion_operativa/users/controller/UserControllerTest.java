@@ -2,6 +2,7 @@ package com.vegas.sistema_gestion_operativa.users.controller;
 
 import com.vegas.sistema_gestion_operativa.users.domain.User;
 import com.vegas.sistema_gestion_operativa.users.dto.CreateUserDto;
+import com.vegas.sistema_gestion_operativa.users.factory.FakeUserFactory;
 import com.vegas.sistema_gestion_operativa.users.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,7 @@ class UserControllerTest {
 
     @BeforeEach
     void setUp() {
-        dto = new CreateUserDto("carlos@example.com", "Carlos", "Perez", "CC", "3001234567");
+        dto = FakeUserFactory.createFakeCreateUserDto();
     }
 
     @Test

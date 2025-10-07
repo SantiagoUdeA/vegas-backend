@@ -2,6 +2,7 @@ package com.vegas.sistema_gestion_operativa.users.controller;
 
 import com.vegas.sistema_gestion_operativa.users.domain.User;
 import com.vegas.sistema_gestion_operativa.users.dto.CreateUserDto;
+import com.vegas.sistema_gestion_operativa.users.factory.FakeUserFactory;
 import com.vegas.sistema_gestion_operativa.users.service.UserService;
 import io.cucumber.java.en.*;
 import io.cucumber.java.Before;
@@ -49,9 +50,7 @@ public class UserControllerSteps {
 
     @When("the administrator enters an employee's information")
     public void admin_enters_employee_info() {
-        createUserDto = new CreateUserDto(
-                "test@example.com", "Test", "User", "CC", "1234567890"
-        );
+        createUserDto = FakeUserFactory.createFakeCreateUserDto();
     }
 
     @When("creates a user, the system should register the new user")
@@ -75,7 +74,7 @@ public class UserControllerSteps {
     public void user_already_registered() {
         // Asegurarnos de inicializar el DTO con la misma información que se usará en el When
         if (createUserDto == null) {
-            createUserDto = new CreateUserDto("test@example.com", "Test", "User", "CC", "1234567890");
+            createUserDto = FakeUserFactory.createFakeCreateUserDto();
         }
         Mockito.when(userService.create(createUserDto)).thenThrow(new RuntimeException("User already exists"));
     }

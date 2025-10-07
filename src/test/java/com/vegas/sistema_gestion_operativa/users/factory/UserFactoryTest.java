@@ -10,7 +10,7 @@ class UserFactoryTest {
 
     @Test
     void createFromDto_shouldMapAllFields() {
-        CreateUserDto dto = new CreateUserDto("john.doe@example.com", "John", "Doe", "CC", "123456789");
+        CreateUserDto dto = FakeUserFactory.createFakeCreateUserDto();
 
         User user = UserFactory.createFromDto(dto);
 

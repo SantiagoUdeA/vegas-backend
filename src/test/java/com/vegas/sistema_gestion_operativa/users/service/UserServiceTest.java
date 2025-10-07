@@ -2,6 +2,7 @@ package com.vegas.sistema_gestion_operativa.users.service;
 
 import com.vegas.sistema_gestion_operativa.users.domain.User;
 import com.vegas.sistema_gestion_operativa.users.dto.CreateUserDto;
+import com.vegas.sistema_gestion_operativa.users.factory.FakeUserFactory;
 import com.vegas.sistema_gestion_operativa.users.repository.IUserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,7 +40,7 @@ class UserServiceTest {
 
     @Test
     void create_shouldBuildUserFromDtoAndSave() {
-        CreateUserDto dto = new CreateUserDto("new@example.com", "New", "User", "CC", "555");
+        CreateUserDto dto = FakeUserFactory.createFakeCreateUserDto();
 
         // Simular que el repositorio devuelve exactamente el objeto que se le pasa
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -57,7 +58,7 @@ class UserServiceTest {
 
     @Test
     void create_whenRepositoryThrows_shouldPropagateException() {
-        CreateUserDto dto = new CreateUserDto("err@example.com", "Err", "User", "CC", "999");
+        CreateUserDto dto = FakeUserFactory.createFakeCreateUserDto();
         when(userRepository.save(any(User.class))).thenThrow(new RuntimeException("DB failure"));
 
         RuntimeException ex = assertThrows(RuntimeException.class, () -> userService.create(dto));
