@@ -33,26 +33,6 @@ public enum Role {
             )
     ),
 
-    GERENTE(
-            "Gerente con acceso a reportes, indicadores y control financiero sin permisos de edición.",
-            Set.of(
-                    REPORTS_VIEW, REPORTS_EXPORT,
-                    INVENTORY_VIEW,
-                    PRODUCTS_VIEW,
-                    DASHBOARD_VIEW
-            )
-    ),
-
-    GERENTE_PRODUCCION(
-            "Responsable de la gestión de recetas y producción. Puede crear y editar fórmulas y consultar inventario.",
-            Set.of(
-                    INVENTORY_VIEW,
-                    FORMULAS_CREATE, FORMULAS_EDIT, FORMULAS_VIEW,
-                    PRODUCTS_VIEW,
-                    DASHBOARD_VIEW
-            )
-    ),
-
     DUENO(
             "Dueño del negocio con acceso ejecutivo de solo lectura a reportes, dashboard y auditorías.",
             Set.of(

@@ -18,10 +18,6 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
             "ADMIN", Role.ADMIN,
             "Cajero", Role.CAJERO,
             "CAJERO", Role.CAJERO,
-            "Gerente", Role.GERENTE,
-            "GERENTE", Role.GERENTE,
-            "Gerente Produccion", Role.GERENTE_PRODUCCION,
-            "GERENTE_PRODUCCION", Role.GERENTE_PRODUCCION,
             "Dueno", Role.DUENO,
             "DUENO", Role.DUENO
     );

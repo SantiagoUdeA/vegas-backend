@@ -1,7 +1,7 @@
 package com.vegas.sistema_gestion_operativa.users.repository;
 
 import com.vegas.sistema_gestion_operativa.branches.domain.Branch;
-import com.vegas.sistema_gestion_operativa.roles.domain.Rol;
+import com.vegas.sistema_gestion_operativa.roles.domain.Role;
 import com.vegas.sistema_gestion_operativa.users.domain.User;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -35,9 +35,9 @@ public class InMemoryUserRepository implements IUserRepository {
         u1.setFamilyName("Pérez");
         u1.setIdType("CI");
         u1.setPhoneNumber("+5491112345678");
-        Rol r1 = new Rol();
-        r1.setNombre("ADMIN");
-        u1.setRol(r1);
+        Role r1 = new Role();
+        r1.setName("ADMIN");
+        u1.setRole(r1);
         Branch b1 = Branch.builder().id("b1").name("Sucursal Centro").build();
         u1.setBranch(b1);
 
@@ -48,9 +48,9 @@ public class InMemoryUserRepository implements IUserRepository {
         u2.setFamilyName("López");
         u2.setIdType("CI");
         u2.setPhoneNumber("+5491198765432");
-        Rol r2 = new Rol();
-        r2.setNombre("USER");
-        u2.setRol(r2);
+        Role r2 = new Role();
+        r2.setName("USER");
+        u2.setRole(r2);
         Branch b2 = Branch.builder().id("b2").name("Sucursal Norte").build();
         u2.setBranch(b2);
 

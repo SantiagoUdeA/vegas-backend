@@ -11,3 +11,13 @@ aws:
   cognito:
     userPoolId: ${COGNITO_USER_POOL_ID:us-east-1_mqoX49I0Z}
     clientId: ${COGNITO_CLIENT_ID}
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+  info:
+    title: Sistema de gestión operativa integral - Grupo las vegas
+    description: API REST para la gestión operativa integral del Grupo las vegas.
+    version: 1.0.0
