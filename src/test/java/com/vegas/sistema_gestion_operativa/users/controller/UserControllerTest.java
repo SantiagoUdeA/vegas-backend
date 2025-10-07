@@ -41,7 +41,7 @@ class UserControllerTest {
 
         assertNotNull(result);
         assertEquals(2, result.size());
-        assertEquals("a@ex.com", result.get(0).getEmail());
+        assertEquals("a@ex.com", result.getFirst().getEmail());
         verify(userService, times(1)).findAll();
     }
 

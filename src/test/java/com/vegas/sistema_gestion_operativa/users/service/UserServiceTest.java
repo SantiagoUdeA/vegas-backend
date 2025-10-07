@@ -33,7 +33,7 @@ class UserServiceTest {
 
         assertNotNull(result);
         assertEquals(2, result.size());
-        assertEquals("a@example.com", result.get(0).getEmail());
+        assertEquals("a@example.com", result.getFirst().getEmail());
         verify(userRepository, times(1)).findAll();
     }
 
