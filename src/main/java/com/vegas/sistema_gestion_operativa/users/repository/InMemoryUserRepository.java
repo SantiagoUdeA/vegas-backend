@@ -34,10 +34,8 @@ public class InMemoryUserRepository implements IUserRepository {
         u1.setGivenName("Juan");
         u1.setFamilyName("Pérez");
         u1.setIdType("CI");
-        u1.setPhoneNumber("+5491112345678");
-        Role r1 = new Role();
-        r1.setName("ADMIN");
-        u1.setRole(r1);
+        u1.setPhoneNumber("+5491112345678");;
+        u1.setRole(Role.ADMIN);
         Branch b1 = Branch.builder().id("b1").name("Sucursal Centro").build();
         u1.setBranch(b1);
 
@@ -48,9 +46,7 @@ public class InMemoryUserRepository implements IUserRepository {
         u2.setFamilyName("López");
         u2.setIdType("CI");
         u2.setPhoneNumber("+5491198765432");
-        Role r2 = new Role();
-        r2.setName("USER");
-        u2.setRole(r2);
+        u2.setRole(Role.CASHIER);
         Branch b2 = Branch.builder().id("b2").name("Sucursal Norte").build();
         u2.setBranch(b2);
 

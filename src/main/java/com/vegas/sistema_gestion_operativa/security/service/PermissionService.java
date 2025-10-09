@@ -1,7 +1,7 @@
 package com.vegas.sistema_gestion_operativa.security.service;
 
-import com.vegas.sistema_gestion_operativa.security.domain.Permission;
-import com.vegas.sistema_gestion_operativa.security.domain.Role;
+import com.vegas.sistema_gestion_operativa.roles.domain.Permission;
+import com.vegas.sistema_gestion_operativa.roles.domain.Role;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;

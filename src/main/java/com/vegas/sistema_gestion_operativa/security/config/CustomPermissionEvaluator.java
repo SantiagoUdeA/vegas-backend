@@ -1,7 +1,7 @@
 package com.vegas.sistema_gestion_operativa.security.config;
 
-import com.vegas.sistema_gestion_operativa.security.domain.Permission;
-import com.vegas.sistema_gestion_operativa.security.domain.Role;
+import com.vegas.sistema_gestion_operativa.roles.domain.Permission;
+import com.vegas.sistema_gestion_operativa.roles.domain.Role;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -16,10 +16,10 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
     private static final Map<String, Role> ROLE_MAPPING = Map.of(
             "Administrador", Role.ADMIN,
             "ADMIN", Role.ADMIN,
-            "Cajero", Role.CAJERO,
-            "CAJERO", Role.CAJERO,
-            "Dueno", Role.DUENO,
-            "DUENO", Role.DUENO
+            "Cajero", Role.CASHIER,
+            "CAJERO", Role.CASHIER,
+            "Dueno", Role.OWNER,
+            "DUENO", Role.OWNER
     );
 
     @Override

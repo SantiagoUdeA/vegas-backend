@@ -27,7 +27,8 @@ public class FakeUserFactory {
                 faker.name().lastName(),
                 "CC",
                 faker.number().digits(8),
-                faker.phoneNumber().phoneNumber()
+                faker.phoneNumber().phoneNumber(),
+                "CASHIER"
         );
     }
 
@@ -42,7 +43,8 @@ public class FakeUserFactory {
                 faker.name().lastName(),
                 "CC",
                 faker.number().digits(8),
-                faker.phoneNumber().phoneNumber()
+                faker.phoneNumber().phoneNumber(),
+                "CASHIER"
         );
     }
 
@@ -57,7 +59,8 @@ public class FakeUserFactory {
                 faker.name().lastName(),
                 "CC",
                 faker.number().digits(8),
-                faker.phoneNumber().phoneNumber()
+                faker.phoneNumber().phoneNumber(),
+                "CASHIER"
         );
     }
 
@@ -72,7 +75,8 @@ public class FakeUserFactory {
                 faker.name().lastName(),
                 "CC",
                 faker.number().digits(8),
-                faker.phoneNumber().phoneNumber()
+                faker.phoneNumber().phoneNumber(),
+                "CASHIER"
         );
     }
 
@@ -87,7 +91,8 @@ public class FakeUserFactory {
                 null,
                 "CC",
                 faker.number().digits(8),
-                faker.phoneNumber().phoneNumber()
+                faker.phoneNumber().phoneNumber(),
+                "CASHIER"
         );
     }
 
@@ -102,7 +107,8 @@ public class FakeUserFactory {
                 faker.name().lastName(),
                 "CC",
                 faker.number().digits(8),
-                faker.phoneNumber().phoneNumber()
+                faker.phoneNumber().phoneNumber(),
+                "CASHIER"
         );
     }
 
@@ -117,7 +123,8 @@ public class FakeUserFactory {
                 "B".repeat(101),
                 "CC",
                 faker.number().digits(8),
-                faker.phoneNumber().phoneNumber()
+                faker.phoneNumber().phoneNumber(),
+                "CASHIER"
         );
     }
 
@@ -132,7 +139,8 @@ public class FakeUserFactory {
                 null,
                 "CC",
                 faker.number().digits(8),
-                faker.phoneNumber().phoneNumber()
+                faker.phoneNumber().phoneNumber(),
+                "CASHIER"
         );
     }
 }

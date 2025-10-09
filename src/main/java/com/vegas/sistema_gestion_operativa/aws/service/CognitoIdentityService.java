@@ -1,6 +1,5 @@
     package com.vegas.sistema_gestion_operativa.aws.service;
 
-    import com.vegas.sistema_gestion_operativa.aws.dto.CreateUserDto;
     import com.vegas.sistema_gestion_operativa.aws.dto.ListUsersDto;
     import com.vegas.sistema_gestion_operativa.aws.dto.ListUsersResponseDto;
     import com.vegas.sistema_gestion_operativa.aws.dto.UserDto;
@@ -41,17 +40,22 @@
                     .build();
         }
 
-        public AdminCreateUserResponse createUser(CreateUserDto dto) {
+        public void createUser(
+                String email,
+                String given_name,
+                String family_name,
+                String roleName
+        ) {
             var request = CognitoIdentityRequestFactory.createAdminCreateUserRequest(
                     this.userPoolId,
-                    dto.getGiven_name(),
-                    dto.getFamily_name(),
-                    dto.getEmail(),
-                    dto.getRoleId(),
+                    given_name,
+                    family_name,
+                    email,
+                    roleName.toUpperCase(),
                     true,
                     false
             );
-            return client.adminCreateUser(request);
+            client.adminCreateUser(request);
         }
 
         public ListUsersResponseDto listUsersPage(ListUsersDto dto) {

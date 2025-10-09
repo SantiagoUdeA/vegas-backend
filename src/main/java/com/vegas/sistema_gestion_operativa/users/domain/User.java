@@ -1,7 +1,7 @@
 package com.vegas.sistema_gestion_operativa.users.domain;
 
-import com.vegas.sistema_gestion_operativa.roles.domain.Role;
 import com.vegas.sistema_gestion_operativa.branches.domain.Branch;
+import com.vegas.sistema_gestion_operativa.roles.domain.Role;
 import lombok.*;
 
 /**

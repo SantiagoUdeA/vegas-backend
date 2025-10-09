@@ -12,10 +12,11 @@ public class CognitoIdentityRequestFactory {
             String givenName,
             String familyName,
             String email,
-            String roleId,
+            String roleName,
             Boolean emailVerified,
             Boolean sendEmail
     ) {
+        System.out.println("Creating AdminCreateUserRequest for userPoolId: " + userPoolId + ", email: " + email + ", roleName: " + roleName);
         var messageAction = sendEmail ? "RESEND" : "SUPPRESS";
         var emailVerifiedValue = emailVerified ? "true" : "false";
         return AdminCreateUserRequest.builder()
@@ -25,7 +26,7 @@ public class CognitoIdentityRequestFactory {
                         AttributeType.builder().name("given_name").value(givenName).build(),
                         AttributeType.builder().name("family_name").value(familyName).build(),
                         AttributeType.builder().name("email_verified").value(emailVerifiedValue).build(),
-                        AttributeType.builder().name("custom:roleId").value(roleId).build()
+                        AttributeType.builder().name("custom:role").value(roleName).build()
                 ))
                 .messageAction(messageAction) // Evita que se envíe el correo de bienvenida
                 .build();

@@ -1,4 +1,4 @@
-package com.vegas.sistema_gestion_operativa.security.domain;
+package com.vegas.sistema_gestion_operativa.roles.domain;
 
 public enum Permission {
 
