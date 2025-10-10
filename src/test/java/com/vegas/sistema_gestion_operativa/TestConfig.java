@@ -1,10 +1,8 @@
 package com.vegas.sistema_gestion_operativa;
 
 import com.vegas.sistema_gestion_operativa.security.config.CustomPermissionEvaluator;
-import net.datafaker.Faker;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
