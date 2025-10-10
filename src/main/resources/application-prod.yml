@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: 'Sistema de gestión operativa integral - Grupo las vegas'
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_mqoX49I0Z/.well-known/jwks.json
+
+aws:
+  region: ${COGNITO_REGION}
+  cognito:
+    userPoolId: ${COGNITO_USER_POOL_ID:us-east-1_mqoX49I0Z}
+    clientId: ${COGNITO_CLIENT_ID}
+
+springdoc:
+  swagger-ui:
+    enabled: false
+  api-docs:
+    enabled: false
