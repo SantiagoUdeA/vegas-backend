@@ -27,7 +27,7 @@ public class FakeUserFactory {
                 faker.name().lastName(),
                 "CC",
                 faker.number().digits(8),
-                faker.phoneNumber().phoneNumber(),
+                "+57" + faker.number().digits(10),
                 "CASHIER"
         );
     }
