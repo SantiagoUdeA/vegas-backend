@@ -4,13 +4,15 @@ import com.vegas.sistema_gestion_operativa.users.domain.User;
 import com.vegas.sistema_gestion_operativa.users.dto.CreateUserDto;
 import net.datafaker.Faker;
 
+import java.math.BigInteger;
+
 public class FakeUserFactory {
 
     private static final Faker faker = new Faker();
 
     public static User createFakeUser() {
         return User.builder()
-                .id(faker.internet().uuid())
+                .id(new BigInteger(faker.number().digits(5)))
                 .email(faker.internet().emailAddress())
                 .givenName(faker.name().firstName())
                 .familyName(faker.name().lastName())

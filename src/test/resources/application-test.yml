@@ -8,8 +8,18 @@ spring:
         jwt:
           issuer-uri: http://localhost:9999
 
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+    jpa:
+      hibernate:
+        ddl-auto: create-drop
+      show-sql: true
+
 aws:
   region: us-east-1
   cognito:
-    userPoolId: test-pool-id
-    clientId: test-client-id
+    userPoolId: ${COGNITO_USER_POOL_ID:us-east-1_mqoX49I0Z}
+    clientId: ${COGNITO_CLIENT_ID}

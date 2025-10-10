@@ -1,11 +1,13 @@
-package com.vegas.sistema_gestion_operativa.security.config;
+package com.vegas.sistema_gestion_operativa;
 
+import com.vegas.sistema_gestion_operativa.security.config.CustomPermissionEvaluator;
+import net.datafaker.Faker;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
@@ -15,10 +17,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
-@Configuration
-@EnableWebSecurity
-public class SecurityConfig {
+@TestConfiguration
+public class TestConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -56,4 +56,3 @@ public class SecurityConfig {
                 .collect(Collectors.toList());
     }
 }
-
