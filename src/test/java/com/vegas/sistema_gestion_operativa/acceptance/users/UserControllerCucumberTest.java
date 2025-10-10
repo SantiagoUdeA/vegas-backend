@@ -1,4 +1,4 @@
-package com.vegas.sistema_gestion_operativa.users.controller;
+package com.vegas.sistema_gestion_operativa.acceptance.users;
 
 import org.junit.platform.suite.api.ConfigurationParameter;
 import org.junit.platform.suite.api.SelectClasspathResource;

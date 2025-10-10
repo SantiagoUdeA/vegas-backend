@@ -1,5 +1,6 @@
-package com.vegas.sistema_gestion_operativa.branches.controller;
+package com.vegas.sistema_gestion_operativa.unit.branches.controller;
 
+import com.vegas.sistema_gestion_operativa.branches.controller.BranchController;
 import com.vegas.sistema_gestion_operativa.branches.domain.Branch;
 import com.vegas.sistema_gestion_operativa.branches.dto.CreateBranchDto;
 import com.vegas.sistema_gestion_operativa.branches.dto.UpdateBranchDto;

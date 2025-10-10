@@ -1,4 +1,4 @@
-package com.vegas.sistema_gestion_operativa.users.controller;
+package com.vegas.sistema_gestion_operativa.acceptance.users;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vegas.sistema_gestion_operativa.security.config.CustomPermissionEvaluator;

@@ -1,4 +1,4 @@
-package com.vegas.sistema_gestion_operativa.users.controller;
+package com.vegas.sistema_gestion_operativa.acceptance.config;
 
 import com.vegas.sistema_gestion_operativa.security.config.CustomPermissionEvaluator;
 import com.vegas.sistema_gestion_operativa.users.service.UserService;
