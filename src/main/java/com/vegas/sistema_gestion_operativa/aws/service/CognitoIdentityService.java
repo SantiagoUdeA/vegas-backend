@@ -6,6 +6,7 @@
     import org.springframework.stereotype.Service;
     import software.amazon.awssdk.regions.Region;
     import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient;
+    import software.amazon.awssdk.services.cognitoidentityprovider.model.AdminCreateUserResponse;
 
     @Service
     public class CognitoIdentityService {
@@ -26,7 +27,7 @@
                     .build();
         }
 
-        public void createUser(
+        public AdminCreateUserResponse createUser(
                 String email,
                 String given_name,
                 String family_name,
@@ -41,6 +42,6 @@
                     true,
                     false
             );
-            client.adminCreateUser(request);
+            return client.adminCreateUser(request);
         }
     }
