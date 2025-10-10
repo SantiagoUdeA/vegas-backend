@@ -3,7 +3,7 @@ package com.vegas.sistema_gestion_operativa.unit.users.controller;
 import com.vegas.sistema_gestion_operativa.users.controller.UserController;
 import com.vegas.sistema_gestion_operativa.users.domain.User;
 import com.vegas.sistema_gestion_operativa.users.dto.CreateUserDto;
-import com.vegas.sistema_gestion_operativa.users.factory.FakeUserFactory;
+import com.vegas.sistema_gestion_operativa.unit.users.factory.FakeUserFactory;
 import com.vegas.sistema_gestion_operativa.users.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

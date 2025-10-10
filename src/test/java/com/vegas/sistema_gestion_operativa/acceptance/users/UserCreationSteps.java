@@ -3,7 +3,7 @@ package com.vegas.sistema_gestion_operativa.acceptance.users;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vegas.sistema_gestion_operativa.users.dto.CreateUserDto;
 import com.vegas.sistema_gestion_operativa.users.repository.IUserRepository;
-import com.vegas.sistema_gestion_operativa.users.factory.FakeUserFactory;
+import com.vegas.sistema_gestion_operativa.unit.users.factory.FakeUserFactory;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;

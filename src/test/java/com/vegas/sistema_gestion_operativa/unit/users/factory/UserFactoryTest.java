@@ -2,7 +2,6 @@ package com.vegas.sistema_gestion_operativa.unit.users.factory;
 
 import com.vegas.sistema_gestion_operativa.users.domain.User;
 import com.vegas.sistema_gestion_operativa.users.dto.CreateUserDto;
-import com.vegas.sistema_gestion_operativa.users.factory.FakeUserFactory;
 import com.vegas.sistema_gestion_operativa.users.factory.UserFactory;
 import org.junit.jupiter.api.Test;
 

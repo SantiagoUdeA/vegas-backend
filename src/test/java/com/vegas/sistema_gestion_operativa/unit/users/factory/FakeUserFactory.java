@@ -1,4 +1,4 @@
-package com.vegas.sistema_gestion_operativa.users.factory;
+package com.vegas.sistema_gestion_operativa.unit.users.factory;
 
 import com.vegas.sistema_gestion_operativa.users.domain.User;
 import com.vegas.sistema_gestion_operativa.users.dto.CreateUserDto;
@@ -14,7 +14,6 @@ public class FakeUserFactory {
         return User.builder()
                 .id(new BigInteger(faker.number().digits(5)))
                 .email(faker.internet().emailAddress())
-                .givenName(faker.name().firstName())
                 .familyName(faker.name().lastName())
                 .idType("CC")
                 .idNumber(faker.number().digits(8))
