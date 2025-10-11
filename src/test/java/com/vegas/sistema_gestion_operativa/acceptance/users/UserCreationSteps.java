@@ -4,12 +4,14 @@ import com.vegas.sistema_gestion_operativa.roles.domain.Role;
 import com.vegas.sistema_gestion_operativa.unit.users.factory.FakeUserFactory;
 import com.vegas.sistema_gestion_operativa.users.domain.User;
 import com.vegas.sistema_gestion_operativa.users.dto.CreateUserDto;
+import com.vegas.sistema_gestion_operativa.utils.CucumberSpringConfiguration;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.And;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Define los pasos en lenguaje Gherkin para crear y validar usuarios.
  */
 
+@ContextConfiguration(classes = CucumberSpringConfiguration.class)
 public class UserCreationSteps extends CucumberSpringConfiguration {
 
     private CreateUserDto userDto;
