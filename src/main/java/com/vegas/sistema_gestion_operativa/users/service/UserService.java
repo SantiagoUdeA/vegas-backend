@@ -91,6 +91,18 @@ public class UserService {
         return userRepository.save(updatedUser);
     }
 
+    /**
+     * Deactivates a user by their ID.
+     * @param userId ID of the user to deactivate
+     * @throws UserNotFoundException if the user is not found
+     */
+    public void desactivate(String userId) throws UserNotFoundException {
+        var user = retrieveUser(userId);
+        cognitoIdentityService.disableUser(user.getEmail());
+        user.setActive(false);
+        userRepository.save(user);
+    }
+
     private void validateUserDoesntExists(String email) throws UserAlreadyExistsException {
         if(userRepository.findByEmail(email).isPresent()) throw new UserAlreadyExistsException(email);
     }

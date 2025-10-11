@@ -7,7 +7,9 @@
     import software.amazon.awssdk.regions.Region;
     import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient;
     import software.amazon.awssdk.services.cognitoidentityprovider.model.AdminCreateUserResponse;
+    import software.amazon.awssdk.services.cognitoidentityprovider.model.AdminDisableUserRequest;
     import software.amazon.awssdk.services.cognitoidentityprovider.model.AttributeType;
+    import software.amazon.awssdk.services.cognitoidentityprovider.model.CognitoIdentityProviderException;
 
     /**
      * Service for interacting with AWS Cognito Identity Provider.
@@ -61,6 +63,19 @@
                     false
             );
             return getUserId(client.adminCreateUser(request));
+        }
+
+        /**
+         * Disables a user in the Cognito user pool.
+         *
+         * @param username the username or email of the user to disable
+         */
+        public void disableUser(String username) {
+            var request = CognitoIdentityRequestFactory.createAdminDisableUserRequest(
+                    this.userPoolId,
+                    username
+            );
+            client.adminDisableUser(request);
         }
 
         private String getUserId(AdminCreateUserResponse response) {

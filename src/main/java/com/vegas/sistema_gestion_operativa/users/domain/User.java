@@ -32,6 +32,8 @@ public class User {
     private String idNumber;
     @Column()
     private String phoneNumber;
+    @Column(nullable = false, columnDefinition = "boolean default true")
+    private boolean isActive;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

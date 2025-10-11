@@ -1,10 +1,11 @@
 package com.vegas.sistema_gestion_operativa.aws.factory;
 
 import software.amazon.awssdk.services.cognitoidentityprovider.model.AdminCreateUserRequest;
+import software.amazon.awssdk.services.cognitoidentityprovider.model.AdminDisableUserRequest;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.AttributeType;
 
 import java.util.Arrays;
-
+// TODO Make this a spring component and inject it where needed
 /**
  * Factory class for creating AWS Cognito Identity requests.
  * Provides methods to create request objects for various Cognito operations.
@@ -45,6 +46,16 @@ public class CognitoIdentityRequestFactory {
                         AttributeType.builder().name("custom:role").value(roleName).build()
                 ))
                 .messageAction(messageAction) // Evita que se envíe el correo de bienvenida
+                .build();
+    }
+
+    public static AdminDisableUserRequest createAdminDisableUserRequest(
+            String userPoolId,
+            String username
+    ) {
+        return AdminDisableUserRequest.builder()
+                .userPoolId(userPoolId)
+                .username(username)
                 .build();
     }
 }

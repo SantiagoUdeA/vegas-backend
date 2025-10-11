@@ -7,6 +7,7 @@ import com.vegas.sistema_gestion_operativa.users.exceptions.UserAlreadyExistsExc
 import com.vegas.sistema_gestion_operativa.users.exceptions.UserNotFoundException;
 import com.vegas.sistema_gestion_operativa.users.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -59,6 +60,13 @@ public class UserController {
     @PreAuthorize("hasPermission(null, 'USERS_EDIT')")
     public User updateUser(@PathVariable String id, @RequestBody @Valid UpdateUserDto dto) throws UserNotFoundException {
         return userService.update(id, dto);
+    }
+
+    @DeleteMapping
+    @PreAuthorize("hasPermission(null, 'USERS_DELETE')")
+    public ResponseEntity<String> desactivateUser(@RequestParam String id) throws UserNotFoundException {
+        userService.desactivate(id);
+        return  ResponseEntity.ok().build();
     }
 
 }
