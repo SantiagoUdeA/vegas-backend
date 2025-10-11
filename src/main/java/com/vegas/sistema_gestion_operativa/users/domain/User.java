@@ -19,9 +19,7 @@ import lombok.*;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+    private String id;
     @Column(nullable = false, unique = true)
     private String email;
     @Column(nullable = false)

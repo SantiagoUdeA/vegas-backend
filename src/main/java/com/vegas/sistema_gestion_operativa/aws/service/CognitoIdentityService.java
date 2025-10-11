@@ -7,6 +7,7 @@
     import software.amazon.awssdk.regions.Region;
     import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient;
     import software.amazon.awssdk.services.cognitoidentityprovider.model.AdminCreateUserResponse;
+    import software.amazon.awssdk.services.cognitoidentityprovider.model.AttributeType;
 
     /**
      * Service for interacting with AWS Cognito Identity Provider.
@@ -42,9 +43,9 @@
          * @param given_name the given name (first name) of the new user
          * @param family_name the family name (last name) of the new user
          * @param roleName   the role to assign to the new user
-         * @return the response from the AdminCreateUser operation
+         * @return the ID of the created user
          */
-        public AdminCreateUserResponse createUser(
+        public String createUser(
                 String email,
                 String given_name,
                 String family_name,
@@ -59,6 +60,14 @@
                     true,
                     false
             );
-            return client.adminCreateUser(request);
+            return getUserId(client.adminCreateUser(request));
+        }
+
+        private String getUserId(AdminCreateUserResponse response) {
+            return response.user().attributes().stream()
+                    .filter(attr -> "sub".equals(attr.name()))
+                    .findFirst()
+                    .map(AttributeType::value)
+                    .orElse(null);
         }
     }

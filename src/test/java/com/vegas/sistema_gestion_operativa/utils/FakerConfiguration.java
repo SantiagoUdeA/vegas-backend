@@ -1,5 +1,6 @@
 package com.vegas.sistema_gestion_operativa.utils;
 
+import com.vegas.sistema_gestion_operativa.users.factory.UserFactory;
 import net.datafaker.Faker;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,4 +12,5 @@ public class FakerConfiguration {
     public Faker faker() {
         return new Faker();
     }
+
 }

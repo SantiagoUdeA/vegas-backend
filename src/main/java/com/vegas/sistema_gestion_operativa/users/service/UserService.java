@@ -26,6 +26,7 @@ public class UserService {
      * Repository for user persistence operations.
      */
     private final IUserRepository userRepository;
+    private final UserFactory userFactory;
 
     /**
      * Constructor that injects the user repository.
@@ -33,9 +34,10 @@ public class UserService {
      * @param userRepository user repository
      */
     @Autowired
-    public UserService(CognitoIdentityService cognitoIdentityService, IUserRepository userRepository) {
+    public UserService(CognitoIdentityService cognitoIdentityService, IUserRepository userRepository, UserFactory userFactory) {
         this.cognitoIdentityService = cognitoIdentityService;
         this.userRepository = userRepository;
+        this.userFactory = userFactory;
     }
 
     /**
@@ -54,11 +56,10 @@ public class UserService {
      */
     @Transactional
     public User create(CreateUserDto user) throws UserAlreadyExistsException {
-        var newUser = UserFactory.createFromDto(user);
         validateUserDoesntExists(user.email());
-        var savedUser = userRepository.save(newUser);
+        String newUserId;
         try{
-            cognitoIdentityService.createUser(
+            newUserId = cognitoIdentityService.createUser(
                     user.email(),
                     user.givenName(),
                     user.familyName(),
@@ -67,7 +68,8 @@ public class UserService {
         }catch (CognitoIdentityProviderException e){
             throw new RuntimeException(e.getMessage());
         }
-        return savedUser;
+        var newUser = userFactory.createFromDto(user, newUserId);
+        return userRepository.save(newUser);
     }
 
     private void validateUserDoesntExists(String email) throws UserAlreadyExistsException {
