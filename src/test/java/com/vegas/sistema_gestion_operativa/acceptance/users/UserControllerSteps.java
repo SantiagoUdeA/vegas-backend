@@ -1,15 +1,14 @@
 package com.vegas.sistema_gestion_operativa.acceptance.users;
 
 import com.vegas.sistema_gestion_operativa.roles.domain.Role;
+import com.vegas.sistema_gestion_operativa.unit.users.factory.FakeUserFactory;
 import com.vegas.sistema_gestion_operativa.users.domain.User;
 import com.vegas.sistema_gestion_operativa.users.dto.CreateUserDto;
-import com.vegas.sistema_gestion_operativa.users.factory.FakeUserFactory;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.And;
-import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,7 +34,7 @@ public class UserControllerSteps extends CucumberSpringConfiguration {
     }
 
     @And("creates a user")
-    public void createsAUser() throws Exception {
+    public void createsAUser() {
         response = testRestTemplate.postForEntity("/api/v1/users", userDto, User.class);
     }
 
