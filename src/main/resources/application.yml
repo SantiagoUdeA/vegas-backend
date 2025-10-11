@@ -2,10 +2,10 @@ spring:
   application:
     name: 'Sistema de gestión operativa integral - Grupo las vegas'
   datasource:
-    url: ${DB_URL:jdbc:h2:mem:testdb}
-    username: ${DB_USERNAME:sa}
-    password: ${DB_PASSWORD:}
-    driver-class-name: ${DB_DRIVER:org.h2.Driver}
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: ${DB_DRIVER:org.postgresql.Driver}
   jpa:
     hibernate:
       ddl-auto: update
@@ -13,7 +13,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        dialect: ${HIBERNATE_DIALECT:org.hibernate.dialect.H2Dialect}
+        dialect: ${DB_DIALECT:org.hibernate.dialect.PostgreSQLDialect}
   security:
     oauth2:
       resourceserver:
@@ -30,7 +30,3 @@ springdoc:
     path: /api-docs
   swagger-ui:
     path: /swagger-ui.html
-  info:
-    title: Sistema de gestión operativa integral - Grupo las vegas
-    description: API REST para la gestión operativa integral del Grupo las vegas.
-    version: 1.0.0
