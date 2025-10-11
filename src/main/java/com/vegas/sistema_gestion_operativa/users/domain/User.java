@@ -2,6 +2,7 @@ package com.vegas.sistema_gestion_operativa.users.domain;
 
 import com.vegas.sistema_gestion_operativa.branches.domain.Branch;
 import com.vegas.sistema_gestion_operativa.roles.domain.Role;
+import jakarta.persistence.*;
 import lombok.*;
 
 /**
@@ -13,15 +14,32 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
+@Table(name = "users")
 public class User {
 
-    private String id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, unique = true)
     private String email;
+    @Column(nullable = false)
     private String givenName;
+    @Column(nullable = false)
     private String familyName;
+    @Column()
     private String idType;
+    @Column(unique = true)
     private String idNumber;
+    @Column()
     private String phoneNumber;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Role role;
+
+    @ManyToOne
+    @JoinColumn(name = "branch_id")
     private Branch branch;
 }

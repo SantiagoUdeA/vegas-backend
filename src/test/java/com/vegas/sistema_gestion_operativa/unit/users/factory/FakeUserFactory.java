@@ -1,8 +1,10 @@
-package com.vegas.sistema_gestion_operativa.users.factory;
+package com.vegas.sistema_gestion_operativa.unit.users.factory;
 
 import com.vegas.sistema_gestion_operativa.users.domain.User;
 import com.vegas.sistema_gestion_operativa.users.dto.CreateUserDto;
 import net.datafaker.Faker;
+
+import java.math.BigInteger;
 
 public class FakeUserFactory {
 
@@ -10,9 +12,8 @@ public class FakeUserFactory {
 
     public static User createFakeUser() {
         return User.builder()
-                .id(faker.internet().uuid())
+                .id(faker.number().randomNumber())
                 .email(faker.internet().emailAddress())
-                .givenName(faker.name().firstName())
                 .familyName(faker.name().lastName())
                 .idType("CC")
                 .idNumber(faker.number().digits(8))

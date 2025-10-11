@@ -153,6 +153,25 @@
 			<artifactId>datafaker</artifactId>
 			<version>2.4.3</version>
 		</dependency>
+
+		<!-- Driver H2 Database (para pruebas y desarrollo) -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+		</dependency>
+
+		<!--JPA (Jakarta Persistence API)-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+
+		<!--Postgres JDBC Driver-->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.7.7</version>
+		</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>

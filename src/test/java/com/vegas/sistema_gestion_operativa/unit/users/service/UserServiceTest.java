@@ -3,7 +3,7 @@ package com.vegas.sistema_gestion_operativa.unit.users.service;
 import com.vegas.sistema_gestion_operativa.aws.service.CognitoIdentityService;
 import com.vegas.sistema_gestion_operativa.users.domain.User;
 import com.vegas.sistema_gestion_operativa.users.dto.CreateUserDto;
-import com.vegas.sistema_gestion_operativa.users.factory.FakeUserFactory;
+import com.vegas.sistema_gestion_operativa.unit.users.factory.FakeUserFactory;
 import com.vegas.sistema_gestion_operativa.users.repository.IUserRepository;
 import com.vegas.sistema_gestion_operativa.users.service.UserService;
 import org.junit.jupiter.api.Test;
