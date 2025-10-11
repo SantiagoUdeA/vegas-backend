@@ -1,8 +1,10 @@
 package com.vegas.sistema_gestion_operativa;
 
+import com.vegas.sistema_gestion_operativa.shared.exceptions.ApiException;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -16,8 +18,36 @@ import java.util.Map;
  * Handles validation errors and other exceptions.
  */
 @RestControllerAdvice
-@Profile({"dev", "prod"})
+@Profile({"dev", "prod", "test"})
 public class GlobalExceptionHandler {
+
+    /**
+     * Handles custom ApiException and returns its status and message.
+     * @param ex the ApiException thrown
+     * @return ResponseEntity with status and message from the exception
+     */
+    @ExceptionHandler(ApiException.class)
+    public ResponseEntity<Map<String, String>> handleApiExceptions(
+            ApiException ex) {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("message", ex.getMessage());
+        return ResponseEntity.status(ex.getStatus()).body(errorResponse);
+    }
+
+    /**
+     * Maneja las excepciones de acceso denegado (cuando falla @PreAuthorize).
+     * Retorna HTTP 403 (Forbidden) con un mensaje descriptivo.
+     *
+     * @param ex la excepción de acceso denegado
+     * @return respuesta HTTP 403 con detalles del error
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Map<String, String>> handleAccessDeniedException(AccessDeniedException ex) {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("error", "Access Denied");
+        errorResponse.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+    }
 
     /**
      * Handles validation errors when @Valid fails on DTOs.
