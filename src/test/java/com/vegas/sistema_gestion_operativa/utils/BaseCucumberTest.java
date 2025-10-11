@@ -11,7 +11,6 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
  * Clase base para ejecutar todas las pruebas de Cucumber.
  * Configura el motor de Cucumber y los parámetros necesarios.
  */
-@Suite
 @IncludeEngines("cucumber")
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty, html:target/cucumber-reports.html")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "com.vegas.sistema_gestion_operativa")
