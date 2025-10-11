@@ -5,8 +5,6 @@ import com.vegas.sistema_gestion_operativa.roles.domain.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.math.BigInteger;
-
 /**
  * Represents a user in the system.
  * Contains user details such as email, name, ID type, phone number, role, and branch.
@@ -22,7 +20,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private BigInteger id;
+    private Long id;
 
     @Column(nullable = false, unique = true)
     private String email;

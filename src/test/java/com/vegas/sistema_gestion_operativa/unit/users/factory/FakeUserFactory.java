@@ -12,7 +12,7 @@ public class FakeUserFactory {
 
     public static User createFakeUser() {
         return User.builder()
-                .id(new BigInteger(faker.number().digits(5)))
+                .id(faker.number().randomNumber())
                 .email(faker.internet().emailAddress())
                 .familyName(faker.name().lastName())
                 .idType("CC")
