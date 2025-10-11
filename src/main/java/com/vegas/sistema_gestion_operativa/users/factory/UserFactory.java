@@ -15,13 +15,14 @@ public class UserFactory {
      * @return User instance
      */
     public static User createFromDto(CreateUserDto user) {
+        RoleFactory roleFactory = new RoleFactory();
         return User.builder()
                 .email(user.email())
                 .givenName(user.givenName())
                 .familyName(user.familyName())
                 .idType(user.idType())
                 .phoneNumber(user.phoneNumber())
-                .role(RoleFactory.createRole(user.roleName()))
+                .role(roleFactory.createRole(user.roleName()))
                 .build();
     }
 }

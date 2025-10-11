@@ -4,6 +4,7 @@ import com.vegas.sistema_gestion_operativa.users.controller.UserController;
 import com.vegas.sistema_gestion_operativa.users.domain.User;
 import com.vegas.sistema_gestion_operativa.users.dto.CreateUserDto;
 import com.vegas.sistema_gestion_operativa.unit.users.factory.FakeUserFactory;
+import com.vegas.sistema_gestion_operativa.users.exceptions.UserAlreadyExistsException;
 import com.vegas.sistema_gestion_operativa.users.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -67,7 +68,7 @@ class UserControllerTest {
     }
 
     @Test
-    void createUser_shouldReturnCreatedUser() {
+    void createUser_shouldReturnCreatedUser() throws UserAlreadyExistsException {
         // Arrange
         CreateUserDto dto = FakeUserFactory.createFakeCreateUserDto();
         User expectedUser = FakeUserFactory.createFakeUser();
@@ -83,7 +84,7 @@ class UserControllerTest {
     }
 
     @Test
-    void createUser_shouldDelegateToService() {
+    void createUser_shouldDelegateToService() throws UserAlreadyExistsException {
         // Arrange
         CreateUserDto dto = FakeUserFactory.createFakeCreateUserDto();
         User user = FakeUserFactory.createFakeUser();
