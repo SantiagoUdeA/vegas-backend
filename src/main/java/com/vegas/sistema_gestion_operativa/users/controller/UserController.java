@@ -2,6 +2,7 @@ package com.vegas.sistema_gestion_operativa.users.controller;
 
 import com.vegas.sistema_gestion_operativa.users.domain.User;
 import com.vegas.sistema_gestion_operativa.users.dto.CreateUserDto;
+import com.vegas.sistema_gestion_operativa.users.exceptions.UserAlreadyExistsException;
 import com.vegas.sistema_gestion_operativa.users.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -51,7 +52,7 @@ public class UserController {
      */
     @PostMapping("api/v1/users")
     @PreAuthorize("hasPermission(null, 'USERS_CREATE')")
-    public User createUser(@RequestBody @Valid CreateUserDto dto) {
+    public User createUser(@RequestBody @Valid CreateUserDto dto) throws UserAlreadyExistsException {
         return userService.create(dto);
     }
 

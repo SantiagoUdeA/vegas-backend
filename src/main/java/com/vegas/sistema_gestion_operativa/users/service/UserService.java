@@ -3,6 +3,7 @@ package com.vegas.sistema_gestion_operativa.users.service;
 import com.vegas.sistema_gestion_operativa.aws.service.CognitoIdentityService;
 import com.vegas.sistema_gestion_operativa.users.domain.User;
 import com.vegas.sistema_gestion_operativa.users.dto.CreateUserDto;
+import com.vegas.sistema_gestion_operativa.users.exceptions.UserAlreadyExistsException;
 import com.vegas.sistema_gestion_operativa.users.factory.UserFactory;
 import com.vegas.sistema_gestion_operativa.users.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,8 +53,9 @@ public class UserService {
      * @return the created user
      */
     @Transactional
-    public User create(CreateUserDto user) {
+    public User create(CreateUserDto user) throws UserAlreadyExistsException {
         var newUser = UserFactory.createFromDto(user);
+        validateUserDoesntExists(user.email());
         var savedUser = userRepository.save(newUser);
         try{
             cognitoIdentityService.createUser(
@@ -66,6 +68,10 @@ public class UserService {
             throw new RuntimeException(e.getMessage());
         }
         return savedUser;
+    }
+
+    private void validateUserDoesntExists(String email) throws UserAlreadyExistsException {
+        if(userRepository.findByEmail(email).isPresent()) throw new UserAlreadyExistsException(email);
     }
 
 }

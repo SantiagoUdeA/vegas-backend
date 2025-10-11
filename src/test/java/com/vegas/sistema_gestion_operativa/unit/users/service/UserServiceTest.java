@@ -4,6 +4,7 @@ import com.vegas.sistema_gestion_operativa.aws.service.CognitoIdentityService;
 import com.vegas.sistema_gestion_operativa.users.domain.User;
 import com.vegas.sistema_gestion_operativa.users.dto.CreateUserDto;
 import com.vegas.sistema_gestion_operativa.unit.users.factory.FakeUserFactory;
+import com.vegas.sistema_gestion_operativa.users.exceptions.UserAlreadyExistsException;
 import com.vegas.sistema_gestion_operativa.users.repository.IUserRepository;
 import com.vegas.sistema_gestion_operativa.users.service.UserService;
 import org.junit.jupiter.api.Test;
@@ -45,7 +46,7 @@ class UserServiceTest {
     }
 
     @Test
-    void create_shouldBuildUserFromDtoAndSave() {
+    void create_shouldBuildUserFromDtoAndSave() throws UserAlreadyExistsException {
         CreateUserDto dto = FakeUserFactory.createFakeCreateUserDto();
 
         // Simular que el repositorio devuelve exactamente el objeto que se le pasa
