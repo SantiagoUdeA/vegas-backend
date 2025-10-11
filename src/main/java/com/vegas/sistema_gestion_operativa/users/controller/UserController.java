@@ -2,14 +2,13 @@ package com.vegas.sistema_gestion_operativa.users.controller;
 
 import com.vegas.sistema_gestion_operativa.users.domain.User;
 import com.vegas.sistema_gestion_operativa.users.dto.CreateUserDto;
+import com.vegas.sistema_gestion_operativa.users.dto.UpdateUserDto;
 import com.vegas.sistema_gestion_operativa.users.exceptions.UserAlreadyExistsException;
+import com.vegas.sistema_gestion_operativa.users.exceptions.UserNotFoundException;
 import com.vegas.sistema_gestion_operativa.users.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -54,6 +53,12 @@ public class UserController {
     @PreAuthorize("hasPermission(null, 'USERS_CREATE')")
     public User createUser(@RequestBody @Valid CreateUserDto dto) throws UserAlreadyExistsException {
         return userService.create(dto);
+    }
+
+    @PatchMapping("api/v1/users/{id}")
+    @PreAuthorize("hasPermission(null, 'USERS_EDIT')")
+    public User updateUser(@PathVariable String id, @RequestBody @Valid UpdateUserDto dto) throws UserNotFoundException {
+        return userService.update(id, dto);
     }
 
 }

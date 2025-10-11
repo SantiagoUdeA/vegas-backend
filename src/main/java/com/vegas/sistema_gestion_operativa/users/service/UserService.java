@@ -3,9 +3,13 @@ package com.vegas.sistema_gestion_operativa.users.service;
 import com.vegas.sistema_gestion_operativa.aws.service.CognitoIdentityService;
 import com.vegas.sistema_gestion_operativa.users.domain.User;
 import com.vegas.sistema_gestion_operativa.users.dto.CreateUserDto;
+import com.vegas.sistema_gestion_operativa.users.dto.UpdateUserDto;
 import com.vegas.sistema_gestion_operativa.users.exceptions.UserAlreadyExistsException;
+import com.vegas.sistema_gestion_operativa.users.exceptions.UserNotFoundException;
 import com.vegas.sistema_gestion_operativa.users.factory.UserFactory;
+import com.vegas.sistema_gestion_operativa.users.mapper.IUserMapper;
 import com.vegas.sistema_gestion_operativa.users.repository.IUserRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +31,7 @@ public class UserService {
      */
     private final IUserRepository userRepository;
     private final UserFactory userFactory;
+    private final IUserMapper userMapper;
 
     /**
      * Constructor that injects the user repository.
@@ -34,10 +39,11 @@ public class UserService {
      * @param userRepository user repository
      */
     @Autowired
-    public UserService(CognitoIdentityService cognitoIdentityService, IUserRepository userRepository, UserFactory userFactory) {
+    public UserService(CognitoIdentityService cognitoIdentityService, IUserRepository userRepository, UserFactory userFactory, IUserMapper userMapper) {
         this.cognitoIdentityService = cognitoIdentityService;
         this.userRepository = userRepository;
         this.userFactory = userFactory;
+        this.userMapper = userMapper;
     }
 
     /**
@@ -72,8 +78,31 @@ public class UserService {
         return userRepository.save(newUser);
     }
 
+    /**
+     * Updates an existing user with the provided DTO.
+     * @param userId ID of the user to update
+     * @param dto DTO containing updated user data
+     * @return the updated user
+     * @throws UserNotFoundException if the user is not found
+     */
+    public User update(String userId, UpdateUserDto dto) throws UserNotFoundException {
+        var user = retrieveUser(userId);
+        var updatedUser = userMapper.partialUpdate(dto, user);
+        return userRepository.save(updatedUser);
+    }
+
     private void validateUserDoesntExists(String email) throws UserAlreadyExistsException {
         if(userRepository.findByEmail(email).isPresent()) throw new UserAlreadyExistsException(email);
+    }
+
+    /**
+     * Retrieves a user by their ID.
+     * @param userId ID of the user to retrieve
+     * @return the retrieved user
+     * @throws UserNotFoundException if the user is not found
+     */
+    private User retrieveUser(String userId) throws UserNotFoundException {
+        return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User with id %s not found".formatted(userId)));
     }
 
 }
