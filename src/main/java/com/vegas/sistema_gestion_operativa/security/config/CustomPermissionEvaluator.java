@@ -2,6 +2,8 @@ package com.vegas.sistema_gestion_operativa.security.config;
 
 import com.vegas.sistema_gestion_operativa.roles.domain.Permission;
 import com.vegas.sistema_gestion_operativa.roles.domain.Role;
+import com.vegas.sistema_gestion_operativa.roles.factory.RoleFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -12,15 +14,12 @@ import java.util.Map;
 @Component
 public class CustomPermissionEvaluator implements PermissionEvaluator {
 
-    // Mapeo de nombres de Cognito a roles del sistema
-    private static final Map<String, Role> ROLE_MAPPING = Map.of(
-            "Administrador", Role.ADMIN,
-            "ADMIN", Role.ADMIN,
-            "Cajero", Role.CASHIER,
-            "CAJERO", Role.CASHIER,
-            "Dueno", Role.OWNER,
-            "DUENO", Role.OWNER
-    );
+    private final RoleFactory roleFactory;
+
+    @Autowired
+    public CustomPermissionEvaluator(RoleFactory roleFactory) {
+        this.roleFactory = roleFactory;
+    }
 
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
@@ -38,8 +37,10 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
             return false;
         }
 
-        Role role = ROLE_MAPPING.get(roleName);
-        if (role == null) {
+        Role role;
+        try {
+            role = roleFactory.createRole(roleName);
+        }catch (IllegalArgumentException e){
             return false;
         }
 
