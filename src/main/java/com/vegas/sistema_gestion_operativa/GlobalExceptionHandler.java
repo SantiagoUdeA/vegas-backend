@@ -1,4 +1,4 @@
-package com.vegas.sistema_gestion_operativa.users.controller;
+package com.vegas.sistema_gestion_operativa;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
