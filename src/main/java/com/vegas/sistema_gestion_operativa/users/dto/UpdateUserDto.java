@@ -1,5 +1,6 @@
 package com.vegas.sistema_gestion_operativa.users.dto;
 
+import com.vegas.sistema_gestion_operativa.roles.domain.Role;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -23,7 +24,6 @@ public record UpdateUserDto(
         @Pattern(regexp = "^\\+?[0-9]{7,15}$", message = "Número de teléfono inválido")
         String phoneNumber,
 
-        @Pattern(regexp = "(?i)ADMIN|CASHIER|OWNER", message = "Rol inválido")
-        String roleName
+        Role role
 ) {
 }
