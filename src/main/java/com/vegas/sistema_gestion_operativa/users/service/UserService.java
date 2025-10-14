@@ -5,6 +5,7 @@ import com.vegas.sistema_gestion_operativa.users.domain.User;
 import com.vegas.sistema_gestion_operativa.users.dto.CreateUserDto;
 import com.vegas.sistema_gestion_operativa.users.dto.UpdateUserDto;
 import com.vegas.sistema_gestion_operativa.users.exceptions.UserAlreadyExistsException;
+import com.vegas.sistema_gestion_operativa.users.exceptions.UserAlreadyInactiveException;
 import com.vegas.sistema_gestion_operativa.users.exceptions.UserNotFoundException;
 import com.vegas.sistema_gestion_operativa.users.factory.UserFactory;
 import com.vegas.sistema_gestion_operativa.users.mapper.IUserMapper;
@@ -96,8 +97,9 @@ public class UserService {
      * @param userId ID of the user to deactivate
      * @throws UserNotFoundException if the user is not found
      */
-    public void desactivate(String userId) throws UserNotFoundException {
+    public void desactivate(String userId) throws UserNotFoundException, UserAlreadyInactiveException {
         var user = retrieveUser(userId);
+        if(!user.isActive()) throw new UserAlreadyInactiveException("El usuario ya se encuentra inactivo");
         cognitoIdentityService.disableUser(user.getEmail());
         user.setActive(false);
         userRepository.save(user);

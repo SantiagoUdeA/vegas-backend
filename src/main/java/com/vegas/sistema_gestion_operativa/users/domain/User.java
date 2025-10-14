@@ -16,6 +16,7 @@ import lombok.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
+@ToString
 public class User {
 
     @Id

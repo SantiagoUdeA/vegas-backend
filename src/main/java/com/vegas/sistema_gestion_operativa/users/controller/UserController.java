@@ -4,6 +4,7 @@ import com.vegas.sistema_gestion_operativa.users.domain.User;
 import com.vegas.sistema_gestion_operativa.users.dto.CreateUserDto;
 import com.vegas.sistema_gestion_operativa.users.dto.UpdateUserDto;
 import com.vegas.sistema_gestion_operativa.users.exceptions.UserAlreadyExistsException;
+import com.vegas.sistema_gestion_operativa.users.exceptions.UserAlreadyInactiveException;
 import com.vegas.sistema_gestion_operativa.users.exceptions.UserNotFoundException;
 import com.vegas.sistema_gestion_operativa.users.service.UserService;
 import jakarta.validation.Valid;
@@ -62,9 +63,9 @@ public class UserController {
         return userService.update(id, dto);
     }
 
-    @DeleteMapping
+    @DeleteMapping("api/v1/users/{id}")
     @PreAuthorize("hasPermission(null, 'USERS_DELETE')")
-    public ResponseEntity<String> desactivateUser(@RequestParam String id) throws UserNotFoundException {
+    public ResponseEntity<String> desactivateUser(@PathVariable String id) throws UserNotFoundException, UserAlreadyInactiveException {
         userService.desactivate(id);
         return  ResponseEntity.ok().build();
     }
