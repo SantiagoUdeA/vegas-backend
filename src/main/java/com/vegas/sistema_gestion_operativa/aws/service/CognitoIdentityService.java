@@ -2,14 +2,12 @@
 
     import com.vegas.sistema_gestion_operativa.aws.factory.CognitoIdentityRequestFactory;
     import jakarta.annotation.PostConstruct;
+    import org.springframework.beans.factory.annotation.Autowired;
     import org.springframework.beans.factory.annotation.Value;
     import org.springframework.stereotype.Service;
     import software.amazon.awssdk.regions.Region;
     import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient;
-    import software.amazon.awssdk.services.cognitoidentityprovider.model.AdminCreateUserResponse;
-    import software.amazon.awssdk.services.cognitoidentityprovider.model.AdminDisableUserRequest;
-    import software.amazon.awssdk.services.cognitoidentityprovider.model.AttributeType;
-    import software.amazon.awssdk.services.cognitoidentityprovider.model.CognitoIdentityProviderException;
+    import software.amazon.awssdk.services.cognitoidentityprovider.model.*;
 
     /**
      * Service for interacting with AWS Cognito Identity Provider.
@@ -19,12 +17,18 @@
     public class CognitoIdentityService {
 
         private CognitoIdentityProviderClient client;
+        private final CognitoIdentityRequestFactory cognitoIdentityRequestFactory;
 
         @Value("${aws.cognito.userPoolId}")
         private String userPoolId;
 
         @Value("${aws.region}")
         private String region;
+
+        @Autowired
+        public CognitoIdentityService(CognitoIdentityRequestFactory cognitoIdentityRequestFactory) {
+            this.cognitoIdentityRequestFactory = cognitoIdentityRequestFactory;
+        }
 
         /**
          * Initializes the CognitoIdentityProviderClient after the service is constructed.
@@ -40,6 +44,7 @@
 
         /**
          * Creates a new user in the Cognito user pool with the specified attributes.
+         * Sets its password as permanent with idNumber and does not send an invitation email.
          *
          * @param email      the email of the new user
          * @param given_name the given name (first name) of the new user
@@ -51,9 +56,10 @@
                 String email,
                 String given_name,
                 String family_name,
-                String roleName
+                String roleName,
+                String idNumber
         ) {
-            var request = CognitoIdentityRequestFactory.createAdminCreateUserRequest(
+            var request = cognitoIdentityRequestFactory.createAdminCreateUserRequest(
                     this.userPoolId,
                     given_name,
                     family_name,
@@ -62,7 +68,9 @@
                     true,
                     false
             );
-            return getUserId(client.adminCreateUser(request));
+            var userId = getUserId(client.adminCreateUser(request));
+            setUserPassword(email, given_name + "#" + idNumber);
+            return userId;
         }
 
         /**
@@ -71,7 +79,7 @@
          * @param username the username or email of the user to disable
          */
         public void disableUser(String username) {
-            var request = CognitoIdentityRequestFactory.createAdminDisableUserRequest(
+            var request = cognitoIdentityRequestFactory.createAdminDisableUserRequest(
                     this.userPoolId,
                     username
             );
@@ -84,5 +92,20 @@
                     .findFirst()
                     .map(AttributeType::value)
                     .orElse(null);
+        }
+
+        /**
+         * Sets a permanent password for a user in the Cognito user pool.
+         *
+         * @param username the username or email of the user
+         * @param password the new password to set
+         */
+        public void setUserPassword(String username, String password) {
+            var request = cognitoIdentityRequestFactory.createAdminSetUserPasswordRequest(
+                    this.userPoolId,
+                    username,
+                    password
+            );
+            client.adminSetUserPassword(request);
         }
     }

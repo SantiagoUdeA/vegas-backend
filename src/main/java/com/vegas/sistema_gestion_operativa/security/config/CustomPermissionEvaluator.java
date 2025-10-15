@@ -9,7 +9,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
-import java.util.Map;
 
 @Component
 public class CustomPermissionEvaluator implements PermissionEvaluator {
@@ -32,6 +31,7 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
                 .findFirst()
                 .map(a -> a.getAuthority().replace("ROLE_", ""))
                 .orElse(null);
+        System.out.println(roleName);
 
         if (roleName == null) {
             return false;

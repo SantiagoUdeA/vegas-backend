@@ -1,10 +1,12 @@
 package com.vegas.sistema_gestion_operativa.unit.users.service;
 
 import com.vegas.sistema_gestion_operativa.aws.service.CognitoIdentityService;
+import com.vegas.sistema_gestion_operativa.roles.domain.Role;
 import com.vegas.sistema_gestion_operativa.users.domain.User;
 import com.vegas.sistema_gestion_operativa.users.dto.CreateUserDto;
 import com.vegas.sistema_gestion_operativa.unit.users.factory.FakeUserFactory;
 import com.vegas.sistema_gestion_operativa.users.exceptions.UserAlreadyExistsException;
+import com.vegas.sistema_gestion_operativa.users.factory.IdTypeFactory;
 import com.vegas.sistema_gestion_operativa.users.factory.UserFactory;
 import com.vegas.sistema_gestion_operativa.users.repository.IUserRepository;
 import com.vegas.sistema_gestion_operativa.users.service.UserService;
@@ -34,6 +36,8 @@ class UserServiceTest {
     @InjectMocks
     private UserService userService;
 
+    private final IdTypeFactory idTypeFactory = new IdTypeFactory();
+
     @Test
     void findAll_shouldReturnListFromRepository() {
         User u1 = User.builder().email("a@example.com").givenName("A").familyName("One").build();
@@ -44,7 +48,7 @@ class UserServiceTest {
 
         assertNotNull(result);
         assertEquals(2, result.size());
-        assertEquals("a@example.com", result.get(0).getEmail());
+        assertEquals("a@example.com", result.getFirst().getEmail());
         verify(userRepository, times(1)).findAll();
     }
 
@@ -54,7 +58,7 @@ class UserServiceTest {
         String fakeUserId = "fake-cognito-user-id-123";
 
         // Mock de Cognito para devolver un ID de usuario
-        when(cognitoIdentityService.createUser(anyString(), anyString(), anyString(), anyString()))
+        when(cognitoIdentityService.createUser(anyString(), anyString(), anyString(), anyString(), anyString()))
                 .thenReturn(fakeUserId);
 
         // Mock del UserFactory para crear el usuario con el ID de Cognito
@@ -63,9 +67,9 @@ class UserServiceTest {
                 .email(dto.email())
                 .givenName(dto.givenName())
                 .familyName(dto.familyName())
-                .idType(dto.idType())
+                .idType(idTypeFactory.createIdType(dto.idType()))
                 .phoneNumber(dto.phoneNumber())
-                .role(com.vegas.sistema_gestion_operativa.roles.domain.Role.CASHIER)
+                .role(Role.ADMIN)
                 .build();
 
         when(userFactory.createFromDto(eq(dto), eq(fakeUserId))).thenReturn(expectedUser);
@@ -80,7 +84,7 @@ class UserServiceTest {
         assertEquals(dto.email(), result.getEmail());
         assertEquals(dto.givenName(), result.getGivenName());
         assertEquals(dto.familyName(), result.getFamilyName());
-        assertEquals(dto.idType(), result.getIdType());
+        assertEquals(dto.idType(), result.getIdType().toString());
         assertEquals(dto.phoneNumber(), result.getPhoneNumber());
         assertEquals(fakeUserId, result.getId());
 
@@ -88,7 +92,8 @@ class UserServiceTest {
                 eq(dto.email()),
                 eq(dto.givenName()),
                 eq(dto.familyName()),
-                eq(dto.roleName())
+                eq(dto.roleName()),
+                eq(dto.idNumber())
         );
         verify(userFactory, times(1)).createFromDto(eq(dto), eq(fakeUserId));
         verify(userRepository, times(1)).save(any(User.class));
@@ -100,7 +105,7 @@ class UserServiceTest {
         String fakeUserId = "fake-cognito-user-id-123";
 
         // Mock de Cognito para devolver un ID de usuario
-        when(cognitoIdentityService.createUser(anyString(), anyString(), anyString(), anyString()))
+        when(cognitoIdentityService.createUser(anyString(), anyString(), anyString(), anyString(), anyString()))
                 .thenReturn(fakeUserId);
 
         // Mock del UserFactory para crear el usuario

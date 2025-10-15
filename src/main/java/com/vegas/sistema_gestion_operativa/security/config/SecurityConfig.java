@@ -2,7 +2,7 @@ package com.vegas.sistema_gestion_operativa.security.config;
 
 
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -16,10 +16,11 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @EnableWebSecurity
 @EnableMethodSecurity
-@Profile({"dev", "prod"})
+@Configuration
 public class SecurityConfig {
 
     /**
@@ -73,8 +74,8 @@ public class SecurityConfig {
      * @return collection of granted authorities
      */
     private Collection<GrantedAuthority> extractAuthorities(Jwt jwt) {
-        String role = jwt.getClaimAsString("custom:role");
-        if (role.isBlank()) return List.of();
-        return List.of(new SimpleGrantedAuthority("ROLE_" + role));
+        Optional<String> role = jwt.getClaimAsString("role").describeConstable();
+        if (role.isEmpty()) return List.of();
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role.get()));
     }
 }

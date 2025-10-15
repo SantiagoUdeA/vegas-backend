@@ -10,7 +10,6 @@ import com.vegas.sistema_gestion_operativa.users.exceptions.UserNotFoundExceptio
 import com.vegas.sistema_gestion_operativa.users.factory.UserFactory;
 import com.vegas.sistema_gestion_operativa.users.mapper.IUserMapper;
 import com.vegas.sistema_gestion_operativa.users.repository.IUserRepository;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,7 +69,8 @@ public class UserService {
                     user.email(),
                     user.givenName(),
                     user.familyName(),
-                    user.roleName()
+                    user.roleName(),
+                    user.idNumber()
             );
         }catch (CognitoIdentityProviderException e){
             throw new RuntimeException(e.getMessage());

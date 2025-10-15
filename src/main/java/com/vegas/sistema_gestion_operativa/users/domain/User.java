@@ -27,8 +27,9 @@ public class User {
     private String givenName;
     @Column(nullable = false)
     private String familyName;
-    @Column()
-    private String idType;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private IdType idType;
     @Column(unique = true)
     private String idNumber;
     @Column()

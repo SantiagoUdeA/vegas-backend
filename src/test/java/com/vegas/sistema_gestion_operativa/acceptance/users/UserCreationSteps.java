@@ -33,7 +33,7 @@ public class UserCreationSteps extends CucumberSpringConfiguration {
 
     @Given("the administrator is authenticated")
     public void theAdministratorIsAuthenticated() {
-        setJwt(() -> fakeJwtFactory.createJwtWithRole(Role.ADMIN));
+        setJwt(() -> fakeJwtFactory.createJwtWithRole(Role.CASHIER));
     }
 
     @When("the administrator enters the employee's information")

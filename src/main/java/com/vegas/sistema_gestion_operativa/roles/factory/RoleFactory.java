@@ -7,11 +7,10 @@ import org.springframework.stereotype.Component;
 public class RoleFactory {
 
     public Role createRole(String roleName) throws IllegalArgumentException {
-        return switch (roleName.toUpperCase()) {
-            case "ADMIN" -> Role.ADMIN;
-            case "CASHIER" -> Role.CASHIER;
-            case "OWNER" -> Role.OWNER;
-            default -> throw new IllegalArgumentException("Invalid role ID: " + roleName);
-        };
+        try{
+            return Role.valueOf(roleName);
+        }catch (IllegalArgumentException e){
+            throw new IllegalArgumentException("Rol invalido: " + roleName);
+        }
     }
 }

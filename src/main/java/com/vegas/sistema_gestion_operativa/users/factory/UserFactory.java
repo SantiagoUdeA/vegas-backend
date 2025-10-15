@@ -13,36 +13,28 @@ import org.springframework.stereotype.Component;
 public class UserFactory {
 
     private final RoleFactory roleFactory;
+    private final IdTypeFactory idTypeFactory;
 
     @Autowired
-    public UserFactory(RoleFactory roleFactory) {
+    public UserFactory(RoleFactory roleFactory, IdTypeFactory idTypeFactory) {
         this.roleFactory = roleFactory;
+        this.idTypeFactory = idTypeFactory;
     }
+
 
     /**
-     * Creates a User instance from a CreateUserDto.
-     * @param user DTO containing user data
-     * @return User instance
+     * Creates a User entity from a CreateUserDto and a given ID.
+     * @param user the CreateUserDto containing user details
+     * @param id the unique identifier for the user
+     * @return a User entity
      */
-    public User createFromDto(CreateUserDto user) {
-        return User.builder()
-                .email(user.email())
-                .givenName(user.givenName())
-                .familyName(user.familyName())
-                .idType(user.idType())
-                .idNumber(user.idNumber())
-                .phoneNumber(user.phoneNumber())
-                .role(roleFactory.createRole(user.roleName()))
-                .build();
-    }
-
     public User createFromDto(CreateUserDto user, String id) {
         return User.builder()
                 .id(id)
                 .email(user.email())
                 .givenName(user.givenName())
                 .familyName(user.familyName())
-                .idType(user.idType())
+                .idType(idTypeFactory.createIdType(user.idType()))
                 .idNumber(user.idNumber())
                 .phoneNumber(user.phoneNumber())
                 .role(roleFactory.createRole(user.roleName()))

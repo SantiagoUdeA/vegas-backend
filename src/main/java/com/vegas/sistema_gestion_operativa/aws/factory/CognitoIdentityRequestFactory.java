@@ -1,15 +1,18 @@
 package com.vegas.sistema_gestion_operativa.aws.factory;
 
+import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.AdminCreateUserRequest;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.AdminDisableUserRequest;
+import software.amazon.awssdk.services.cognitoidentityprovider.model.AdminSetUserPasswordRequest;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.AttributeType;
 
 import java.util.Arrays;
-// TODO Make this a spring component and inject it where needed
+
 /**
  * Factory class for creating AWS Cognito Identity requests.
  * Provides methods to create request objects for various Cognito operations.
  */
+@Component
 public class CognitoIdentityRequestFactory {
 
     /**
@@ -24,7 +27,7 @@ public class CognitoIdentityRequestFactory {
      * @param sendEmail    whether to send a welcome email to the user
      * @return an AdminCreateUserRequest object
      */
-    public static AdminCreateUserRequest createAdminCreateUserRequest(
+    public AdminCreateUserRequest createAdminCreateUserRequest(
             String userPoolId,
             String givenName,
             String familyName,
@@ -48,7 +51,7 @@ public class CognitoIdentityRequestFactory {
                 .build();
     }
 
-    public static AdminDisableUserRequest createAdminDisableUserRequest(
+    public AdminDisableUserRequest createAdminDisableUserRequest(
             String userPoolId,
             String username
     ) {
@@ -57,4 +60,18 @@ public class CognitoIdentityRequestFactory {
                 .username(username)
                 .build();
     }
+
+    public AdminSetUserPasswordRequest createAdminSetUserPasswordRequest(
+            String userPoolId,
+            String username,
+            String password
+    ){
+        return AdminSetUserPasswordRequest.builder()
+                .userPoolId(userPoolId)
+                .username(username)
+                .password(password)
+                .permanent(false) // falso para que la contraseña requiera cambio en el primer login
+                .build();
+    }
+
 }
