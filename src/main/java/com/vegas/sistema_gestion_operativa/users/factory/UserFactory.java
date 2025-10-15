@@ -30,6 +30,7 @@ public class UserFactory {
                 .givenName(user.givenName())
                 .familyName(user.familyName())
                 .idType(user.idType())
+                .idNumber(user.idNumber())
                 .phoneNumber(user.phoneNumber())
                 .role(roleFactory.createRole(user.roleName()))
                 .build();
@@ -42,6 +43,7 @@ public class UserFactory {
                 .givenName(user.givenName())
                 .familyName(user.familyName())
                 .idType(user.idType())
+                .idNumber(user.idNumber())
                 .phoneNumber(user.phoneNumber())
                 .role(roleFactory.createRole(user.roleName()))
                 .build();

@@ -33,7 +33,6 @@ public class CognitoIdentityRequestFactory {
             Boolean emailVerified,
             Boolean sendEmail
     ) {
-        System.out.println("Creating AdminCreateUserRequest for userPoolId: " + userPoolId + ", email: " + email + ", roleName: " + roleName);
         var messageAction = sendEmail ? "RESEND" : "SUPPRESS";
         var emailVerifiedValue = emailVerified ? "true" : "false";
         return AdminCreateUserRequest.builder()

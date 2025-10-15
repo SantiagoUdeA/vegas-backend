@@ -54,6 +54,7 @@ public class UserController {
     @PostMapping("api/v1/users")
     @PreAuthorize("hasPermission(null, 'USERS_CREATE')")
     public User createUser(@RequestBody @Valid CreateUserDto dto) throws UserAlreadyExistsException {
+        System.out.println(dto.idNumber());
         return userService.create(dto);
     }
 

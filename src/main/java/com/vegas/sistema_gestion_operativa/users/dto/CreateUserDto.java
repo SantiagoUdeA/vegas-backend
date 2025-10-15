@@ -11,23 +11,31 @@ import org.hibernate.validator.constraints.Length;
  * Contains necessary fields for user creation.
  */
 public record CreateUserDto(
-        @NotNull
-        @Email
+        @NotNull(message = "El correo electrónico es obligatorio")
+        @Email(message = "El correo electrónico no es válido")
         String email,
-        @NotNull
-        @Length(max = 100)
+
+        @NotNull(message = "El nombre es obligatorio")
+        @Length(max = 100, message = "El nombre no puede superar los 100 caracteres")
         String givenName,
-        @NotNull
-        @Length(max = 100)
+
+        @NotNull(message = "El apellido es obligatorio")
+        @Length(max = 100, message = "El apellido no puede superar los 100 caracteres")
         String familyName,
+
+        @NotNull(message = "El tipo de documento es obligatorio")
+        @Pattern(regexp = "^(CC|CE|PP)$", message = "El tipo de documento debe ser CC, CE o PP")
         String idType,
+
+        @NotNull(message = "El número de documento es obligatorio")
+        @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "El número de documento debe ser alfanumérico")
         String idNumber,
 
         @Nullable
-        @Pattern(regexp = "^\\+?[0-9]{7,15}$", message = "Número de teléfono inválido")
+        @Pattern(regexp = "^\\+?[0-9]{7,15}$", message = "El número de teléfono es inválido")
         String phoneNumber,
 
-        @Pattern(regexp = "(?i)ADMIN|CASHIER|OWNER", message = "Rol inválido")
+        @Pattern(regexp = "(?i)ADMIN|CASHIER|OWNER", message = "El rol debe ser ADMIN, CASHIER u OWNER")
         String roleName
 ) {
 }
