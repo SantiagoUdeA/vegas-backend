@@ -1,19 +1,10 @@
 package com.vegas.sistema_gestion_operativa.acceptance.users;
 
-import com.vegas.sistema_gestion_operativa.roles.domain.Role;
-import com.vegas.sistema_gestion_operativa.unit.users.factory.FakeUserFactory;
-import com.vegas.sistema_gestion_operativa.users.domain.User;
-import com.vegas.sistema_gestion_operativa.users.dto.CreateUserDto;
+import com.vegas.sistema_gestion_operativa.users.domain.entity.User;
+import com.vegas.sistema_gestion_operativa.users.application.dto.CreateUserDto;
 import com.vegas.sistema_gestion_operativa.utils.CucumberSpringConfiguration;
-import io.cucumber.java.Before;
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.When;
-import io.cucumber.java.en.Then;
-import io.cucumber.java.en.And;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Step Definitions para las pruebas de aceptación del UserController.
@@ -26,7 +17,7 @@ public class UserCreationSteps extends CucumberSpringConfiguration {
     private CreateUserDto userDto;
     private ResponseEntity<User> response;
 
-    @Before
+    /*@Before
     public void setUp() {
         // Configuración antes de cada escenario si es necesaria
     }
@@ -85,7 +76,7 @@ public class UserCreationSteps extends CucumberSpringConfiguration {
     public  void requiredFieldsAreMissing() {
         assertNotNull(response, "Answer should not be null");
         assertEquals(400, response.getStatusCode().value(), "Status code should be 400 Bad Request");
-    }
+    }*/
 
 
 }

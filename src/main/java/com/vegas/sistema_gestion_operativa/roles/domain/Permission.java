@@ -1,5 +1,9 @@
 package com.vegas.sistema_gestion_operativa.roles.domain;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Arrays;
+
 public enum Permission {
 
     // Sucursales
@@ -8,11 +12,23 @@ public enum Permission {
     BRANCHES_DELETE,
     BRANCHES_VIEW,
 
-    // Usuarios
-    USERS_CREATE,
-    USERS_EDIT,
-    USERS_DEACTIVATE,
-    USERS_VIEW,
+    // Administradores
+    ADMINS_CREATE,
+    ADMINS_EDIT,
+    ADMINS_DEACTIVATE,
+    ADMINS_VIEW,
+
+    // Cajeros
+    CASHIERS_CREATE,
+    CASHIERS_EDIT,
+    CASHIERS_DEACTIVATE,
+    CASHIERS_VIEW,
+
+    // Dueños
+    OWNERS_CREATE,
+    OWNERS_EDIT,
+    OWNERS_DEACTIVATE,
+    OWNERS_VIEW,
 
     // Inventario
     INVENTORY_CREATE,
@@ -40,5 +56,20 @@ public enum Permission {
     ALERTS_CONFIGURE,
 
     // Dashboard
-    DASHBOARD_VIEW
+    DASHBOARD_VIEW;
+
+    @JsonCreator
+    public static Permission fromValue(String value) throws  IllegalArgumentException {
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException("El permiso no puede ser nulo o vacío");
+        }
+        try {
+            return Permission.valueOf(value.trim().toUpperCase());
+        } catch (IllegalArgumentException ex) {
+            String allowed = Arrays.toString(Permission.values());
+            throw new IllegalArgumentException(
+                    String.format("El permiso '%s' no es válido. Valores permitidos: %s", value, allowed)
+            );
+        }
+    }
 }

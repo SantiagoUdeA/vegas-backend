@@ -1,7 +1,9 @@
 package com.vegas.sistema_gestion_operativa.roles.domain;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
 
+import java.util.Arrays;
 import java.util.Set;
 
 import static com.vegas.sistema_gestion_operativa.roles.domain.Permission.*;
@@ -12,7 +14,7 @@ public enum Role {
     ADMIN(
             "Administrador general del sistema. Tiene acceso total a la configuración, usuarios, inventario y reportes.",
             Set.of(
-                    USERS_CREATE, USERS_EDIT, USERS_DEACTIVATE, USERS_VIEW,
+                    CASHIERS_CREATE, CASHIERS_EDIT, CASHIERS_DEACTIVATE, CASHIERS_VIEW,
                     INVENTORY_CREATE, INVENTORY_EDIT, INVENTORY_DELETE, INVENTORY_VIEW,
                     PRODUCTS_CREATE, PRODUCTS_EDIT, PRODUCTS_DELETE, PRODUCTS_VIEW,
                     FORMULAS_CREATE, FORMULAS_EDIT, FORMULAS_VIEW,
@@ -34,12 +36,25 @@ public enum Role {
     ),
 
     OWNER(
-            "Dueño del negocio con acceso ejecutivo de solo lectura a reportes, dashboard y auditorías.",
+            "Dueño del negocio con acceso ejecutivo.",
             Set.of(
-                    USERS_VIEW,
+                    ADMINS_CREATE, ADMINS_EDIT, ADMINS_DEACTIVATE, ADMINS_VIEW,
+                    CASHIERS_CREATE, CASHIERS_EDIT, CASHIERS_DEACTIVATE, CASHIERS_VIEW,
+                    OWNERS_CREATE, OWNERS_EDIT, OWNERS_DEACTIVATE, OWNERS_VIEW,
+                    FORMULAS_CREATE, FORMULAS_EDIT, FORMULAS_VIEW,
+                    INVENTORY_CREATE, INVENTORY_EDIT, INVENTORY_DELETE, INVENTORY_VIEW,
+                    PRODUCTS_CREATE, PRODUCTS_EDIT, PRODUCTS_DELETE, PRODUCTS_VIEW,
                     REPORTS_VIEW, REPORTS_EXPORT,
-                    INVENTORY_VIEW,
-                    DASHBOARD_VIEW
+                    ALERTS_VIEW, ALERTS_CONFIGURE,
+                    DASHBOARD_VIEW,
+                    BRANCHES_CREATE, BRANCHES_EDIT, BRANCHES_DELETE, BRANCHES_VIEW
+            )
+    ),
+
+    ROOT(
+            "Acceso total e irrestricto a todas las funcionalidades del sistema, incluyendo configuración avanzada y auditorías.",
+            Set.of(
+                    OWNERS_CREATE, OWNERS_EDIT, OWNERS_DEACTIVATE, OWNERS_VIEW
             )
     );
 
@@ -51,7 +66,20 @@ public enum Role {
         this.permissions = permissions;
     }
 
-    public boolean hasPermission(Permission permission) {
-        return permissions.contains(permission);
+    @JsonCreator
+    public static Role fromValue(String value) {
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException("El rol no puede ser nulo o vacío");
+        }
+
+        try {
+            return Role.valueOf(value.trim().toUpperCase());
+        } catch (IllegalArgumentException ex) {
+            String allowed = Arrays.toString(Role.values());
+            throw new IllegalArgumentException(
+                    String.format("El rol '%s' no es válido. Valores permitidos: %s", value, allowed)
+            );
+        }
     }
+
 }

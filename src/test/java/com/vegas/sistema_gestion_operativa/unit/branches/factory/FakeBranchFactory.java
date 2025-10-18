@@ -1,6 +1,6 @@
 package com.vegas.sistema_gestion_operativa.unit.branches.factory;
 
-import com.vegas.sistema_gestion_operativa.branches.domain.Branch;
+import com.vegas.sistema_gestion_operativa.branches.domain.entity.Branch;
 import net.datafaker.Faker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

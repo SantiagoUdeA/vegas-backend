@@ -1,8 +1,9 @@
 package com.vegas.sistema_gestion_operativa.unit.users.factory;
 
-import com.vegas.sistema_gestion_operativa.users.domain.IdType;
-import com.vegas.sistema_gestion_operativa.users.domain.User;
-import com.vegas.sistema_gestion_operativa.users.dto.CreateUserDto;
+import com.vegas.sistema_gestion_operativa.roles.domain.Role;
+import com.vegas.sistema_gestion_operativa.users.domain.entity.IdType;
+import com.vegas.sistema_gestion_operativa.users.domain.entity.User;
+import com.vegas.sistema_gestion_operativa.users.application.dto.CreateUserDto;
 import net.datafaker.Faker;
 
 public class FakeUserFactory {
@@ -29,10 +30,11 @@ public class FakeUserFactory {
                 faker.internet().emailAddress(),
                 faker.name().firstName(),
                 faker.name().lastName(),
-                "CC",
+                IdType.CC,
                 faker.number().digits(8),
                 "+57" + faker.number().digits(10),
-                "CASHIER"
+                Role.CASHIER.name(),
+                1L
         );
     }
 }

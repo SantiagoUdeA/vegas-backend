@@ -1,0 +1,123 @@
+package com.vegas.sistema_gestion_operativa.users.infrastructure.aws.service;
+
+import com.vegas.sistema_gestion_operativa.users.application.service.IIdentityService;
+import com.vegas.sistema_gestion_operativa.users.infrastructure.aws.factory.CognitoIdentityRequestFactory;
+import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient;
+import software.amazon.awssdk.services.cognitoidentityprovider.model.*;
+
+/**
+ * Service for interacting with AWS Cognito Identity Provider.
+ * Provides methods to create users in a specified user pool.
+ */
+@Service
+@Slf4j
+public class CognitoIdentityService implements IIdentityService {
+
+    private CognitoIdentityProviderClient client;
+    private final CognitoIdentityRequestFactory cognitoIdentityRequestFactory;
+
+    @Value("${aws.cognito.userPoolId}")
+    private String userPoolId;
+
+    @Value("${aws.region}")
+    private String region;
+
+    @Autowired
+    public CognitoIdentityService(CognitoIdentityRequestFactory cognitoIdentityRequestFactory) {
+        this.cognitoIdentityRequestFactory = cognitoIdentityRequestFactory;
+    }
+
+    /**
+     * Initializes the CognitoIdentityProviderClient after the service is constructed.
+     * Uses the configured AWS region.
+     */
+    @PostConstruct
+    private void initializeClient() {
+        log.info("Initializing CognitoIdentityService with region: {}", region);
+        this.client = CognitoIdentityProviderClient.builder()
+                .region(Region.of(region))
+                .build();
+    }
+
+    /**
+     * Creates a new user in the Cognito user pool with the specified attributes.
+     * Sets its password as permanent with idNumber and does not send an invitation email.
+     *
+     * @param email      the email of the new user
+     * @param given_name the given name (first name) of the new user
+     * @param family_name the family name (last name) of the new user
+     * @param roleName   the role to assign to the new user
+     * @return the ID of the created user
+     */
+    public String createUser(
+            String email,
+            String given_name,
+            String family_name,
+            String roleName,
+            String idNumber
+    ) {
+        var request = cognitoIdentityRequestFactory.createAdminCreateUserRequest(
+                this.userPoolId,
+                given_name,
+                family_name,
+                email,
+                roleName.toUpperCase(),
+                true,
+                false
+        );
+        var userId = getUserId(client.adminCreateUser(request));
+        setUserPassword(email, idNumber + "#Vegas");
+        return userId;
+    }
+
+    /**
+     * Disables a user in the Cognito user pool.
+     *
+     * @param username the username or email of the user to disable
+     */
+    public void disableUser(String username) {
+        var request = cognitoIdentityRequestFactory.createAdminDisableUserRequest(
+                this.userPoolId,
+                username
+        );
+        client.adminDisableUser(request);
+    }
+
+    private String getUserId(AdminCreateUserResponse response) {
+        return response.user().attributes().stream()
+                .filter(attr -> "sub".equals(attr.name()))
+                .findFirst()
+                .map(AttributeType::value)
+                .orElse(null);
+    }
+
+    /**
+     * Sets a permanent password for a user in the Cognito user pool.
+     *
+     * @param username the username or email of the user
+     * @param password the new password to set
+     */
+    public void setUserPassword(String username, String password) {
+        var request = cognitoIdentityRequestFactory.createAdminSetUserPasswordRequest(
+                this.userPoolId,
+                username,
+                password
+        );
+        client.adminSetUserPassword(request);
+    }
+
+    @Override
+    public void deleteUser(String userId) {
+        var request = cognitoIdentityRequestFactory.createAdminDeleteUserRequest(
+                this.userPoolId,
+                userId
+        );
+        client.adminDeleteUser(request);
+    }
+}
