@@ -3,6 +3,7 @@ package com.vegas.sistema_gestion_operativa.branches.application.service;
 import com.vegas.sistema_gestion_operativa.branches.domain.entity.Branch;
 import com.vegas.sistema_gestion_operativa.branches.application.dto.CreateBranchDto;
 import com.vegas.sistema_gestion_operativa.branches.application.dto.UpdateBranchDto;
+import com.vegas.sistema_gestion_operativa.branches.domain.exception.BranchNameAlreadyExistsException;
 import com.vegas.sistema_gestion_operativa.branches.domain.exception.BranchNotFoundException;
 import com.vegas.sistema_gestion_operativa.branches.application.factory.BranchFactory;
 import com.vegas.sistema_gestion_operativa.branches.application.mapper.IBranchMapper;
@@ -30,7 +31,9 @@ public class BranchService {
     }
 
     @Transactional
-    public Branch create(CreateBranchDto dto, String ownerId) throws ApiException {
+    public Branch create(CreateBranchDto dto, String ownerId) throws BranchNameAlreadyExistsException {
+        if(this.branchRepository.existsByNameAndUserBranches_Id_UserId(dto.name(), ownerId))
+            throw new BranchNameAlreadyExistsException("Ya existe una sede con el nombre: " + dto.name());
         var branch = BranchFactory.createBranch(dto);
         branch.assignFounder(ownerId);
         return branchRepository.save(branch);

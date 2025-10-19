@@ -4,6 +4,7 @@ import com.vegas.sistema_gestion_operativa.common.exceptions.ApiException;
 import com.vegas.sistema_gestion_operativa.exception_handler.dto.FieldErrorResponse;
 import com.vegas.sistema_gestion_operativa.exception_handler.dto.ValidationErrorResponse;
 import org.springframework.context.annotation.Profile;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -76,6 +77,34 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.badRequest().body(response);
     }
+
+    /**
+     * Maneja excepciones de integridad de datos (violaciones de constraints, claves únicas, etc.)
+     * Retorna HTTP 409 (Conflict) con información detallada.
+     *
+     * @param ex excepción lanzada por JPA/Hibernate
+     * @return respuesta estructurada con detalles del error
+     */
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ResponseEntity<ValidationErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+        // Mensaje más claro según el tipo de violación
+        String message = "Violación de integridad de datos.";
+
+        // Se extrae el mensaje detallado de la causa raíz
+        String detailedMessage = ex.getMostSpecificCause().getMessage();
+
+        // Construye la respuesta de error
+        ValidationErrorResponse response = new ValidationErrorResponse(
+                HttpStatus.CONFLICT.value(),
+                message,
+                List.of(new FieldErrorResponse("database", detailedMessage)),
+                Instant.now().toString()
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
     /**
      * Handles RuntimeException (e.g., business logic errors like "User already exists").
      * @param ex the runtime exception

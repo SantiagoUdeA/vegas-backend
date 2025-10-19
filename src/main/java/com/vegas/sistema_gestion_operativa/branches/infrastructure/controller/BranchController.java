@@ -4,7 +4,7 @@ import com.vegas.sistema_gestion_operativa.branches.domain.entity.Branch;
 import com.vegas.sistema_gestion_operativa.branches.application.dto.CreateBranchDto;
 import com.vegas.sistema_gestion_operativa.branches.application.dto.UpdateBranchDto;
 import com.vegas.sistema_gestion_operativa.branches.application.service.BranchService;
-import com.vegas.sistema_gestion_operativa.common.exceptions.ApiException;
+import com.vegas.sistema_gestion_operativa.branches.domain.exception.BranchNameAlreadyExistsException;
 import com.vegas.sistema_gestion_operativa.security.AuthUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class BranchController {
 
     @PostMapping
     @PreAuthorize("hasPermission(null, 'BRANCHES_CREATE')")
-    public ResponseEntity<Branch> create(@RequestBody @Valid CreateBranchDto dto) throws ApiException {
+    public ResponseEntity<Branch> create(@RequestBody @Valid CreateBranchDto dto) throws BranchNameAlreadyExistsException {
         Branch branch = branchService.create(dto, AuthUtils.getUserIdFromToken());
         return ResponseEntity.ok(branch);
     }

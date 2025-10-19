@@ -9,4 +9,5 @@ public interface IBranchRepository extends JpaRepository<Branch, Long> {
 
     List<Branch> findByUserBranches_Id_UserIdAndUserBranches_FounderTrue(String userId);
 
+    boolean existsByNameAndUserBranches_Id_UserId(String name, String ownerId);
 }
