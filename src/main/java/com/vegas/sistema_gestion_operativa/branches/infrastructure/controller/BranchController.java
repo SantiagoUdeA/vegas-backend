@@ -8,6 +8,7 @@ import com.vegas.sistema_gestion_operativa.branches.domain.exception.BranchNameA
 import com.vegas.sistema_gestion_operativa.security.AuthUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -39,26 +40,10 @@ public class BranchController {
         return ResponseEntity.ok(branchService.findOwnerBranches(AuthUtils.getUserIdFromToken()));
     }
 
-    @PatchMapping("/{branchId}")
+    /*@PatchMapping("/{branchId}")
     @PreAuthorize("hasPermission(null, 'BRANCHES_EDIT')")
     public ResponseEntity<Branch> update(@PathVariable Long branchId, @RequestBody @Valid UpdateBranchDto dto) throws AccessDeniedException {
         Branch updated = branchService.update(AuthUtils.getUserIdFromToken(), branchId, dto);
         return ResponseEntity.ok(updated);
-    }
-
-    /*@GetMapping("/{id}")
-    @PreAuthorize("hasPermission(null, 'BRANCHES_VIEW')")
-    public ResponseEntity<Branch> findById(@PathVariable String id) {
-        return ResponseEntity.ok(branchService.findById(id));
-    }
-
-
-
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasPermission(null, 'BRANCHES_DELETE')")
-    public ResponseEntity<Branch> delete(@PathVariable String id) {
-        Branch deleted = branchService.delete(id);
-        return ResponseEntity.ok(deleted);
     }*/
-
 }

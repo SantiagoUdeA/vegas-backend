@@ -65,17 +65,4 @@ public class BranchService {
                 .orElseThrow(() -> new BranchNotFoundException("Branch not found with id: " + id));
     }
 
-    /*public Branch findById(Long id) {
-        return this.branchRepository
-                .findById(id)
-                .orElseThrow(() -> new BranchNotFoundException("Branch not found with id: " + id));
-    }
-
-
-
-    public Branch delete(Long id){
-        var branch = this.findById(id);
-        this.branchRepository.deleteById(id);
-        return branch;
-    }*/
 }
