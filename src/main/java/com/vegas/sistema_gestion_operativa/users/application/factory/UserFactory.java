@@ -25,7 +25,7 @@ public class UserFactory {
                 .idType(user.idType())
                 .idNumber(user.idNumber())
                 .phoneNumber(user.phoneNumber())
-                .role(user.roleName())
+                .roleName(user.roleName())
                 .build();
     }
 }

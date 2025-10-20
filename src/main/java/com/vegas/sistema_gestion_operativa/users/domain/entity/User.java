@@ -39,5 +39,5 @@ public class User {
     private boolean isActive;
 
     @Column(nullable = false)
-    private String role;
+    private String roleName;
 }
