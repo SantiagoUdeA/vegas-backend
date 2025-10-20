@@ -21,21 +21,27 @@ public class RoleService implements IRoleApi {
         return role.getPermissions().contains(permission); // Verifica si el rol tiene el permiso
     }
 
-    @Override
-    public boolean canCreateUserWithRole(String userRoleName, String newUserRoleName) {
+    /**
+     * Verifica si un usuario con un rol específico puede crear o editar usuarios con otro rol.
+     *
+     * @param userRoleName el nombre del rol del usuario que realiza la acción
+     * @param targetRoleName el nombre del rol del usuario objetivo
+     * @return true si el usuario puede gestionar el rol objetivo, false en caso contrario
+     */
+    public boolean canManageUserWithRole(String userRoleName, String targetRoleName) {
         Role userRole;
-        Role newUserRole;
+        Role targetRole;
         try {
-            userRole = Role.fromValue(userRoleName); // Convierte el nombre del rol del usuario a un objeto Role
-            newUserRole = Role.fromValue(newUserRoleName); // Convierte el nombre del nuevo rol a un objeto Role
+            userRole = Role.fromValue(userRoleName);
+            targetRole = Role.fromValue(targetRoleName);
         } catch (IllegalArgumentException e) {
-            return false; // Rol o permiso no válido
+            return false; // Rol no válido
         }
 
         return switch (userRole) {
-            case ROOT -> newUserRole.equals(Role.OWNER); // ROOT solo puede crear OWNER
-            case OWNER -> newUserRole.equals(Role.ADMIN) || newUserRole.equals(Role.CASHIER); // OWNER puede crear ADMIN y CASHIER
-            case ADMIN -> newUserRole.equals(Role.CASHIER); // ADMIN solo puede crear CASHIER
+            case ROOT -> targetRole.equals(Role.OWNER); // ROOT solo puede gestionar OWNER
+            case OWNER -> targetRole.equals(Role.ADMIN) || targetRole.equals(Role.CASHIER); // OWNER puede gestionar ADMIN y CASHIER
+            case ADMIN -> targetRole.equals(Role.CASHIER); // ADMIN solo puede gestionar CASHIER
             default -> false;
         };
     }

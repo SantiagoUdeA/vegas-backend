@@ -69,7 +69,7 @@ public class UserService {
     public User create(CreateUserDto newUser, String userId, String userRoleName) throws UserAlreadyExistsException {
 
         // Verificar si el usuario tiene permisos para crear un usuario con el rol especificado
-        if(!this.roleApi.canCreateUserWithRole(userRoleName, newUser.roleName()))
+        if(!this.roleApi.canManageUserWithRole(userRoleName, newUser.roleName()))
             throw new AccessDeniedException("No tienes permisos para crear un usuario con el rol %s".formatted(newUser.roleName()));
 
         // Validar que el usuario no exista previamente
@@ -114,7 +114,9 @@ public class UserService {
      * @return the updated user
      * @throws UserNotFoundException if the user is not found
      */
-    public User update(String userId, UpdateUserDto dto) throws UserNotFoundException {
+    public User update(String userId, UpdateUserDto dto, String userRoleName) throws UserNotFoundException {
+        if(!this.roleApi.canManageUserWithRole(userRoleName, dto.roleName()))
+            throw new AccessDeniedException("No tienes permisos para editar un usuario con el rol %s".formatted(dto.roleName()));
         var user = retrieveUser(userId);
         var updatedUser = userMapper.partialUpdate(dto, user);
         return userRepository.save(updatedUser);
@@ -125,9 +127,14 @@ public class UserService {
      * @param userId ID of the user to deactivate
      * @throws UserNotFoundException if the user is not found
      */
-    public void desactivate(String userId) throws UserNotFoundException, UserAlreadyInactiveException {
+    public void desactivate(String userId, String userRoleName) throws UserNotFoundException, UserAlreadyInactiveException {
         var user = retrieveUser(userId);
+
+        if(!this.roleApi.canManageUserWithRole(userRoleName, user.getRoleName()))
+            throw new AccessDeniedException("No tienes permisos para desactivar un usuario con el rol %s".formatted(user.getRoleName()));
+
         if(!user.isActive()) throw new UserAlreadyInactiveException("El usuario ya se encuentra inactivo");
+
         identityService.disableUser(user.getEmail());
         user.setActive(false);
         userRepository.save(user);

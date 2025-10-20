@@ -23,6 +23,7 @@ public class UserFactory {
                 .givenName(user.givenName())
                 .familyName(user.familyName())
                 .idType(user.idType())
+                .isActive(true)
                 .idNumber(user.idNumber())
                 .phoneNumber(user.phoneNumber())
                 .roleName(user.roleName())
