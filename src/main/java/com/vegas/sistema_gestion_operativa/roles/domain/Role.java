@@ -12,12 +12,13 @@ import static com.vegas.sistema_gestion_operativa.roles.domain.Permission.*;
 public enum Role {
 
     ADMIN(
-            "Administrador general del sistema. Tiene acceso total a la configuración, usuarios, inventario y reportes.",
+            "Administrador de una sede. Tiene acceso a los usuarios, inventario y reportes de una sede.",
             Set.of(
                     CASHIERS_CREATE, CASHIERS_EDIT, CASHIERS_DEACTIVATE, CASHIERS_VIEW,
                     INVENTORY_CREATE, INVENTORY_EDIT, INVENTORY_DELETE, INVENTORY_VIEW,
                     PRODUCTS_CREATE, PRODUCTS_EDIT, PRODUCTS_DELETE, PRODUCTS_VIEW,
                     FORMULAS_CREATE, FORMULAS_EDIT, FORMULAS_VIEW,
+                    PROVIDERS_CREATE, PROVIDERS_EDIT, PROVIDERS_VIEW, PROVIDERS_DELETE,
                     REPORTS_VIEW, REPORTS_EXPORT,
                     ALERTS_VIEW, ALERTS_CONFIGURE,
                     DASHBOARD_VIEW,
@@ -36,7 +37,7 @@ public enum Role {
     ),
 
     OWNER(
-            "Dueño del negocio con acceso ejecutivo.",
+            "Dueño de una sede.",
             Set.of(
                     ADMINS_CREATE, ADMINS_EDIT, ADMINS_DEACTIVATE, ADMINS_VIEW,
                     CASHIERS_CREATE, CASHIERS_EDIT, CASHIERS_DEACTIVATE, CASHIERS_VIEW,

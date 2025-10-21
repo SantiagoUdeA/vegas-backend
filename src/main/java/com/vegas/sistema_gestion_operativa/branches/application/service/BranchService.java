@@ -8,12 +8,11 @@ import com.vegas.sistema_gestion_operativa.branches.domain.exception.BranchNotFo
 import com.vegas.sistema_gestion_operativa.branches.application.factory.BranchFactory;
 import com.vegas.sistema_gestion_operativa.branches.application.mapper.IBranchMapper;
 import com.vegas.sistema_gestion_operativa.branches.infrastructure.repository.IBranchRepository;
-import com.vegas.sistema_gestion_operativa.common.exceptions.ApiException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @Service
@@ -47,9 +46,9 @@ public class BranchService {
         // TODO Evitar que se carguen datos infinitos anidados en branch (debuggear para ver)
         var branch = this.retrieveBranch(branchId);
 
-        if(!branch.isFoundedByUser(ownerId)) {
-            throw new AccessDeniedException("El usuario no está autorizado a modificar esta sucursal");
-        }
+        if(!branch.isFoundedByUser(ownerId))
+            throw new AccessDeniedException("No puedes editar por que no eres el fundador de esta sucursal");
+
         var updatedBranch = this.branchMapper.partialUpdate(dto, branch);
         return this.branchRepository.save(updatedBranch);
     }

@@ -30,6 +30,12 @@ public enum Permission {
     OWNERS_DEACTIVATE,
     OWNERS_VIEW,
 
+    // Proveedores
+    PROVIDERS_CREATE,
+    PROVIDERS_EDIT,
+    PROVIDERS_DELETE,
+    PROVIDERS_VIEW,
+
     // Inventario
     INVENTORY_CREATE,
     INVENTORY_EDIT,
