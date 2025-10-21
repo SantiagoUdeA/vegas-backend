@@ -45,4 +45,34 @@ public class RoleService implements IRoleApi {
             default -> false;
         };
     }
+
+    @Override
+    public boolean isCashierRole(String roleName) {
+        return this.isRole(roleName, Role.CASHIER);
+    }
+
+    @Override
+    public boolean isOwnerRole(String roleName) {
+        return this.isRole(roleName, Role.OWNER);
+    }
+
+    @Override
+    public boolean isAdminRole(String roleName) {
+        return this.isRole(roleName, Role.ADMIN);
+    }
+
+    @Override
+    public boolean isRootRole(String roleName) {
+        return this.isRole(roleName, Role.ROOT);
+    }
+
+    private boolean isRole(String roleName, Role targetRole) {
+        Role role;
+        try {
+            role = Role.fromValue(roleName);
+        } catch (IllegalArgumentException e) {
+            return false; // Rol no válido
+        }
+        return role == targetRole;
+    }
 }

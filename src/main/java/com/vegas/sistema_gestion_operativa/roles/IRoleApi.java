@@ -4,4 +4,8 @@ public interface IRoleApi {
 
     boolean hasPermission(String roleName, String permission);
     boolean canManageUserWithRole(String userRoleName, String targetRoleName);
+    boolean isCashierRole(String roleName);
+    boolean isOwnerRole(String roleName);
+    boolean isAdminRole(String roleName);
+    boolean isRootRole(String roleName);
 }

@@ -55,8 +55,16 @@ public class UserService {
      * Retrieves all users from the repository.
      * @return list of users
      */
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public List<User> findAll(String userId, String userRoleName) {
+        if(this.roleApi.isRootRole(userRoleName)){
+            return userRepository.findAllByRoleName("OWNER");
+        }
+        else if(this.roleApi.isAdminRole(userRoleName)) {
+            return userRepository.findUsersByRolesInBranchesWithUser(List.of("CASHIER"), userId);
+        }
+        else if(this.roleApi.isOwnerRole(userRoleName))
+            return userRepository.findUsersByRolesInBranchesWithUser(List.of("ADMIN", "CASHIER"), userId);
+        throw new AccessDeniedException("No tienes permisos para ver la lista de usuarios");
     }
 
     /**
@@ -79,7 +87,6 @@ public class UserService {
         String newUserId = null;
         User savedUser;
 
-
         try {
             newUserId = identityService.createUser(
                     newUser.email(),
@@ -101,7 +108,7 @@ public class UserService {
         }
 
         eventPublisher.publishEvent(
-                new UserCreatedEvent(userId, Optional.ofNullable(newUser.branchId()), newUser.roleName())
+                new UserCreatedEvent(newUserId, Optional.ofNullable(newUser.branchId()), newUser.roleName())
         );
 
         return savedUser;
@@ -141,7 +148,7 @@ public class UserService {
     }
 
     private void validateUserDoesntExists(String email) throws UserAlreadyExistsException {
-        if(userRepository.findByEmail(email).isPresent()) throw new UserAlreadyExistsException(email);
+        if(userRepository.findByEmail(email).isPresent()) throw new UserAlreadyExistsException("Ya existe un usuario con el correo electrónico: " + email);
     }
 
     /**

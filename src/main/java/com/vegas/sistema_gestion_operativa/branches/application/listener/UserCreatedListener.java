@@ -15,8 +15,9 @@ public class UserCreatedListener {
     private final BranchService branchService;
 
     @Async
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
     public void handleUserCreated(UserCreatedEvent event) {
+        System.out.println("UserCreatedListener triggered for userId: " + event.userId());
         if(event.branchId().isPresent())
             branchService.assignUserToBranch(event.userId(), event.branchId().get(), false);
     }

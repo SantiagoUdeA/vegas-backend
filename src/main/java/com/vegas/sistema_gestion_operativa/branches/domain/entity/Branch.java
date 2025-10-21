@@ -43,8 +43,8 @@ public class Branch {
         userBranches.add(relation);
     }
 
-    public void assignUser(String userId, boolean isFounder) {
-        UserBranch relation = new UserBranch(userId, this, isFounder);
+    public void assignUser(String userId) {
+        UserBranch relation = new UserBranch(userId, this, false);
         userBranches.add(relation);
     }
 

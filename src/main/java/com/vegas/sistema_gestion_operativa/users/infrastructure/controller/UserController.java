@@ -8,6 +8,7 @@ import com.vegas.sistema_gestion_operativa.users.domain.exceptions.UserAlreadyEx
 import com.vegas.sistema_gestion_operativa.users.domain.exceptions.UserAlreadyInactiveException;
 import com.vegas.sistema_gestion_operativa.users.domain.exceptions.UserNotFoundException;
 import com.vegas.sistema_gestion_operativa.users.application.service.UserService;
+import io.cucumber.java.bs.A;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,7 +43,7 @@ public class UserController {
      */
     @GetMapping
     public List<User> findAll() {
-        return userService.findAll();
+        return userService.findAll(AuthUtils.getUserIdFromToken(), AuthUtils.getRoleNameFromToken());
     }
 
     /**

@@ -57,6 +57,7 @@ public class BranchService {
     public void assignUserToBranch(String userId, Long branchId, boolean isFounder) {
         var branch = this.retrieveBranch(branchId);
         if(isFounder) branch.assignFounder(userId);
+        else branch.assignUser(userId);
         branchRepository.save(branch);
     }
 
