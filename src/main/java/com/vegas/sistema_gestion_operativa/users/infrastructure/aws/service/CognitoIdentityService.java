@@ -112,6 +112,27 @@ public class CognitoIdentityService implements IIdentityService {
         client.adminSetUserPassword(request);
     }
 
+    /**
+     * Updates the role of a user in the Cognito user pool.
+     *
+     * @param username    the username or email of the user
+     * @param newRoleName the new role to assign to the user
+     */
+    @Override
+    public void updateUserRole(String username, String newRoleName) {
+        var request = cognitoIdentityRequestFactory.createAdminUpdateUserAttributesRequest(
+                this.userPoolId,
+                username,
+                newRoleName.toUpperCase()
+        );
+        client.adminUpdateUserAttributes(request);
+    }
+
+    /**
+     * Deletes a user from the Cognito user pool.
+     *
+     * @param userId the ID of the user to delete
+     */
     @Override
     public void deleteUser(String userId) {
         var request = cognitoIdentityRequestFactory.createAdminDeleteUserRequest(

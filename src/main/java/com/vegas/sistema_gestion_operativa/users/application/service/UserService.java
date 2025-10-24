@@ -116,16 +116,18 @@ public class UserService {
 
     /**
      * Updates an existing user with the provided DTO.
-     * @param userId ID of the user to update
+     * @param targetUserId ID of the user to update
      * @param dto DTO containing updated user data
      * @return the updated user
      * @throws UserNotFoundException if the user is not found
      */
-    public User update(String userId, UpdateUserDto dto, String userRoleName) throws UserNotFoundException {
+    @Transactional
+    public User update(String targetUserId, UpdateUserDto dto, String userRoleName) throws UserNotFoundException {
         if(!this.roleApi.canManageUserWithRole(userRoleName, dto.roleName()))
             throw new AccessDeniedException("No tienes permisos para editar un usuario con el rol %s".formatted(dto.roleName()));
-        var user = retrieveUser(userId);
+        var user = retrieveUser(targetUserId);
         var updatedUser = userMapper.partialUpdate(dto, user);
+        this.identityService.updateUserRole(user.getEmail(), dto.roleName());
         return userRepository.save(updatedUser);
     }
 

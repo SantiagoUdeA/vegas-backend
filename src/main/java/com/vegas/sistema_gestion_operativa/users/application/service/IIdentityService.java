@@ -33,6 +33,19 @@ public interface IIdentityService {
      */
     void setUserPassword(String username, String password);
 
+    /**
+     * Updates the role of a user in the identity provider.
+     *
+     * @param username    the username or email of the user
+     * @param newRoleName the new role to assign to the user
+     */
+    void updateUserRole(String username, String newRoleName);
+
+    /**
+     * Deletes a user from the identity provider.
+     *
+     * @param userId the ID of the user to delete
+     */
     void deleteUser(String userId);
 }
 

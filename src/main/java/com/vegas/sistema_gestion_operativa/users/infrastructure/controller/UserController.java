@@ -8,7 +8,6 @@ import com.vegas.sistema_gestion_operativa.users.domain.exceptions.UserAlreadyEx
 import com.vegas.sistema_gestion_operativa.users.domain.exceptions.UserAlreadyInactiveException;
 import com.vegas.sistema_gestion_operativa.users.domain.exceptions.UserNotFoundException;
 import com.vegas.sistema_gestion_operativa.users.application.service.UserService;
-import io.cucumber.java.bs.A;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -57,6 +56,12 @@ public class UserController {
         return userService.create(dto, AuthUtils.getUserIdFromToken(), AuthUtils.getRoleNameFromToken());
     }
 
+    /**
+     * Updates an existing user.
+     * @param id ID of the user to update
+     * @param dto data to update the user
+     * @return updated user
+     */
     @PatchMapping("/{id}")
     public User updateUser(@PathVariable String id, @RequestBody @Valid UpdateUserDto dto) throws UserNotFoundException {
         return userService.update(id, dto, AuthUtils.getRoleNameFromToken());

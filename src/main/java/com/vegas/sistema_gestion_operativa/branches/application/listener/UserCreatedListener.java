@@ -17,7 +17,7 @@ public class UserCreatedListener {
     @Async
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
     public void handleUserCreated(UserCreatedEvent event) {
-        System.out.println("UserCreatedListener triggered for userId: " + event.userId());
+        // TODO Validar que la branch pertenezca al usuario que hace la solicitud de crear
         if(event.branchId().isPresent())
             branchService.assignUserToBranch(event.userId(), event.branchId().get(), false);
     }

@@ -77,4 +77,21 @@ public class CognitoIdentityRequestFactory {
                 .username(userId)
                 .build();
     }
+
+    public AdminUpdateUserAttributesRequest createAdminUpdateUserAttributesRequest(
+            String userPoolId,
+            String username,
+            String roleName
+    ) {
+        AttributeType roleAttribute = AttributeType.builder()
+                .name("custom:role")
+                .value(roleName)
+                .build();
+
+        return AdminUpdateUserAttributesRequest.builder()
+                .userPoolId(userPoolId)
+                .username(username)
+                .userAttributes(roleAttribute)
+                .build();
+    }
 }
