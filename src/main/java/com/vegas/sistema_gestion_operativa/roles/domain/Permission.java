@@ -36,6 +36,12 @@ public enum Permission {
     PROVIDERS_DELETE,
     PROVIDERS_VIEW,
 
+    // Materias Primas
+    RAW_MATERIALS_CREATE,
+    RAW_MATERIALS_EDIT,
+    RAW_MATERIALS_DELETE,
+    RAW_MATERIALS_VIEW,
+
     // Inventario
     INVENTORY_CREATE,
     INVENTORY_EDIT,

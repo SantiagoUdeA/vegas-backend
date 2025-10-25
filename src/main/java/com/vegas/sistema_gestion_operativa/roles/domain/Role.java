@@ -19,9 +19,8 @@ public enum Role {
                     PRODUCTS_CREATE, PRODUCTS_EDIT, PRODUCTS_DELETE, PRODUCTS_VIEW,
                     FORMULAS_CREATE, FORMULAS_EDIT, FORMULAS_VIEW,
                     PROVIDERS_CREATE, PROVIDERS_EDIT, PROVIDERS_VIEW, PROVIDERS_DELETE,
+                    RAW_MATERIALS_CREATE, RAW_MATERIALS_EDIT, RAW_MATERIALS_DELETE, RAW_MATERIALS_VIEW,
                     REPORTS_VIEW, REPORTS_EXPORT,
-                    ALERTS_VIEW, ALERTS_CONFIGURE,
-                    DASHBOARD_VIEW,
                     BRANCHES_VIEW
             )
     ),
@@ -31,6 +30,7 @@ public enum Role {
             Set.of(
                     INVENTORY_VIEW,
                     PRODUCTS_VIEW,
+                    RAW_MATERIALS_VIEW,
                     REPORTS_VIEW,
                     DASHBOARD_VIEW
             )
@@ -45,6 +45,8 @@ public enum Role {
                     FORMULAS_CREATE, FORMULAS_EDIT, FORMULAS_VIEW,
                     INVENTORY_CREATE, INVENTORY_EDIT, INVENTORY_DELETE, INVENTORY_VIEW,
                     PRODUCTS_CREATE, PRODUCTS_EDIT, PRODUCTS_DELETE, PRODUCTS_VIEW,
+                    PROVIDERS_CREATE, PROVIDERS_EDIT, PROVIDERS_DELETE, PROVIDERS_VIEW,
+                    RAW_MATERIALS_CREATE, RAW_MATERIALS_EDIT, RAW_MATERIALS_DELETE, RAW_MATERIALS_VIEW,
                     REPORTS_VIEW, REPORTS_EXPORT,
                     ALERTS_VIEW, ALERTS_CONFIGURE,
                     DASHBOARD_VIEW,
