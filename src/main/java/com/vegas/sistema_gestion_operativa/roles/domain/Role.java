@@ -22,7 +22,7 @@ public enum Role {
                     REPORTS_VIEW, REPORTS_EXPORT,
                     ALERTS_VIEW, ALERTS_CONFIGURE,
                     DASHBOARD_VIEW,
-                    BRANCHES_CREATE, BRANCHES_EDIT, BRANCHES_DELETE, BRANCHES_VIEW
+                    BRANCHES_VIEW
             )
     ),
 
