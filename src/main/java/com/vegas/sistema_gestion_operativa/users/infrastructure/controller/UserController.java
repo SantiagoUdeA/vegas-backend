@@ -9,6 +9,8 @@ import com.vegas.sistema_gestion_operativa.users.domain.exceptions.UserAlreadyIn
 import com.vegas.sistema_gestion_operativa.users.domain.exceptions.UserNotFoundException;
 import com.vegas.sistema_gestion_operativa.users.application.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,8 +43,8 @@ public class UserController {
      * @return list of users
      */
     @GetMapping
-    public List<User> findAll() {
-        return userService.findAll(AuthUtils.getUserIdFromToken(), AuthUtils.getRoleNameFromToken());
+    public ResponseEntity<List<User>> findAll() {
+        return ResponseEntity.ok(userService.findAll(AuthUtils.getUserIdFromToken(), AuthUtils.getRoleNameFromToken()));
     }
 
     /**
@@ -52,8 +54,10 @@ public class UserController {
      * @return created user
      */
     @PostMapping
-    public User createUser(@RequestBody @Valid CreateUserDto dto) throws UserAlreadyExistsException {
-        return userService.create(dto, AuthUtils.getUserIdFromToken(), AuthUtils.getRoleNameFromToken());
+    public ResponseEntity<User> createUser(@RequestBody @Valid CreateUserDto dto) throws UserAlreadyExistsException {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(userService.create(dto, AuthUtils.getUserIdFromToken(), AuthUtils.getRoleNameFromToken()));
     }
 
     /**
@@ -63,8 +67,8 @@ public class UserController {
      * @return updated user
      */
     @PatchMapping("/{id}")
-    public User updateUser(@PathVariable String id, @RequestBody @Valid UpdateUserDto dto) throws UserNotFoundException {
-        return userService.update(id, dto, AuthUtils.getRoleNameFromToken());
+    public ResponseEntity<User> updateUser(@PathVariable String id, @RequestBody @Valid UpdateUserDto dto) throws UserNotFoundException {
+        return ResponseEntity.ok(userService.update(id, dto, AuthUtils.getRoleNameFromToken()));
     }
 
     @DeleteMapping("/{id}")
