@@ -1,17 +1,13 @@
 package com.vegas.sistema_gestion_operativa.raw_material.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
-import java.util.List;
+import lombok.*;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Setter
 @Builder
 public class RawMaterialCategory {
 
@@ -25,4 +21,10 @@ public class RawMaterialCategory {
     @Column
     private String description;
 
+    @Column(columnDefinition = "boolean default true")
+    private boolean active;
+
+    public void deactivate() {
+        this.active = false;
+    }
 }

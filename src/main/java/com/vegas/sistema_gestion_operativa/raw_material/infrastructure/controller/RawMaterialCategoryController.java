@@ -4,6 +4,7 @@ import com.vegas.sistema_gestion_operativa.raw_material.application.dto.CreateRa
 import com.vegas.sistema_gestion_operativa.raw_material.application.dto.RawMaterialCategoryResponseDto;
 import com.vegas.sistema_gestion_operativa.raw_material.application.dto.UpdateRawMaterialCategoryDto;
 import com.vegas.sistema_gestion_operativa.raw_material.application.service.RawMaterialCategoryService;
+import com.vegas.sistema_gestion_operativa.raw_material.domain.exceptions.RawMaterialCategoryNameAlreadyExistsException;
 import com.vegas.sistema_gestion_operativa.raw_material.domain.exceptions.RawMaterialCategoryNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,7 @@ public class RawMaterialCategoryController {
      */
     @PostMapping
     @PreAuthorize("hasPermission(null, 'RAW_MATERIALS_CREATE')")
-    public ResponseEntity<RawMaterialCategoryResponseDto> create(@RequestBody @Valid CreateRawMaterialCategoryDto dto) {
+    public ResponseEntity<RawMaterialCategoryResponseDto> create(@RequestBody @Valid CreateRawMaterialCategoryDto dto) throws RawMaterialCategoryNameAlreadyExistsException {
         RawMaterialCategoryResponseDto category = categoryService.create(dto);
         return ResponseEntity.ok(category);
     }

@@ -6,6 +6,7 @@ import com.vegas.sistema_gestion_operativa.raw_material.application.dto.UpdateRa
 import com.vegas.sistema_gestion_operativa.raw_material.application.factory.RawMaterialCategoryFactory;
 import com.vegas.sistema_gestion_operativa.raw_material.application.mapper.IRawMaterialCategoryMapper;
 import com.vegas.sistema_gestion_operativa.raw_material.domain.entity.RawMaterialCategory;
+import com.vegas.sistema_gestion_operativa.raw_material.domain.exceptions.RawMaterialCategoryNameAlreadyExistsException;
 import com.vegas.sistema_gestion_operativa.raw_material.domain.exceptions.RawMaterialCategoryNotFoundException;
 import com.vegas.sistema_gestion_operativa.raw_material.infrastructure.repository.IRawMaterialCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +35,13 @@ public class RawMaterialCategoryService {
         return categoryMapper.toResponseDtoList(categories);
     }
 
-    public RawMaterialCategoryResponseDto create(CreateRawMaterialCategoryDto dto) {
-        RawMaterialCategory category = this.categoryRepository.save(this.categoryFactory.createFromDto(dto));
-        return categoryMapper.toResponseDto(category);
+    public RawMaterialCategoryResponseDto create(CreateRawMaterialCategoryDto dto) throws RawMaterialCategoryNameAlreadyExistsException {
+        var category = this.categoryRepository.findByName(dto.name());
+        if(category.isPresent())
+            throw new RawMaterialCategoryNameAlreadyExistsException("Ya existe una categoría con el nombre: " + dto.name());
+
+        RawMaterialCategory newCategory = this.categoryRepository.save(this.categoryFactory.createFromDto(dto));
+        return categoryMapper.toResponseDto(newCategory);
     }
 
     public RawMaterialCategoryResponseDto update(Long categoryId, UpdateRawMaterialCategoryDto dto) throws RawMaterialCategoryNotFoundException {
@@ -48,7 +53,7 @@ public class RawMaterialCategoryService {
 
     public RawMaterialCategoryResponseDto delete(Long categoryId) throws RawMaterialCategoryNotFoundException {
         var category = this.retrieveCategoryById(categoryId);
-        this.categoryRepository.delete(category);
+        categoryRepository.delete(category);
         return categoryMapper.toResponseDto(category);
     }
 

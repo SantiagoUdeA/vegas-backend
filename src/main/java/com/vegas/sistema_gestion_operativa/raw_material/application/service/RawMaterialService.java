@@ -35,7 +35,7 @@ public class RawMaterialService {
     }
 
     public List<RawMaterialResponseDto> findAll() {
-        List<RawMaterial> rawMaterials = rawMaterialRepository.findAll();
+        List<RawMaterial> rawMaterials = rawMaterialRepository.findByActiveTrue();
         return rawMaterialMapper.toResponseDtoList(rawMaterials);
     }
 
@@ -56,7 +56,8 @@ public class RawMaterialService {
 
     public RawMaterialResponseDto delete(Long rawMaterialId) throws RawMaterialNotFoundException {
         var rawMaterial = this.retrieveRawMaterialById(rawMaterialId);
-        this.rawMaterialRepository.delete(rawMaterial);
+        rawMaterial.deactivate();
+        this.rawMaterialRepository.save(rawMaterial);
         return rawMaterialMapper.toResponseDto(rawMaterial);
     }
 

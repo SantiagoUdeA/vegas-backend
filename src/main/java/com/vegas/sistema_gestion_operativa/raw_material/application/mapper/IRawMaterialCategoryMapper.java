@@ -10,6 +10,7 @@ import java.util.List;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
 public interface IRawMaterialCategoryMapper {
+
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     RawMaterialCategory partialUpdate(UpdateRawMaterialCategoryDto dto, @MappingTarget RawMaterialCategory category);
 
