@@ -8,6 +8,7 @@ import com.vegas.sistema_gestion_operativa.raw_material.application.mapper.IRawM
 import com.vegas.sistema_gestion_operativa.raw_material.domain.entity.RawMaterial;
 import com.vegas.sistema_gestion_operativa.raw_material.domain.entity.RawMaterialCategory;
 import com.vegas.sistema_gestion_operativa.raw_material.domain.exceptions.RawMaterialCategoryNotFoundException;
+import com.vegas.sistema_gestion_operativa.raw_material.domain.exceptions.RawMaterialNameAlreadyExists;
 import com.vegas.sistema_gestion_operativa.raw_material.domain.exceptions.RawMaterialNotFoundException;
 import com.vegas.sistema_gestion_operativa.raw_material.infrastructure.repository.IRawMaterialCategoryRepository;
 import com.vegas.sistema_gestion_operativa.raw_material.infrastructure.repository.IRawMaterialRepository;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RawMaterialService {
@@ -40,7 +42,14 @@ public class RawMaterialService {
         return rawMaterialMapper.toResponseDtoList(rawMaterials);
     }
 
-    public RawMaterialResponseDto create(CreateRawMaterialDto dto) throws RawMaterialCategoryNotFoundException {
+    public RawMaterialResponseDto create(CreateRawMaterialDto dto) throws RawMaterialCategoryNotFoundException, RawMaterialNameAlreadyExists {
+
+        this.rawMaterialRepository.findByNameAndActiveTrue(dto.name());
+
+        if(this.rawMaterialRepository.findByNameAndActiveTrue(dto.name()).isPresent()){
+            throw new RawMaterialNameAlreadyExists("La materia prima con nombre " + dto.name() + " ya existe");
+        }
+
         categoryRepository.findById(dto.categoryId())
                 .orElseThrow(() -> new RawMaterialCategoryNotFoundException(
                         "La categoría con id " + dto.categoryId() + " no fue encontrada"));
