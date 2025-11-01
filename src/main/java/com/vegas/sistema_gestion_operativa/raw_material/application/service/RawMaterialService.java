@@ -6,6 +6,7 @@ import com.vegas.sistema_gestion_operativa.raw_material.application.dto.UpdateRa
 import com.vegas.sistema_gestion_operativa.raw_material.application.factory.RawMaterialFactory;
 import com.vegas.sistema_gestion_operativa.raw_material.application.mapper.IRawMaterialMapper;
 import com.vegas.sistema_gestion_operativa.raw_material.domain.entity.RawMaterial;
+import com.vegas.sistema_gestion_operativa.raw_material.domain.entity.RawMaterialCategory;
 import com.vegas.sistema_gestion_operativa.raw_material.domain.exceptions.RawMaterialCategoryNotFoundException;
 import com.vegas.sistema_gestion_operativa.raw_material.domain.exceptions.RawMaterialNotFoundException;
 import com.vegas.sistema_gestion_operativa.raw_material.infrastructure.repository.IRawMaterialCategoryRepository;
@@ -40,6 +41,10 @@ public class RawMaterialService {
     }
 
     public RawMaterialResponseDto create(CreateRawMaterialDto dto) throws RawMaterialCategoryNotFoundException {
+        categoryRepository.findById(dto.categoryId())
+                .orElseThrow(() -> new RawMaterialCategoryNotFoundException(
+                        "La categoría con id " + dto.categoryId() + " no fue encontrada"));
+
         RawMaterial rawMaterial = this.rawMaterialRepository.save(this.rawMaterialFactory.createFromDto(dto));
         return rawMaterialMapper.toResponseDto(rawMaterial);
     }
