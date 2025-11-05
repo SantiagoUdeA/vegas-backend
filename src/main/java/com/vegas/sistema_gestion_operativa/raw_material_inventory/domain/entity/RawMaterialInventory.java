@@ -43,4 +43,16 @@ public class RawMaterialInventory {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    /**
+     * Incrementa el stock actual en la cantidad especificada
+     * @param quantity Cantidad a agregar (debe ser positiva)
+     * @throws IllegalArgumentException si la cantidad es negativa o cero
+     */
+    public void addStock(Double quantity) {
+        if (quantity == null || quantity <= 0) {
+            throw new IllegalArgumentException("La cantidad debe ser mayor a cero");
+        }
+        this.currentStock += quantity;
+    }
+
 }

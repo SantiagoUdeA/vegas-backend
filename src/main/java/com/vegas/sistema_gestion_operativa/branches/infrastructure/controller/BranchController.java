@@ -45,4 +45,10 @@ public class BranchController {
         Branch updated = branchService.update(AuthUtils.getUserIdFromToken(), branchId, dto);
         return ResponseEntity.ok(updated);
     }
+
+    @GetMapping("/user-branches")
+    public ResponseEntity<List<Branch>> findAllBranchesByUserId() {
+        List<Branch> branches = branchService.findAllBranchesByUserId(AuthUtils.getUserIdFromToken());
+        return ResponseEntity.ok(branches);
+    }
 }

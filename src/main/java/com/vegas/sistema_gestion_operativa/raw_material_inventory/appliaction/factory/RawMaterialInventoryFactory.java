@@ -11,7 +11,7 @@ public class RawMaterialInventoryFactory {
         return RawMaterialInventory.builder()
                 .rawMaterialId(dto.rawMaterialId())
                 .branchId(dto.branchId())
-                .currentStock(0.0)
+                .currentStock(dto.quantity())
                 .build();
     }
 }

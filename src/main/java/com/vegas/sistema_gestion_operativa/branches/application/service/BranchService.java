@@ -1,5 +1,6 @@
 package com.vegas.sistema_gestion_operativa.branches.application.service;
 
+import com.vegas.sistema_gestion_operativa.branches.IBranchApi;
 import com.vegas.sistema_gestion_operativa.branches.domain.entity.Branch;
 import com.vegas.sistema_gestion_operativa.branches.application.dto.CreateBranchDto;
 import com.vegas.sistema_gestion_operativa.branches.application.dto.UpdateBranchDto;
@@ -16,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-public class BranchService {
+public class BranchService implements IBranchApi {
 
     private final IBranchRepository branchRepository;
     private final IBranchMapper branchMapper;
@@ -50,6 +51,7 @@ public class BranchService {
             throw new AccessDeniedException("No puedes editar por que no eres el fundador de esta sucursal");
 
         var updatedBranch = this.branchMapper.partialUpdate(dto, branch);
+        updatedBranch.setId(branchId); // TODO Arreglar esto en todos los servicios
         return this.branchRepository.save(updatedBranch);
     }
 
@@ -65,4 +67,12 @@ public class BranchService {
                 .orElseThrow(() -> new BranchNotFoundException("Branch not found with id: " + id));
     }
 
+    @Override
+    public List<Long> getUserBranches(String userId) {
+        return branchRepository.findBranchIdsByUserId(userId);
+    }
+
+    public List<Branch> findAllBranchesByUserId(String userIdFromToken) {
+        return branchRepository.findBranchesByUserId(userIdFromToken);
+    }
 }
