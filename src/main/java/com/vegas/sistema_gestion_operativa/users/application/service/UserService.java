@@ -1,5 +1,6 @@
 package com.vegas.sistema_gestion_operativa.users.application.service;
 
+import com.vegas.sistema_gestion_operativa.common.exceptions.InvalidPropertyFilterException;
 import com.vegas.sistema_gestion_operativa.roles.IRoleApi;
 import com.vegas.sistema_gestion_operativa.users.domain.entity.User;
 import com.vegas.sistema_gestion_operativa.users.application.dto.CreateUserDto;
@@ -13,6 +14,9 @@ import com.vegas.sistema_gestion_operativa.users.application.mapper.IUserMapper;
 import com.vegas.sistema_gestion_operativa.users.infrastructure.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,15 +59,19 @@ public class UserService {
      * Retrieves all users from the repository.
      * @return list of users
      */
-    public List<User> findAll(String userId, String userRoleName) {
-        if(this.roleApi.isRootRole(userRoleName)){
-            return userRepository.findAllByRoleName("OWNER");
+    public Page<User> findAll(String userId, String userRoleName, Pageable pageable) throws InvalidPropertyFilterException {
+        try {
+            if(this.roleApi.isRootRole(userRoleName)){
+                return userRepository.findAllByRoleName("OWNER", pageable);
+            }
+            else if(this.roleApi.isAdminRole(userRoleName)) {
+                return userRepository.findUsersByRolesInBranchesWithUser(List.of("CASHIER"), userId, pageable);
+            }
+            else if(this.roleApi.isOwnerRole(userRoleName))
+                return userRepository.findUsersByRolesInBranchesWithUser(List.of("ADMIN", "CASHIER"), userId, pageable);
+        } catch (InvalidDataAccessApiUsageException e) {
+            throw new InvalidPropertyFilterException(e);
         }
-        else if(this.roleApi.isAdminRole(userRoleName)) {
-            return userRepository.findUsersByRolesInBranchesWithUser(List.of("CASHIER"), userId);
-        }
-        else if(this.roleApi.isOwnerRole(userRoleName))
-            return userRepository.findUsersByRolesInBranchesWithUser(List.of("ADMIN", "CASHIER"), userId);
         throw new AccessDeniedException("No tienes permisos para ver la lista de usuarios");
     }
 
@@ -74,7 +82,7 @@ public class UserService {
      * @return the created user
      */
     @Transactional
-    public User create(CreateUserDto newUser, String userId, String userRoleName) throws UserAlreadyExistsException {
+    public User create(CreateUserDto newUser, String userRoleName) throws UserAlreadyExistsException {
 
         // Verificar si el usuario tiene permisos para crear un usuario con el rol especificado
         if(!this.roleApi.canManageUserWithRole(userRoleName, newUser.roleName()))

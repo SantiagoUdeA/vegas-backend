@@ -1,5 +1,9 @@
 package com.vegas.sistema_gestion_operativa.users.infrastructure.controller;
 
+import com.vegas.sistema_gestion_operativa.common.dto.PageResponse;
+import com.vegas.sistema_gestion_operativa.common.dto.PaginationRequest;
+import com.vegas.sistema_gestion_operativa.common.exceptions.InvalidPropertyFilterException;
+import com.vegas.sistema_gestion_operativa.common.utils.PaginationUtils;
 import com.vegas.sistema_gestion_operativa.security.AuthUtils;
 import com.vegas.sistema_gestion_operativa.users.domain.entity.User;
 import com.vegas.sistema_gestion_operativa.users.application.dto.CreateUserDto;
@@ -9,12 +13,11 @@ import com.vegas.sistema_gestion_operativa.users.domain.exceptions.UserAlreadyIn
 import com.vegas.sistema_gestion_operativa.users.domain.exceptions.UserNotFoundException;
 import com.vegas.sistema_gestion_operativa.users.application.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * REST controller for user management.
@@ -43,8 +46,10 @@ public class UserController {
      * @return list of users
      */
     @GetMapping
-    public ResponseEntity<List<User>> findAll() {
-        return ResponseEntity.ok(userService.findAll(AuthUtils.getUserIdFromToken(), AuthUtils.getRoleNameFromToken()));
+    public ResponseEntity<PageResponse<User>> findAll(PaginationRequest paginationRequest) throws InvalidPropertyFilterException {
+        Pageable pageable = PaginationUtils.getPageable(paginationRequest);
+        Page<User> userPage = userService.findAll(AuthUtils.getUserIdFromToken(), AuthUtils.getRoleNameFromToken(), pageable);
+        return ResponseEntity.ok(PageResponse.from(userPage));
     }
 
     /**
@@ -57,7 +62,7 @@ public class UserController {
     public ResponseEntity<User> createUser(@RequestBody @Valid CreateUserDto dto) throws UserAlreadyExistsException {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(userService.create(dto, AuthUtils.getUserIdFromToken(), AuthUtils.getRoleNameFromToken()));
+                .body(userService.create(dto, AuthUtils.getRoleNameFromToken()));
     }
 
     /**

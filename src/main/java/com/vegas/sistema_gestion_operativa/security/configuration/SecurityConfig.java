@@ -42,7 +42,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/api-docs/**").permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())));
         return http.build();
@@ -79,7 +79,6 @@ public class SecurityConfig {
      */
     private Collection<GrantedAuthority> extractAuthorities(Jwt jwt) {
         Optional<String> role = jwt.getClaimAsString("role").describeConstable();
-        if (role.isEmpty()) return List.of();
-        return List.of(new SimpleGrantedAuthority("ROLE_" + role.get()));
+        return role.<Collection<GrantedAuthority>>map(s -> List.of(new SimpleGrantedAuthority("ROLE_" + s))).orElseGet(List::of);
     }
 }
