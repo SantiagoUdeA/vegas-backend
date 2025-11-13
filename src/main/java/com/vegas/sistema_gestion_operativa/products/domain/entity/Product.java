@@ -1,4 +1,4 @@
-package com.vegas.sistema_gestion_operativa.raw_material.domain.entity;
+package com.vegas.sistema_gestion_operativa.products.domain.entity;
 
 import com.vegas.sistema_gestion_operativa.common.domain.UnitOfMeasure;
 import jakarta.persistence.*;
@@ -7,12 +7,12 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-public class RawMaterial {
+public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,13 +25,13 @@ public class RawMaterial {
     @Column(nullable = false)
     private UnitOfMeasure unitOfMeasure;
 
-    @Column(columnDefinition = "boolean default true")
-    private boolean active;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     @OnDelete(action = OnDeleteAction.SET_NULL)
-    private RawMaterialCategory category;
+    private ProductCategory category;
+
+    @Column(columnDefinition = "boolean default true")
+    private boolean active;
 
     public void deactivate() {
         this.active = false;

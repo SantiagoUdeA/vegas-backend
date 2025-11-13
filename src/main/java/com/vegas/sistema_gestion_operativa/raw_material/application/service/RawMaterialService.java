@@ -6,7 +6,6 @@ import com.vegas.sistema_gestion_operativa.raw_material.application.dto.UpdateRa
 import com.vegas.sistema_gestion_operativa.raw_material.application.factory.RawMaterialFactory;
 import com.vegas.sistema_gestion_operativa.raw_material.application.mapper.IRawMaterialMapper;
 import com.vegas.sistema_gestion_operativa.raw_material.domain.entity.RawMaterial;
-import com.vegas.sistema_gestion_operativa.raw_material.domain.entity.RawMaterialCategory;
 import com.vegas.sistema_gestion_operativa.raw_material.domain.exceptions.RawMaterialCategoryNotFoundException;
 import com.vegas.sistema_gestion_operativa.raw_material.domain.exceptions.RawMaterialNameAlreadyExists;
 import com.vegas.sistema_gestion_operativa.raw_material.domain.exceptions.RawMaterialNotFoundException;
@@ -16,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class RawMaterialService {
@@ -64,6 +62,7 @@ public class RawMaterialService {
                 .orElseThrow(() -> new RawMaterialCategoryNotFoundException(
                         "La categoría con id " + dto.categoryId() + " no fue encontrada"));
         var updatedRawMaterial = this.rawMaterialMapper.partialUpdate(dto, category, rawMaterial);
+        updatedRawMaterial.setActive(true);
         RawMaterial saved = this.rawMaterialRepository.save(updatedRawMaterial);
         return rawMaterialMapper.toResponseDto(saved);
     }
