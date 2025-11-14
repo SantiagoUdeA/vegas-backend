@@ -27,7 +27,7 @@ public class ProviderService {
     }
 
     public Page<Provider> findAll(Pageable pageable){
-        return providerRepository.findAll(pageable);
+        return providerRepository.findAllByActiveTrue(pageable);
     }
 
     public Provider create(CreateProviderDto dto){
@@ -42,7 +42,8 @@ public class ProviderService {
 
     public Provider delete(Long providerId) throws ProviderNotFoundException {
         var provider = this.retrieveProviderById(providerId);
-        this.providerRepository.delete(provider);
+        provider.deactivate();
+        this.providerRepository.save(provider);
         return provider;
     }
 

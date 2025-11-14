@@ -23,4 +23,11 @@ public class Provider {
     private String nit;
 
     private String phoneNumber;
+
+    @Column(columnDefinition = "boolean default true")
+    private boolean active;
+
+    public void deactivate() {
+        this.active = false;
+    }
 }
