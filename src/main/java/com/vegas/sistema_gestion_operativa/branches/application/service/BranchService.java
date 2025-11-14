@@ -10,6 +10,8 @@ import com.vegas.sistema_gestion_operativa.branches.application.factory.BranchFa
 import com.vegas.sistema_gestion_operativa.branches.application.mapper.IBranchMapper;
 import com.vegas.sistema_gestion_operativa.branches.infrastructure.repository.IBranchRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,8 +41,8 @@ public class BranchService implements IBranchApi {
         return branchRepository.save(branch);
     }
 
-    public List<Branch> findOwnerBranches(String userId) {
-        return this.branchRepository.findByUserBranches_Id_UserIdAndUserBranches_FounderTrue(userId);
+    public Page<Branch> findOwnerBranches(String userId, Pageable pageable) {
+        return this.branchRepository.findByUserBranches_Id_UserIdAndUserBranches_FounderTrue(userId, pageable);
     }
 
     public Branch update(String ownerId, Long branchId, UpdateBranchDto dto) throws BranchNotFoundException, AccessDeniedException {
