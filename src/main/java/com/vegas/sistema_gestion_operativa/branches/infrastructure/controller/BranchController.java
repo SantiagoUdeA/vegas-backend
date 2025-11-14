@@ -5,12 +5,12 @@ import com.vegas.sistema_gestion_operativa.branches.domain.entity.Branch;
 import com.vegas.sistema_gestion_operativa.branches.application.dto.CreateBranchDto;
 import com.vegas.sistema_gestion_operativa.branches.application.service.BranchService;
 import com.vegas.sistema_gestion_operativa.branches.domain.exception.BranchNameAlreadyExistsException;
+import com.vegas.sistema_gestion_operativa.common.dto.PageResponse;
 import com.vegas.sistema_gestion_operativa.common.dto.PaginationRequest;
 import com.vegas.sistema_gestion_operativa.common.utils.PaginationUtils;
 import com.vegas.sistema_gestion_operativa.security.AuthUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -39,9 +39,12 @@ public class BranchController {
 
     @GetMapping
     @PreAuthorize("hasPermission(null, 'BRANCHES_VIEW')")
-    public ResponseEntity<Page<Branch>> findAll(PaginationRequest paginationRequest) {
+    public ResponseEntity<PageResponse<Branch>> findAll(PaginationRequest paginationRequest) {
         Pageable pageable = PaginationUtils.getPageable(paginationRequest);
-        return ResponseEntity.ok(branchService.findOwnerBranches(AuthUtils.getUserIdFromToken(), pageable));
+        PageResponse<Branch> response = PageResponse.from(
+                branchService.findOwnerBranches(AuthUtils.getUserIdFromToken(), pageable)
+        );
+        return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/{branchId}")
