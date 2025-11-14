@@ -1,6 +1,9 @@
 
 package com.vegas.sistema_gestion_operativa.products.infrastructure.controller;
 
+import com.vegas.sistema_gestion_operativa.common.dto.PageResponse;
+import com.vegas.sistema_gestion_operativa.common.dto.PaginationRequest;
+import com.vegas.sistema_gestion_operativa.common.utils.PaginationUtils;
 import com.vegas.sistema_gestion_operativa.products.application.dto.CreateProductDto;
 import com.vegas.sistema_gestion_operativa.products.application.dto.ProductResponseDto;
 import com.vegas.sistema_gestion_operativa.products.application.dto.UpdateProductDto;
@@ -10,11 +13,10 @@ import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductNam
 import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * REST controller for product management.
@@ -29,17 +31,23 @@ public class ProductController {
     @Autowired
     public ProductController(ProductService productService) {
         this.productService = productService;
+
     }
 
     /**
      * Retrieves the list of all products.
-     *
-     * @return list of products
+    public ResponseEntity<PageResponse<ProductResponseDto>> findAll(PaginationRequest paginationRequest) {
+        Pageable pageable = PaginationUtils.getPageable(paginationRequest);
+        Page<ProductResponseDto> productPage = productService.findAll(pageable);
+        var response = PageResponse.from(productPage);
+        return ResponseEntity.ok(response);
      */
     @GetMapping
     @PreAuthorize("hasPermission(null, 'PRODUCTS_VIEW')")
-    public ResponseEntity<List<ProductResponseDto>> findAll() {
-        return ResponseEntity.ok(productService.findAll());
+    public ResponseEntity<PageResponse<ProductResponseDto>> findAll(PaginationRequest paginationRequest){
+        Pageable pageable = PaginationUtils.getPageable(paginationRequest);
+        var response = productService.findAll(pageable);
+        return ResponseEntity.ok(PageResponse.from(response));
     }
 
     /**

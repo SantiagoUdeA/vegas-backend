@@ -1,5 +1,8 @@
 package com.vegas.sistema_gestion_operativa.provider.infrastructure.controller;
 
+import com.vegas.sistema_gestion_operativa.common.dto.PageResponse;
+import com.vegas.sistema_gestion_operativa.common.dto.PaginationRequest;
+import com.vegas.sistema_gestion_operativa.common.utils.PaginationUtils;
 import com.vegas.sistema_gestion_operativa.provider.application.dto.CreateProviderDto;
 import com.vegas.sistema_gestion_operativa.provider.application.dto.UpdateProviderDto;
 import com.vegas.sistema_gestion_operativa.provider.application.service.ProviderService;
@@ -7,11 +10,11 @@ import com.vegas.sistema_gestion_operativa.provider.domain.entity.Provider;
 import com.vegas.sistema_gestion_operativa.provider.domain.exceptions.ProviderNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * REST controller for provider management.
@@ -31,12 +34,16 @@ public class ProviderController {
     /**
      * Retrieves the list of all providers.
      *
-     * @return list of providers
+     * @param paginationRequest pagination parameters
+     * @return paginated list of providers
      */
     @GetMapping
     @PreAuthorize("hasPermission(null, 'PROVIDERS_VIEW')")
-    public ResponseEntity<List<Provider>> findAll() {
-        return ResponseEntity.ok(providerService.findAll());
+    public ResponseEntity<PageResponse<Provider>> findAll(PaginationRequest paginationRequest) {
+        Pageable pageable = PaginationUtils.getPageable(paginationRequest);
+        Page<Provider> providerPage = providerService.findAll(pageable);
+        var response = PageResponse.from(providerPage);
+        return ResponseEntity.ok(response);
     }
 
     /**

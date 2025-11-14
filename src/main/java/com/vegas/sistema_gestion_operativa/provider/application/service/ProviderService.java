@@ -8,9 +8,9 @@ import com.vegas.sistema_gestion_operativa.provider.domain.entity.Provider;
 import com.vegas.sistema_gestion_operativa.provider.domain.exceptions.ProviderNotFoundException;
 import com.vegas.sistema_gestion_operativa.provider.infrastructure.repository.IProviderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class ProviderService {
@@ -26,8 +26,8 @@ public class ProviderService {
         this.providerMapper = providerMapper;
     }
 
-    public List<Provider> findAll(){
-        return providerRepository.findAll();
+    public Page<Provider> findAll(Pageable pageable){
+        return providerRepository.findAll(pageable);
     }
 
     public Provider create(CreateProviderDto dto){

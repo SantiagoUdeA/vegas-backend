@@ -10,9 +10,9 @@ import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductCat
 import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductCategoryNotFoundException;
 import com.vegas.sistema_gestion_operativa.products.infrastructure.repository.IProductCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class ProductCategoryService {
@@ -30,9 +30,9 @@ public class ProductCategoryService {
         this.categoryMapper = categoryMapper;
     }
 
-    public List<ProductCategoryResponseDto> findAll() {
-        List<ProductCategory> categories = categoryRepository.findAll();
-        return categoryMapper.toResponseDtoList(categories);
+    public Page<ProductCategoryResponseDto> findAll(Pageable pageable) {
+        Page<ProductCategory> categories = categoryRepository.findAll(pageable);
+        return categories.map(categoryMapper::toResponseDto);
     }
 
     public ProductCategoryResponseDto create(CreateProductCategoryDto dto) throws ProductCategoryNameAlreadyExistsException {

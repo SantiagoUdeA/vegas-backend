@@ -1,5 +1,8 @@
 package com.vegas.sistema_gestion_operativa.raw_material.infrastructure.controller;
 
+import com.vegas.sistema_gestion_operativa.common.dto.PageResponse;
+import com.vegas.sistema_gestion_operativa.common.dto.PaginationRequest;
+import com.vegas.sistema_gestion_operativa.common.utils.PaginationUtils;
 import com.vegas.sistema_gestion_operativa.raw_material.application.dto.CreateRawMaterialDto;
 import com.vegas.sistema_gestion_operativa.raw_material.application.dto.RawMaterialResponseDto;
 import com.vegas.sistema_gestion_operativa.raw_material.application.dto.UpdateRawMaterialDto;
@@ -9,11 +12,11 @@ import com.vegas.sistema_gestion_operativa.raw_material.domain.exceptions.RawMat
 import com.vegas.sistema_gestion_operativa.raw_material.domain.exceptions.RawMaterialNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * REST controller for raw material management.
@@ -37,8 +40,11 @@ public class RawMaterialController {
      */
     @GetMapping
     @PreAuthorize("hasPermission(null, 'RAW_MATERIALS_VIEW')")
-    public ResponseEntity<List<RawMaterialResponseDto>> findAll() {
-        return ResponseEntity.ok(rawMaterialService.findAll());
+    public ResponseEntity<PageResponse<RawMaterialResponseDto>> findAll(PaginationRequest paginationRequest) {
+        Pageable pageable = PaginationUtils.getPageable(paginationRequest);
+        Page<RawMaterialResponseDto> rawMaterialPage = rawMaterialService.findAll(pageable);
+        var response = PageResponse.from(rawMaterialPage);
+        return ResponseEntity.ok(response);
     }
 
     /**

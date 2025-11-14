@@ -12,9 +12,9 @@ import com.vegas.sistema_gestion_operativa.raw_material.domain.exceptions.RawMat
 import com.vegas.sistema_gestion_operativa.raw_material.infrastructure.repository.IRawMaterialCategoryRepository;
 import com.vegas.sistema_gestion_operativa.raw_material.infrastructure.repository.IRawMaterialRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class RawMaterialService {
@@ -35,9 +35,9 @@ public class RawMaterialService {
         this.rawMaterialMapper = rawMaterialMapper;
     }
 
-    public List<RawMaterialResponseDto> findAll() {
-        List<RawMaterial> rawMaterials = rawMaterialRepository.findByActiveTrue();
-        return rawMaterialMapper.toResponseDtoList(rawMaterials);
+    public Page<RawMaterialResponseDto> findAll(Pageable pageable) {
+        Page<RawMaterial> rawMaterials = rawMaterialRepository.findByActiveTrue(pageable);
+        return rawMaterials.map(rawMaterialMapper::toResponseDto);
     }
 
     public RawMaterialResponseDto create(CreateRawMaterialDto dto) throws RawMaterialCategoryNotFoundException, RawMaterialNameAlreadyExists {

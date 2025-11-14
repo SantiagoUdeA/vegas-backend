@@ -1,5 +1,8 @@
 package com.vegas.sistema_gestion_operativa.products.infrastructure.controller;
 
+import com.vegas.sistema_gestion_operativa.common.dto.PageResponse;
+import com.vegas.sistema_gestion_operativa.common.dto.PaginationRequest;
+import com.vegas.sistema_gestion_operativa.common.utils.PaginationUtils;
 import com.vegas.sistema_gestion_operativa.products.application.dto.CreateProductCategoryDto;
 import com.vegas.sistema_gestion_operativa.products.application.dto.ProductCategoryResponseDto;
 import com.vegas.sistema_gestion_operativa.products.application.dto.UpdateProductCategoryDto;
@@ -8,11 +11,11 @@ import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductCat
 import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductCategoryNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * REST controller for product category management.
@@ -32,12 +35,16 @@ public class ProductCategoryController {
     /**
      * Retrieves the list of all product categories.
      *
-     * @return list of product categories
+     * @param paginationRequest pagination parameters
+     * @return paginated list of product categories
      */
     @GetMapping
     @PreAuthorize("hasPermission(null, 'PRODUCTS_VIEW')")
-    public ResponseEntity<List<ProductCategoryResponseDto>> findAll() {
-        return ResponseEntity.ok(categoryService.findAll());
+    public ResponseEntity<PageResponse<ProductCategoryResponseDto>> findAll(PaginationRequest paginationRequest) {
+        Pageable pageable = PaginationUtils.getPageable(paginationRequest);
+        Page<ProductCategoryResponseDto> categoryPage = categoryService.findAll(pageable);
+        var response = PageResponse.from(categoryPage);
+        return ResponseEntity.ok(response);
     }
 
     /**

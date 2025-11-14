@@ -5,6 +5,7 @@ import com.vegas.sistema_gestion_operativa.raw_material.application.dto.UpdateRa
 import com.vegas.sistema_gestion_operativa.raw_material.domain.entity.RawMaterial;
 import com.vegas.sistema_gestion_operativa.raw_material.domain.entity.RawMaterialCategory;
 import org.mapstruct.*;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -20,6 +21,6 @@ public interface IRawMaterialMapper {
 
     RawMaterialResponseDto toResponseDto(RawMaterial rawMaterial);
 
-    List<RawMaterialResponseDto> toResponseDtoList(List<RawMaterial> rawMaterials);
+    List<RawMaterialResponseDto> toResponseDtoList(Page<RawMaterial> rawMaterials);
 }
 
