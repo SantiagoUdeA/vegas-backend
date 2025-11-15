@@ -9,10 +9,10 @@ import com.vegas.sistema_gestion_operativa.branches.domain.exception.BranchNotFo
 import com.vegas.sistema_gestion_operativa.branches.application.factory.BranchFactory;
 import com.vegas.sistema_gestion_operativa.branches.application.mapper.IBranchMapper;
 import com.vegas.sistema_gestion_operativa.branches.infrastructure.repository.IBranchRepository;
+import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,8 +70,10 @@ public class BranchService implements IBranchApi {
     }
 
     @Override
-    public List<Long> getUserBranches(String userId) {
-        return branchRepository.findBranchIdsByUserId(userId);
+    public void assertUserHasAccessToBranch(String userId, Long branchId) throws AccessDeniedException {
+        var branches = branchRepository.findBranchIdsByUserId(userId);
+        if(!branches.contains(branchId))
+            throw new AccessDeniedException("No tienes acceso a la sucursal ");
     }
 
     public List<Branch> findAllBranchesByUserId(String userIdFromToken) {

@@ -1,8 +1,9 @@
 package com.vegas.sistema_gestion_operativa.branches;
 
-import java.util.List;
+
+import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 
 public interface IBranchApi {
 
-    public List<Long> getUserBranches(String userId);
+    void assertUserHasAccessToBranch(String userId, Long branchId) throws AccessDeniedException;
 }
