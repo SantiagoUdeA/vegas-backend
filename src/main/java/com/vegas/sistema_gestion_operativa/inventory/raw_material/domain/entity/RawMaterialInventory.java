@@ -1,5 +1,7 @@
 package com.vegas.sistema_gestion_operativa.inventory.raw_material.domain.entity;
 
+import com.vegas.sistema_gestion_operativa.common.domain.Money;
+import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -34,23 +36,45 @@ public class RawMaterialInventory {
     )
     private Long branchId;
 
-    @Column(nullable = false, columnDefinition = "DOUBLE PRECISION DEFAULT 0")
-    private Double currentStock;
+    @Embedded
+    @AttributeOverride(
+            name = "value",
+            column = @Column(name = "current_stock", precision = 19, scale = 4)
+    )
+    private Quantity currentStock;
+
+    @Embedded
+    @AttributeOverride(
+            name = "value",
+            column = @Column(name = "average_cost", precision = 19, scale = 4)
+    )
+    private Money averageCost;
 
     @Column
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    /**
-     * Incrementa el stock actual en la cantidad especificada
-     * @param quantity Cantidad a agregar (debe ser positiva)
-     * @throws IllegalArgumentException si la cantidad es negativa o cero
-     */
-    public void addStock(Double quantity) {
-        if (quantity == null || quantity <= 0) {
-            throw new IllegalArgumentException("La cantidad debe ser mayor a cero");
-        }
-        this.currentStock += quantity;
+    public void addStock(Quantity quantity, Money unitCost) {
+        // Calcular valor del inventario actual
+        Money currentValue = this.averageCost.multiply(this.currentStock);
+
+        // Calcular valor de la entrada
+        Money entryValue = unitCost.multiply(quantity);
+
+        // Calcular valor total del inventario
+        Money totalValue = currentValue.add(entryValue);
+
+        // Calcular nuevo stock
+        Quantity newStock = this.currentStock.add(quantity);
+
+        // Calcular nuevo costo promedio usando los value objects
+        Money newAverageCost = totalValue.divide(newStock);
+
+        this.currentStock = newStock;
+        this.averageCost = newAverageCost;
     }
+
+
+
 
 }

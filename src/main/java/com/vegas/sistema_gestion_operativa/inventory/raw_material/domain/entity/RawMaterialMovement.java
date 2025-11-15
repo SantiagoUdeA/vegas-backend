@@ -20,16 +20,11 @@ public class RawMaterialMovement {
     private Long id;
 
     @Column(nullable = false)
-    private Integer quantity;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private UnitOfMeasure unitOfMeasure;
+    private Double quantity;
 
     @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime movementDate;
-
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

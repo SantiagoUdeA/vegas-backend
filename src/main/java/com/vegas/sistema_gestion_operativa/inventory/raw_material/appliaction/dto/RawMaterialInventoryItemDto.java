@@ -7,5 +7,6 @@ public interface RawMaterialInventoryItemDto {
     String getCategoryName();
     String getUnitOfMeasure();
     Double getCurrentStock();
+    Double getAverageCost();
     LocalDateTime getUpdatedAt();
 }

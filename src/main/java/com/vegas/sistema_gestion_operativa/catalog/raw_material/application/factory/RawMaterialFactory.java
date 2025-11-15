@@ -20,7 +20,6 @@ public class RawMaterialFactory {
                 .unitOfMeasure(dto.unitOfMeasure())
                 .category(category)
                 .branchId(dto.branchId())
-                .averageCost(new Money(BigDecimal.valueOf(0.0)))
                 .active(true)
                 .build();
     }

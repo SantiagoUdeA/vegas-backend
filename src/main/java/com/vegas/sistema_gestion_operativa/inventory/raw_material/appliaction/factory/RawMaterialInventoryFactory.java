@@ -1,5 +1,7 @@
 package com.vegas.sistema_gestion_operativa.inventory.raw_material.appliaction.factory;
 
+import com.vegas.sistema_gestion_operativa.common.domain.Money;
+import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
 import com.vegas.sistema_gestion_operativa.inventory.raw_material.appliaction.dto.RegisterRawMaterialBatchDto;
 import com.vegas.sistema_gestion_operativa.inventory.raw_material.appliaction.dto.RegisterRawMaterialDto;
 import com.vegas.sistema_gestion_operativa.inventory.raw_material.domain.entity.MovementReason;
@@ -17,14 +19,16 @@ public class RawMaterialInventoryFactory {
         return RawMaterialInventory.builder()
                 .rawMaterialId(dto.rawMaterialId())
                 .branchId(dto.branchId())
-                .currentStock(dto.quantity())
+                .currentStock(new Quantity(dto.quantity()))
+                .averageCost(new Money(0.0))
                 .build();
     }
 
     public RawMaterialBatch createBatchFromDto(RegisterRawMaterialBatchDto dto){
         return RawMaterialBatch.builder()
                 .rawMaterialId(dto.rawMaterialId())
-                .quantity(dto.quantity())
+                .quantity(new Quantity(dto.quantity()))
+                .totalCost(new Money(dto.totalCost()))
                 .entryDate(LocalDateTime.now())
                 .expirationDate(dto.expirationDate())
                 .providerId(dto.providerId())
@@ -35,10 +39,9 @@ public class RawMaterialInventoryFactory {
 
     public RawMaterialMovement createMovementFromDto(RegisterRawMaterialBatchDto dto, Long batchId, String userId) {
         return RawMaterialMovement.builder()
-                .movementReason(dto.movementReason())
+                .movementReason(MovementReason.ENTRY)
                 .rawMaterialBatchId(batchId)
                 .userId(userId)
-                .unitOfMeasure(dto.unitOfMeasure())
                 .movementDate(LocalDateTime.now())
                 .quantity(dto.quantity())
                 .build();

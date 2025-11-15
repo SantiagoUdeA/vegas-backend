@@ -20,6 +20,7 @@ public interface IRawMaterialInventoryRepository extends JpaRepository<RawMateri
         rmc.name AS categoryName,
         rm.unit_of_measure AS unitOfMeasure,
         rmi.current_stock AS currentStock,
+        rmi.average_cost AS averageCost,
         rmi.updated_at AS updatedAt
     FROM raw_material_inventory rmi
     JOIN raw_material rm ON rmi.raw_material_id = rm.id

@@ -12,6 +12,7 @@ import com.vegas.sistema_gestion_operativa.catalog.raw_material.domain.exception
 import com.vegas.sistema_gestion_operativa.catalog.raw_material.domain.exceptions.RawMaterialNotFoundException;
 import com.vegas.sistema_gestion_operativa.catalog.raw_material.infrastructure.repository.IRawMaterialCategoryRepository;
 import com.vegas.sistema_gestion_operativa.catalog.raw_material.infrastructure.repository.IRawMaterialRepository;
+import com.vegas.sistema_gestion_operativa.common.domain.Money;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

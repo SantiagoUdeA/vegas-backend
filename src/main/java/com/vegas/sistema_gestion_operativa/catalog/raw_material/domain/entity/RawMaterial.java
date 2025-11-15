@@ -1,6 +1,5 @@
 package com.vegas.sistema_gestion_operativa.catalog.raw_material.domain.entity;
 
-import com.vegas.sistema_gestion_operativa.common.domain.Money;
 import com.vegas.sistema_gestion_operativa.common.domain.UnitOfMeasure;
 import jakarta.persistence.*;
 import lombok.*;
@@ -34,9 +33,6 @@ public class RawMaterial {
     @OnDelete(action = OnDeleteAction.SET_NULL)
     private RawMaterialCategory category;
 
-    @Embedded
-    private Money averageCost;
-
     @Column(
             name = "branch_id",
             // TODO uncomment this line nullable = false,
@@ -47,9 +43,5 @@ public class RawMaterial {
 
     public void deactivate() {
         this.active = false;
-    }
-
-    public void updateAverageCost(Money newCost) {
-        this.averageCost = newCost;
     }
 }
