@@ -7,6 +7,10 @@ import org.springframework.security.core.Authentication;
 
 public class AuthUtils {
 
+    private AuthUtils() {
+        // Util class
+    }
+
     public static String getUserIdFromToken() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof Jwt jwt) {
