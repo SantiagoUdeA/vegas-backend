@@ -12,7 +12,6 @@ import com.vegas.sistema_gestion_operativa.catalog.raw_material.domain.exception
 import com.vegas.sistema_gestion_operativa.catalog.raw_material.domain.exceptions.RawMaterialNotFoundException;
 import com.vegas.sistema_gestion_operativa.catalog.raw_material.infrastructure.repository.IRawMaterialCategoryRepository;
 import com.vegas.sistema_gestion_operativa.catalog.raw_material.infrastructure.repository.IRawMaterialRepository;
-import com.vegas.sistema_gestion_operativa.common.domain.Money;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -59,9 +58,11 @@ public class RawMaterialService {
             throw new RawMaterialNameAlreadyExists("La materia prima con nombre " + dto.name() + " ya existe");
         }
 
-        categoryRepository.findById(dto.categoryId())
-                .orElseThrow(() -> new RawMaterialCategoryNotFoundException(
-                        "La categoría con id " + dto.categoryId() + " no fue encontrada"));
+        if(dto.categoryId() != null){
+            categoryRepository.findById(dto.categoryId())
+                    .orElseThrow(() -> new RawMaterialCategoryNotFoundException(
+                            "La categoría con id " + dto.categoryId() + " no fue encontrada"));
+        }
 
         RawMaterial rawMaterial = this.rawMaterialRepository.save(this.rawMaterialFactory.createFromDto(dto));
         return rawMaterialMapper.toResponseDto(rawMaterial);

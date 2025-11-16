@@ -2,6 +2,7 @@ package com.vegas.sistema_gestion_operativa.catalog.raw_material.application.dto
 
 
 import com.vegas.sistema_gestion_operativa.common.domain.UnitOfMeasure;
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 
@@ -13,7 +14,7 @@ public record CreateRawMaterialDto(
         @NotNull(message = "La unidad de medida es obligatoria")
         UnitOfMeasure unitOfMeasure,
 
-        @NotNull(message = "La categoría es obligatoria")
+        @Nullable
         Long categoryId,
 
         @NotNull(message = "La sede es obligatoria")
