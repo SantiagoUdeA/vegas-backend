@@ -5,6 +5,8 @@ import com.vegas.sistema_gestion_operativa.branches.application.dto.CreateBranch
 
 public class BranchFactory {
 
+    private BranchFactory() {}
+
     public static Branch createBranch(CreateBranchDto dto) {
         return Branch.builder()
                 .name(dto.name())
