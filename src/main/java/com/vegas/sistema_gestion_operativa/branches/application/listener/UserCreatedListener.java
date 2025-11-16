@@ -18,7 +18,9 @@ public class UserCreatedListener {
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
     public void handleUserCreated(UserCreatedEvent event) {
         // TODO Validar que la branch pertenezca al usuario que hace la solicitud de crear
-        if(event.branchId().isPresent())
-            branchService.assignUserToBranch(event.userId(), event.branchId().get(), false);
+        if(event.branchId().isEmpty()){
+            throw new IllegalArgumentException("event.branchId can not be null");
+        }
+        branchService.assignUserToBranch(event.userId(), event.branchId().get(), false);
     }
 }

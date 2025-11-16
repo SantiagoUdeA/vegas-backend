@@ -2,7 +2,6 @@ package com.vegas.sistema_gestion_operativa.inventory.raw_material.domain.entity
 
 import com.vegas.sistema_gestion_operativa.common.domain.Money;
 import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
-import com.vegas.sistema_gestion_operativa.common.domain.UnitOfMeasure;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;

@@ -32,7 +32,7 @@ public record CreateUserDto(
         String idNumber,
 
         @Nullable
-        @Pattern(regexp = "^\\+?[0-9]{7,15}$", message = "El número de teléfono es inválido")
+        @Pattern(regexp = "^\\+?\\d{7,15}$", message = "El número de teléfono es inválido")
         String phoneNumber,
 
         @NotNull(message = "El rol es obligatorio")

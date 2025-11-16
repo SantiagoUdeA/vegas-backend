@@ -55,13 +55,12 @@ public class RawMaterialService {
     ) throws RawMaterialCategoryNotFoundException, RawMaterialNameAlreadyExists, AccessDeniedException {
         branchApi.assertUserHasAccessToBranch(userId, dto.branchId());
         if (this.rawMaterialRepository.findByNameAndActiveTrueAndBranchId(dto.name(), dto.branchId()).isPresent()) {
-            throw new RawMaterialNameAlreadyExists("La materia prima con nombre " + dto.name() + " ya existe");
+            throw new RawMaterialNameAlreadyExists(dto.name());
         }
 
         if(dto.categoryId() != null){
             categoryRepository.findById(dto.categoryId())
-                    .orElseThrow(() -> new RawMaterialCategoryNotFoundException(
-                            "La categoría con id " + dto.categoryId() + " no fue encontrada"));
+                    .orElseThrow(() -> new RawMaterialCategoryNotFoundException(dto.categoryId()));
         }
 
         RawMaterial rawMaterial = this.rawMaterialRepository.save(this.rawMaterialFactory.createFromDto(dto));
@@ -78,8 +77,7 @@ public class RawMaterialService {
         branchApi.assertUserHasAccessToBranch(userId, rawMaterial.getBranchId());
 
         var category = this.categoryRepository.findById(dto.categoryId())
-                .orElseThrow(() -> new RawMaterialCategoryNotFoundException(
-                        "La categoría con id " + dto.categoryId() + " no fue encontrada"));
+                .orElseThrow(() -> new RawMaterialCategoryNotFoundException(dto.categoryId()));
 
         var updatedRawMaterial = this.rawMaterialMapper.partialUpdate(dto, category, rawMaterial);
         updatedRawMaterial.setActive(true);

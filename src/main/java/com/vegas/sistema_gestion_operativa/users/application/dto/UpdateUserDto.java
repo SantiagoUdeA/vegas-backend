@@ -20,7 +20,7 @@ public record UpdateUserDto(
         String idNumber,
 
         @Nullable
-        @Pattern(regexp = "^\\+?[0-9]{7,15}$", message = "Número de teléfono inválido")
+        @Pattern(regexp = "^\\+?\\d{7,15}$", message = "Número de teléfono inválido")
         String phoneNumber,
 
         String roleName

@@ -1,7 +1,6 @@
 package com.vegas.sistema_gestion_operativa.common.domain;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import io.cucumber.java.eo.Do;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.Getter;

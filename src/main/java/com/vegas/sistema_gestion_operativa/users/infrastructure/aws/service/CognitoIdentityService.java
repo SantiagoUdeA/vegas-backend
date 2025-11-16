@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.*;
@@ -42,6 +43,7 @@ public class CognitoIdentityService implements IIdentityService {
         log.info("Initializing CognitoIdentityService with region: {}", region);
         this.client = CognitoIdentityProviderClient.builder()
                 .region(Region.of(region))
+                .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
                 .build();
     }
 
@@ -50,22 +52,22 @@ public class CognitoIdentityService implements IIdentityService {
      * Sets its password as permanent with idNumber and does not send an invitation email.
      *
      * @param email      the email of the new user
-     * @param given_name the given name (first name) of the new user
-     * @param family_name the family name (last name) of the new user
+     * @param givenName the given name (first name) of the new user
+     * @param familyName the family name (last name) of the new user
      * @param roleName   the role to assign to the new user
      * @return the ID of the created user
      */
     public String createUser(
             String email,
-            String given_name,
-            String family_name,
+            String givenName,
+            String familyName,
             String roleName,
             String idNumber
     ) {
         var request = cognitoIdentityRequestFactory.createAdminCreateUserRequest(
                 this.userPoolId,
-                given_name,
-                family_name,
+                givenName,
+                familyName,
                 email,
                 roleName.toUpperCase(),
                 true,

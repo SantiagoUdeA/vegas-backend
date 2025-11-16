@@ -59,8 +59,7 @@ public class RawMaterialCategoryService {
 
     private RawMaterialCategory retrieveCategoryById(Long id) throws RawMaterialCategoryNotFoundException {
         return this.categoryRepository.findById(id)
-                .orElseThrow(() -> new RawMaterialCategoryNotFoundException(
-                        "La categoría con id " + id + " no fue encontrada"));
+                .orElseThrow(() -> new RawMaterialCategoryNotFoundException(id));
     }
 }
 

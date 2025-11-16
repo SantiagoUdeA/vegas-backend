@@ -33,8 +33,8 @@ public class CognitoIdentityRequestFactory {
             Boolean emailVerified,
             Boolean sendEmail
     ) {
-        var messageAction = sendEmail ? "RESEND" : "SUPPRESS";
-        var emailVerifiedValue = emailVerified ? "true" : "false";
+        var messageAction = Boolean.TRUE.equals(sendEmail) ? "RESEND" : "SUPPRESS";
+        var emailVerifiedValue = Boolean.TRUE.equals(emailVerified) ? "true" : "false";
         return AdminCreateUserRequest.builder()
                 .userPoolId(userPoolId)
                 .username(email)
