@@ -1,19 +1,49 @@
 package com.vegas.sistema_gestion_operativa.production.application.dto;
 
-import com.vegas.sistema_gestion_operativa.catalog.products.api.ProductDto;
-import com.vegas.sistema_gestion_operativa.production.application.api.RecipeDto;
-import lombok.*;
+import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
+import java.util.List;
+
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductWithRecipeDto extends ProductDto {
-
+public class ProductWithRecipeDto {
+    private Long id;
+    private String name;
+    private Boolean active;
     private RecipeDto recipe;
 
-    public ProductWithRecipeDto(Long id, String name, String unitOfMeasure, RecipeDto recipe) {
-        super(id, name, unitOfMeasure, null);
-        this.recipe = recipe;
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RecipeDto {
+        private Long id;
+        private Integer unitsProduced;
+        private Boolean active;
+        private String observations;
+        private Long productId;
+        private List<IngredientDto> ingredients;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class IngredientDto {
+        private Long id;
+        private String observations;
+        private Long rawMaterialId;
+        private Quantity quantity;
+        private RawMaterialDto rawMaterial;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RawMaterialDto {
+        private String name;
+        private String unitOfMeasure;
     }
 }

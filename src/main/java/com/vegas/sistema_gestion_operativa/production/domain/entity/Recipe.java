@@ -1,5 +1,6 @@
 package com.vegas.sistema_gestion_operativa.production.domain.entity;
 
+import com.vegas.sistema_gestion_operativa.products.domain.entity.Product;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,15 +27,19 @@ public class Recipe {
     @Column()
     private String observations;
 
-    @OneToMany(mappedBy = "recipeId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Ingredient> ingredients;
 
     @Column(
             name = "product_id",
             nullable = false,
             updatable = false,
-            columnDefinition = "BIGINT REFERENCES product(id)"
+            insertable = false
     )
     private Long productId;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
 
 }

@@ -7,29 +7,28 @@ import com.vegas.sistema_gestion_operativa.production.domain.entity.Ingredient;
 import com.vegas.sistema_gestion_operativa.production.domain.entity.Recipe;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class ProductionFactory {
 
     public Recipe createFromDto(CreateRecipeDto dto){
-        var ingredients = dto.ingredients()
-                .stream()
-                .map(this::createFromDto)
-                .toList();
-
         return Recipe.builder()
                 .productId(dto.productId())
                 .unitsProduced(dto.unitsProduced())
-                .ingredients(ingredients)
                 .observations(dto.observations())
                 .active(true)
                 .build();
     }
 
-    private Ingredient createFromDto(CreateIngredientDto dto){
-        return Ingredient.builder()
-                .quantity(new Quantity(dto.quantity()))
-                .rawMaterialId(dto.rawMaterialId())
-                .observations(dto.observations())
-                .build();
+    public List<Ingredient> createIngredientsFromDto(List<CreateIngredientDto> dto, Long recipeId){
+        return dto.stream().map(ingredientDto ->
+            Ingredient.builder()
+                .recipeId(recipeId)
+                .rawMaterialId(ingredientDto.rawMaterialId())
+                .quantity(new Quantity(ingredientDto.quantity()))
+                .observations(ingredientDto.observations())
+                .build()
+        ).toList();
     }
 }

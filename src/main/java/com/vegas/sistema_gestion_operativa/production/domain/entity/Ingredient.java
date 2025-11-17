@@ -1,5 +1,6 @@
 package com.vegas.sistema_gestion_operativa.production.domain.entity;
 
+import com.vegas.sistema_gestion_operativa.raw_material.domain.entity.RawMaterial;
 import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -26,15 +27,23 @@ public class Ingredient {
     @Column()
     private String observations;
 
-    @Column(nullable = false)
+    @Column(name = "recipe_id", nullable = false, insertable = false, updatable = false)
     private Long recipeId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "recipe_id", nullable = false)
+    private Recipe recipe;
 
     @Column(
             name = "raw_material_id",
             nullable = false,
-            updatable = false,
-            columnDefinition = "BIGINT REFERENCES raw_material(id)"
+            insertable = false,
+            updatable = false
     )
     private Long rawMaterialId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "raw_material_id", nullable = false)
+    private RawMaterial rawMaterial;
 
 }
