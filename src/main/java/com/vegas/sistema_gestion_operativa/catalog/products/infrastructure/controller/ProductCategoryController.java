@@ -4,7 +4,7 @@ import com.vegas.sistema_gestion_operativa.common.dto.PageResponse;
 import com.vegas.sistema_gestion_operativa.common.dto.PaginationRequest;
 import com.vegas.sistema_gestion_operativa.common.utils.PaginationUtils;
 import com.vegas.sistema_gestion_operativa.catalog.products.application.dto.CreateProductCategoryDto;
-import com.vegas.sistema_gestion_operativa.catalog.products.application.dto.ProductCategoryResponseDto;
+import com.vegas.sistema_gestion_operativa.catalog.products.api.ProductCategoryDto;
 import com.vegas.sistema_gestion_operativa.catalog.products.application.dto.UpdateProductCategoryDto;
 import com.vegas.sistema_gestion_operativa.catalog.products.application.service.ProductCategoryService;
 import com.vegas.sistema_gestion_operativa.catalog.products.domain.exceptions.ProductCategoryNameAlreadyExistsException;
@@ -40,9 +40,9 @@ public class ProductCategoryController {
      */
     @GetMapping
     @PreAuthorize("hasPermission(null, 'PRODUCTS_VIEW')")
-    public ResponseEntity<PageResponse<ProductCategoryResponseDto>> findAll(PaginationRequest paginationRequest) {
+    public ResponseEntity<PageResponse<ProductCategoryDto>> findAll(PaginationRequest paginationRequest) {
         Pageable pageable = PaginationUtils.getPageable(paginationRequest);
-        Page<ProductCategoryResponseDto> categoryPage = categoryService.findAll(pageable);
+        Page<ProductCategoryDto> categoryPage = categoryService.findAll(pageable);
         var response = PageResponse.from(categoryPage);
         return ResponseEntity.ok(response);
     }
@@ -55,8 +55,8 @@ public class ProductCategoryController {
      */
     @PostMapping
     @PreAuthorize("hasPermission(null, 'PRODUCTS_CREATE')")
-    public ResponseEntity<ProductCategoryResponseDto> create(@RequestBody @Valid CreateProductCategoryDto dto) throws ProductCategoryNameAlreadyExistsException {
-        ProductCategoryResponseDto category = categoryService.create(dto);
+    public ResponseEntity<ProductCategoryDto> create(@RequestBody @Valid CreateProductCategoryDto dto) throws ProductCategoryNameAlreadyExistsException {
+        ProductCategoryDto category = categoryService.create(dto);
         return ResponseEntity.ok(category);
     }
 
@@ -69,11 +69,11 @@ public class ProductCategoryController {
      */
     @PatchMapping("/{categoryId}")
     @PreAuthorize("hasPermission(null, 'PRODUCTS_EDIT')")
-    public ResponseEntity<ProductCategoryResponseDto> update(
+    public ResponseEntity<ProductCategoryDto> update(
             @PathVariable Long categoryId,
             @RequestBody @Valid UpdateProductCategoryDto dto
     ) throws ProductCategoryNotFoundException {
-        ProductCategoryResponseDto updated = categoryService.update(categoryId, dto);
+        ProductCategoryDto updated = categoryService.update(categoryId, dto);
         return ResponseEntity.ok(updated);
     }
 
@@ -85,8 +85,8 @@ public class ProductCategoryController {
      */
     @DeleteMapping("/{categoryId}")
     @PreAuthorize("hasPermission(null, 'PRODUCTS_DELETE')")
-    public ResponseEntity<ProductCategoryResponseDto> delete(@PathVariable Long categoryId) throws ProductCategoryNotFoundException {
-        ProductCategoryResponseDto deleted = categoryService.delete(categoryId);
+    public ResponseEntity<ProductCategoryDto> delete(@PathVariable Long categoryId) throws ProductCategoryNotFoundException {
+        ProductCategoryDto deleted = categoryService.delete(categoryId);
         return ResponseEntity.ok(deleted);
     }
 }

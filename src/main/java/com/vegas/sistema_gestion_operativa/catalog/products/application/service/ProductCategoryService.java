@@ -1,7 +1,7 @@
 package com.vegas.sistema_gestion_operativa.catalog.products.application.service;
 
 import com.vegas.sistema_gestion_operativa.catalog.products.application.dto.CreateProductCategoryDto;
-import com.vegas.sistema_gestion_operativa.catalog.products.application.dto.ProductCategoryResponseDto;
+import com.vegas.sistema_gestion_operativa.catalog.products.api.ProductCategoryDto;
 import com.vegas.sistema_gestion_operativa.catalog.products.application.dto.UpdateProductCategoryDto;
 import com.vegas.sistema_gestion_operativa.catalog.products.application.factory.ProductCategoryFactory;
 import com.vegas.sistema_gestion_operativa.catalog.products.application.mapper.IProductCategoryMapper;
@@ -30,12 +30,12 @@ public class ProductCategoryService {
         this.categoryMapper = categoryMapper;
     }
 
-    public Page<ProductCategoryResponseDto> findAll(Pageable pageable) {
+    public Page<ProductCategoryDto> findAll(Pageable pageable) {
         Page<ProductCategory> categories = categoryRepository.findAll(pageable);
         return categories.map(categoryMapper::toResponseDto);
     }
 
-    public ProductCategoryResponseDto create(CreateProductCategoryDto dto) throws ProductCategoryNameAlreadyExistsException {
+    public ProductCategoryDto create(CreateProductCategoryDto dto) throws ProductCategoryNameAlreadyExistsException {
         var category = this.categoryRepository.findByName(dto.name());
         if(category.isPresent())
             throw new ProductCategoryNameAlreadyExistsException("Ya existe una categoría con el nombre: " + dto.name());
@@ -44,14 +44,14 @@ public class ProductCategoryService {
         return categoryMapper.toResponseDto(newCategory);
     }
 
-    public ProductCategoryResponseDto update(Long categoryId, UpdateProductCategoryDto dto) throws ProductCategoryNotFoundException {
+    public ProductCategoryDto update(Long categoryId, UpdateProductCategoryDto dto) throws ProductCategoryNotFoundException {
         var category = this.retrieveCategoryById(categoryId);
         var updatedCategory = this.categoryMapper.partialUpdate(dto, category);
         ProductCategory saved = this.categoryRepository.save(updatedCategory);
         return categoryMapper.toResponseDto(saved);
     }
 
-    public ProductCategoryResponseDto delete(Long categoryId) throws ProductCategoryNotFoundException {
+    public ProductCategoryDto delete(Long categoryId) throws ProductCategoryNotFoundException {
         var category = this.retrieveCategoryById(categoryId);
         categoryRepository.delete(category);
         return categoryMapper.toResponseDto(category);

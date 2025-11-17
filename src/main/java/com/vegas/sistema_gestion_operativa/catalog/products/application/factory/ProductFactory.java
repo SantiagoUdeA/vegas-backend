@@ -14,7 +14,6 @@ public class ProductFactory {
 
         return Product.builder()
                 .name(dto.name())
-                .unitOfMeasure(dto.unitOfMeasure())
                 .category(category)
                 .active(true)
                 .build();

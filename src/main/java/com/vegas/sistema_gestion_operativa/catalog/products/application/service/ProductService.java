@@ -1,7 +1,7 @@
 package com.vegas.sistema_gestion_operativa.catalog.products.application.service;
 
 import com.vegas.sistema_gestion_operativa.catalog.products.application.dto.CreateProductDto;
-import com.vegas.sistema_gestion_operativa.catalog.products.application.dto.ProductResponseDto;
+import com.vegas.sistema_gestion_operativa.catalog.products.api.ProductDto;
 import com.vegas.sistema_gestion_operativa.catalog.products.application.dto.UpdateProductDto;
 import com.vegas.sistema_gestion_operativa.catalog.products.application.factory.ProductFactory;
 import com.vegas.sistema_gestion_operativa.catalog.products.application.mapper.IProductMapper;
@@ -35,12 +35,12 @@ public class ProductService {
         this.productMapper = productMapper;
     }
 
-    public Page<ProductResponseDto> findAll(Pageable pageable) {
+    public Page<ProductDto> findAll(Pageable pageable) {
         Page<Product> products = productRepository.findByActiveTrue(pageable);
         return products.map(productMapper::toResponseDto);
     }
 
-    public ProductResponseDto create(CreateProductDto dto) throws ProductCategoryNotFoundException, ProductNameAlreadyExists {
+    public ProductDto create(CreateProductDto dto) throws ProductCategoryNotFoundException, ProductNameAlreadyExists {
 
         if(this.productRepository.findByNameAndActiveTrue(dto.name()).isPresent()){
             throw new ProductNameAlreadyExists("El producto con nombre " + dto.name() + " ya existe");
@@ -54,7 +54,7 @@ public class ProductService {
         return productMapper.toResponseDto(product);
     }
 
-    public ProductResponseDto update(Long productId, UpdateProductDto dto) throws ProductNotFoundException, ProductCategoryNotFoundException {
+    public ProductDto update(Long productId, UpdateProductDto dto) throws ProductNotFoundException, ProductCategoryNotFoundException {
         var product = this.retrieveProductById(productId);
         var category = this.categoryRepository.findById(dto.categoryId())
                 .orElseThrow(() -> new ProductCategoryNotFoundException(
@@ -65,7 +65,7 @@ public class ProductService {
         return productMapper.toResponseDto(saved);
     }
 
-    public ProductResponseDto delete(Long productId) throws ProductNotFoundException {
+    public ProductDto delete(Long productId) throws ProductNotFoundException {
         var product = this.retrieveProductById(productId);
         product.deactivate();
         this.productRepository.save(product);

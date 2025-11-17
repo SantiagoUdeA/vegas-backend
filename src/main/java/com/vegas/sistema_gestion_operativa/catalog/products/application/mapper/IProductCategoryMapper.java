@@ -1,6 +1,6 @@
 package com.vegas.sistema_gestion_operativa.catalog.products.application.mapper;
 
-import com.vegas.sistema_gestion_operativa.catalog.products.application.dto.ProductCategoryResponseDto;
+import com.vegas.sistema_gestion_operativa.catalog.products.api.ProductCategoryDto;
 import com.vegas.sistema_gestion_operativa.catalog.products.application.dto.UpdateProductCategoryDto;
 import com.vegas.sistema_gestion_operativa.catalog.products.domain.entity.ProductCategory;
 import org.mapstruct.*;
@@ -13,8 +13,8 @@ public interface IProductCategoryMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     ProductCategory partialUpdate(UpdateProductCategoryDto dto, @MappingTarget ProductCategory category);
 
-    ProductCategoryResponseDto toResponseDto(ProductCategory category);
+    ProductCategoryDto toResponseDto(ProductCategory category);
 
-    List<ProductCategoryResponseDto> toResponseDtoList(List<ProductCategory> categories);
+    List<ProductCategoryDto> toResponseDtoList(List<ProductCategory> categories);
 }
 

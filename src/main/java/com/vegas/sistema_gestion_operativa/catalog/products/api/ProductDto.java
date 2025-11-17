@@ -1,4 +1,4 @@
-package com.vegas.sistema_gestion_operativa.catalog.products.application.dto;
+package com.vegas.sistema_gestion_operativa.catalog.products.api;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductResponseDto {
+public class ProductDto {
     private Long id;
     private String name;
     private String unitOfMeasure;
-    private ProductCategoryResponseDto category;
+    private ProductCategoryDto category;
 }
 
