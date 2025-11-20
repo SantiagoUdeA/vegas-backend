@@ -12,6 +12,7 @@ public class ProviderFactory {
                 .nit(dto.nit())
                 .name(dto.name())
                 .phoneNumber(dto.phoneNumber())
+                .active(true)
                 .build();
     }
 }
