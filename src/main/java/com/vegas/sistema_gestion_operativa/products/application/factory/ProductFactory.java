@@ -1,5 +1,6 @@
 package com.vegas.sistema_gestion_operativa.products.application.factory;
 
+import com.vegas.sistema_gestion_operativa.common.domain.Money;
 import com.vegas.sistema_gestion_operativa.products.application.dto.CreateProductDto;
 import com.vegas.sistema_gestion_operativa.products.domain.entity.Product;
 import com.vegas.sistema_gestion_operativa.products.domain.entity.ProductCategory;
@@ -15,6 +16,8 @@ public class ProductFactory {
         return Product.builder()
                 .name(dto.name())
                 .category(category)
+                .price(new Money(dto.price()))
+                .branchId(dto.branchId())
                 .active(true)
                 .build();
     }

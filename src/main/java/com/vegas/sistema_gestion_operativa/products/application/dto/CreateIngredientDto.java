@@ -1,4 +1,4 @@
-package com.vegas.sistema_gestion_operativa.production.application.dto;
+package com.vegas.sistema_gestion_operativa.products.application.dto;
 
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;

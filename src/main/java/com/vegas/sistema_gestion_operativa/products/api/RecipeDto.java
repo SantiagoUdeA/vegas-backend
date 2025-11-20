@@ -1,4 +1,4 @@
-package com.vegas.sistema_gestion_operativa.production.application.api;
+package com.vegas.sistema_gestion_operativa.products.api;
 
 import lombok.*;
 

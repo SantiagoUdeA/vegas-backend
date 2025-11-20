@@ -1,7 +1,7 @@
 
 package com.vegas.sistema_gestion_operativa.products.infrastructure.controller;
 
-import com.vegas.sistema_gestion_operativa.production.application.dto.ProductWithRecipeDto;
+import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 import com.vegas.sistema_gestion_operativa.products.api.ProductDto;
 import com.vegas.sistema_gestion_operativa.common.dto.PageResponse;
 import com.vegas.sistema_gestion_operativa.common.dto.PaginationRequest;
@@ -12,6 +12,7 @@ import com.vegas.sistema_gestion_operativa.products.application.service.ProductS
 import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductCategoryNotFoundException;
 import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductNameAlreadyExists;
 import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductNotFoundException;
+import com.vegas.sistema_gestion_operativa.security.AuthUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -33,20 +34,27 @@ public class ProductController {
     @Autowired
     public ProductController(ProductService productService) {
         this.productService = productService;
-
     }
 
     /**
      * Retrieves all products with their recipes and ingredients.
      *
      * @param paginationRequest pagination parameters
+     * @param branchId branch identifier
      * @return paginated list of products with recipes
      */
     @GetMapping
     @PreAuthorize("hasPermission(null, 'PRODUCTS_VIEW')")
-    public ResponseEntity<PageResponse<ProductWithRecipeDto>> getProductsWithRecipes(PaginationRequest paginationRequest) {
+    public ResponseEntity<PageResponse<ProductDto>> findAll(
+            PaginationRequest paginationRequest,
+            @RequestParam Long branchId
+    ) throws AccessDeniedException {
         Pageable pageable = PaginationUtils.getPageable(paginationRequest);
-        Page<ProductWithRecipeDto> page = productService.getProductsWithRecipes(pageable);
+        Page<ProductDto> page = productService.findAll(
+                pageable,
+                AuthUtils.getUserIdFromToken(),
+                branchId
+        );
         return ResponseEntity.ok(PageResponse.from(page));
     }
 
@@ -58,8 +66,10 @@ public class ProductController {
      */
     @PostMapping
     @PreAuthorize("hasPermission(null, 'PRODUCTS_CREATE')")
-    public ResponseEntity<ProductDto> create(@RequestBody @Valid CreateProductDto dto) throws ProductCategoryNotFoundException, ProductNameAlreadyExists {
-        ProductDto product = productService.create(dto);
+    public ResponseEntity<ProductDto> create(
+            @RequestBody @Valid CreateProductDto dto
+    ) throws ProductCategoryNotFoundException, ProductNameAlreadyExists, AccessDeniedException {
+        ProductDto product = productService.create(dto, AuthUtils.getUserIdFromToken());
         return ResponseEntity.ok(product);
     }
 
@@ -75,8 +85,8 @@ public class ProductController {
     public ResponseEntity<ProductDto> update(
             @PathVariable Long productId,
             @RequestBody @Valid UpdateProductDto dto
-    ) throws ProductNotFoundException, ProductCategoryNotFoundException {
-        ProductDto updated = productService.update(productId, dto);
+    ) throws ProductNotFoundException, ProductCategoryNotFoundException, AccessDeniedException {
+        ProductDto updated = productService.update(productId, dto, AuthUtils.getUserIdFromToken());
         return ResponseEntity.ok(updated);
     }
 
@@ -88,8 +98,10 @@ public class ProductController {
      */
     @DeleteMapping("/{productId}")
     @PreAuthorize("hasPermission(null, 'PRODUCTS_DELETE')")
-    public ResponseEntity<ProductDto> delete(@PathVariable Long productId) throws ProductNotFoundException {
-        ProductDto deleted = productService.delete(productId);
+    public ResponseEntity<ProductDto> delete(
+            @PathVariable Long productId
+    ) throws ProductNotFoundException, AccessDeniedException {
+        ProductDto deleted = productService.delete(productId, AuthUtils.getUserIdFromToken());
         return ResponseEntity.ok(deleted);
     }
 }

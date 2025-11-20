@@ -1,4 +1,4 @@
-package com.vegas.sistema_gestion_operativa.production.application.api;
+package com.vegas.sistema_gestion_operativa.products.api;
 
 import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
 import lombok.*;
@@ -16,5 +16,7 @@ public class IngredientDto {
     private Long recipeId;
     private Long rawMaterialId;
     private String unitOfMeasure;
+    private String rawMaterialName;
+    private String rawMaterialUnitOfMeasure;
 
 }

@@ -1,4 +1,4 @@
-package com.vegas.sistema_gestion_operativa.production.domain.entity;
+package com.vegas.sistema_gestion_operativa.products.domain.entity;
 
 import com.vegas.sistema_gestion_operativa.raw_material.domain.entity.RawMaterial;
 import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
@@ -26,9 +26,6 @@ public class Ingredient {
 
     @Column()
     private String observations;
-
-    @Column(name = "recipe_id", nullable = false, insertable = false, updatable = false)
-    private Long recipeId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipe_id", nullable = false)

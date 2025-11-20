@@ -8,7 +8,7 @@ import com.vegas.sistema_gestion_operativa.products.application.mapper.IProductC
 import com.vegas.sistema_gestion_operativa.products.domain.entity.ProductCategory;
 import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductCategoryNameAlreadyExistsException;
 import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductCategoryNotFoundException;
-import com.vegas.sistema_gestion_operativa.products.infrastructure.repository.IProductCategoryRepository;
+import com.vegas.sistema_gestion_operativa.products.domain.repository.IProductCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

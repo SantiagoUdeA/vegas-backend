@@ -68,9 +68,14 @@ public class GlobalExceptionHandler {
                 .map(error -> new FieldErrorResponse(error.getField(), error.getDefaultMessage()))
                 .toList();
 
+        // Obtener el mensaje del primer error de validación
+        String message = fieldErrors.isEmpty()
+                ? "Validación fallida"
+                : fieldErrors.get(0).message();
+
         ValidationErrorResponse response = new ValidationErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
-                "Validación fallida",
+                message,
                 fieldErrors,
                 Instant.now().toString()
         );
@@ -88,11 +93,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ResponseEntity<ValidationErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
-        // Mensaje más claro según el tipo de violación
-        String message = "Violación de integridad de datos.";
-
         // Se extrae el mensaje detallado de la causa raíz
         String detailedMessage = ex.getMostSpecificCause().getMessage();
+
+        // Usar el mensaje detallado como mensaje principal
+        String message = detailedMessage != null && !detailedMessage.isEmpty()
+                ? detailedMessage
+                : "Violación de integridad de datos.";
 
         // Construye la respuesta de error
         ValidationErrorResponse response = new ValidationErrorResponse(

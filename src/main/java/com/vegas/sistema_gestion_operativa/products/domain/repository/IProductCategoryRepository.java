@@ -1,4 +1,4 @@
-package com.vegas.sistema_gestion_operativa.products.infrastructure.repository;
+package com.vegas.sistema_gestion_operativa.products.domain.repository;
 
 import com.vegas.sistema_gestion_operativa.products.domain.entity.ProductCategory;
 import org.springframework.data.jpa.repository.JpaRepository;

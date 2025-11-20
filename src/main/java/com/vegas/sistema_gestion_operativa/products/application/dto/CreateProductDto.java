@@ -1,7 +1,10 @@
 package com.vegas.sistema_gestion_operativa.products.application.dto;
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import org.hibernate.validator.constraints.Length;
+
+import java.math.BigDecimal;
 
 public record CreateProductDto(
         @NotNull(message = "El nombre del producto es obligatorio")
@@ -9,6 +12,13 @@ public record CreateProductDto(
         String name,
 
         @NotNull(message = "La categoría es obligatoria")
-        Long categoryId
+        Long categoryId,
+
+        @NotNull(message = "El precio es obligatorio")
+        @Positive(message = "El precio debe ser mayor a 0")
+        BigDecimal price,
+
+        @NotNull(message = "La sede es obligatoria")
+        Long branchId
 ) {}
 
