@@ -2,6 +2,8 @@ package com.vegas.sistema_gestion_operativa.products.application.service;
 
 import com.vegas.sistema_gestion_operativa.branches.IBranchApi;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
+import com.vegas.sistema_gestion_operativa.products.api.IProductApi;
+import com.vegas.sistema_gestion_operativa.products.api.IngredientDto;
 import com.vegas.sistema_gestion_operativa.products.application.dto.CreateProductDto;
 import com.vegas.sistema_gestion_operativa.products.api.ProductDto;
 import com.vegas.sistema_gestion_operativa.products.application.dto.UpdateProductDto;
@@ -19,8 +21,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
-public class ProductService {
+public class ProductService implements IProductApi {
 
     private final ProductFactory productFactory;
     private final IProductRepository productRepository;
@@ -105,5 +110,14 @@ public class ProductService {
     private Product retrieveProductById(Long id) throws ProductNotFoundException {
         return this.productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException("El producto con id " + id + " no fue encontrado"));
+    }
+
+    @Override
+    public Optional<List<IngredientDto>> getRawMaterialIngredients(Long productId) throws ProductNotFoundException {
+        var product = this.retrieveProductById(productId);
+        if(product.getRecipe() == null) {
+            return Optional.empty();
+        }
+        return Optional.of(product.getRecipe().getIngredients().stream().map(productMapper::toIngredientDto).toList());
     }
 }

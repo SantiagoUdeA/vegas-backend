@@ -1,8 +1,7 @@
-package com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.entity;
+package com.vegas.sistema_gestion_operativa.products_inventory.domain.entity;
 
 import com.vegas.sistema_gestion_operativa.common.domain.Money;
 import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
-import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.exceptions.NotEnoughStockException;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -15,19 +14,28 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
-public class RawMaterialInventory {
+public class ProductInventory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(
-            name = "raw_material_id",
-            nullable = false,
-            updatable = false,
-            columnDefinition = "BIGINT REFERENCES raw_material(id)"
+    @Embedded
+    @AttributeOverride(
+            name = "value",
+            column = @Column(name = "current_stock", precision = 19, scale = 4)
     )
-    private Long rawMaterialId;
+    private Quantity currentStock;
+
+    /*
+     * Costo promedio del producto en inventario
+     */
+    @Embedded
+    @AttributeOverride(
+            name = "value",
+            column = @Column(name = "average_cost", precision = 19, scale = 4)
+    )
+    private Money averageCost;
 
     @Column(
             name = "branch_id",
@@ -37,24 +45,24 @@ public class RawMaterialInventory {
     )
     private Long branchId;
 
-    @Embedded
-    @AttributeOverride(
-            name = "value",
-            column = @Column(name = "current_stock", precision = 19, scale = 4)
+    @Column(
+            name = "product_id",
+            nullable = false,
+            updatable = false,
+            columnDefinition = "BIGINT REFERENCES product(id)"
     )
-    private Quantity currentStock;
-
-    @Embedded
-    @AttributeOverride(
-            name = "value",
-            column = @Column(name = "average_cost", precision = 19, scale = 4)
-    )
-    private Money averageCost;
+    private Long productId;
 
     @Column
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    /**
+     * Agrega stock al inventario y recalcula el costo promedio ponderado
+     *
+     * @param quantity cantidad a agregar
+     * @param unitCost costo unitario del lote entrante
+     */
     public void addStock(Quantity quantity, Money unitCost) {
         // Calcular valor del inventario actual
         Money currentValue = this.averageCost.multiply(this.currentStock);
@@ -68,19 +76,23 @@ public class RawMaterialInventory {
         // Calcular nuevo stock
         Quantity newStock = this.currentStock.add(quantity);
 
-        // Calcular nuevo costo promedio usando los value objects
+        // Calcular nuevo costo promedio
         Money newAverageCost = totalValue.divide(newStock);
 
         this.currentStock = newStock;
         this.averageCost = newAverageCost;
     }
 
-    public void reduceStock(Quantity quantity) throws NotEnoughStockException {
+    /**
+     * Reduce el stock del inventario
+     *
+     * @param quantity cantidad a reducir
+     * @throws IllegalArgumentException si la cantidad es mayor al stock disponible
+     */
+    public void reduceStock(Quantity quantity) {
         if (this.currentStock.getValue().compareTo(quantity.getValue()) < 0) {
-            throw new NotEnoughStockException("No hay suficiente stock para realizar esta operación.");
+            throw new IllegalArgumentException("Stock insuficiente");
         }
         this.currentStock = this.currentStock.subtract(quantity);
     }
-
-
 }

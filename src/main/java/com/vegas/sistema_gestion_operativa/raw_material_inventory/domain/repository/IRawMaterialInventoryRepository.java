@@ -30,4 +30,6 @@ public interface IRawMaterialInventoryRepository extends JpaRepository<RawMateri
     List<RawMaterialInventoryItemDto> findInventoryItemsByBranchId(@Param("branchId") Long branchId);
 
     Optional<RawMaterialInventory> findByRawMaterialIdAndBranchId(@NotNull(message = "El ID del material prima no puede ser nulo") Long rawMaterialId, @NotNull(message = "El ID de la sede no puede ser nulo") Long branchId);
+
+    List<RawMaterialInventory> findByRawMaterialIdIn(List<Long> rawMaterialIds);
 }

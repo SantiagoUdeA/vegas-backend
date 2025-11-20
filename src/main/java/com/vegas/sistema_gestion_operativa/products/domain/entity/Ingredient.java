@@ -31,6 +31,7 @@ public class Ingredient {
     @JoinColumn(name = "recipe_id", nullable = false)
     private Recipe recipe;
 
+    // TODO Delete this
     @Column(
             name = "raw_material_id",
             nullable = false,

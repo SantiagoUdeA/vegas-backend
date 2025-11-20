@@ -4,12 +4,15 @@ import com.vegas.sistema_gestion_operativa.branches.IBranchApi;
 import com.vegas.sistema_gestion_operativa.common.domain.Money;
 import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
+import com.vegas.sistema_gestion_operativa.raw_material_inventory.IRawMaterialInventoryApi;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.appliaction.dto.RawMaterialBatchDto;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.appliaction.dto.RawMaterialInventoryItemDto;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.appliaction.dto.RegisterRawMaterialBatchDto;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.appliaction.dto.RegisterRawMaterialDto;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.appliaction.factory.RawMaterialInventoryFactory;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.entity.RawMaterialBatch;
+import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.entity.RawMaterialInventory;
+import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.exceptions.NotEnoughStockException;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.repository.IRawMateriaBatchRepository;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.repository.IRawMaterialInventoryRepository;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.repository.IRawMaterialMovementRepository;
@@ -21,10 +24,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
-public class RawMaterialInventoryService {
+public class RawMaterialInventoryService implements IRawMaterialInventoryApi {
 
     private final IRawMaterialInventoryRepository rawMaterialInventoryRepository;
     private final RawMaterialInventoryFactory rawMaterialFactory;
@@ -118,5 +124,42 @@ public class RawMaterialInventoryService {
     public List<RawMaterialInventoryItemDto> getInventoryByBranchId(Long branchId, String userId) throws com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException {
         branchApi.assertUserHasAccessToBranch(userId, branchId);
         return rawMaterialInventoryRepository.findInventoryItemsByBranchId(branchId);
+    }
+
+    @Transactional
+    public void reduceStock(Map<Long, Quantity> quantities) throws NotEnoughStockException {
+
+        // 1. Obtener todos los inventarios afectados
+        List<RawMaterialInventory> items =
+                rawMaterialInventoryRepository.findByRawMaterialIdIn(
+                        new ArrayList<>(quantities.keySet())
+                );
+
+        // 2. Convertir a mapa para acceso O(1)
+        Map<Long, RawMaterialInventory> inventoryMap = items.stream()
+                .collect(Collectors.toMap(RawMaterialInventory::getRawMaterialId, i -> i));
+
+        // 3. Validar existencia y stock suficiente
+        for (var entry : quantities.entrySet()) {
+            Long rawMaterialId = entry.getKey();
+            RawMaterialInventory item = inventoryMap.get(rawMaterialId);
+
+            if (item == null) {
+                throw new NotEnoughStockException(
+                        // TODO Especificar el nombre de la materia prima
+                        "No hay suficiente inventario para una de las materias primas (id: " + rawMaterialId + ")"
+                );
+            }
+        }
+
+        // 4. Reducir el stock ahora que todos ya está validado
+        for (Map.Entry<Long, Quantity> entry : quantities.entrySet()) {
+            Long id = entry.getKey();
+            Quantity qty = entry.getValue();
+            inventoryMap.get(id).reduceStock(qty);
+        }
+
+        // 5. Guardar all en batch
+        rawMaterialInventoryRepository.saveAll(inventoryMap.values());
     }
 }

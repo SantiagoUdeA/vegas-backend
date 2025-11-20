@@ -31,12 +31,23 @@ public class Quantity {
         this.value = BigDecimal.valueOf(value).setScale(4, RoundingMode.HALF_UP);
     }
 
+    public Quantity(Integer value) {
+        if (value == null || value < 0) {
+            throw new IllegalArgumentException("La cantidad no puede ser negativa");
+        }
+        this.value = BigDecimal.valueOf(value).setScale(4, RoundingMode.HALF_UP);
+    }
+
     public Quantity add(Quantity other) {
         return new Quantity(this.value.add(other.value));
     }
 
     public Quantity subtract(Quantity other) {
         return new Quantity(this.value.subtract(other.value));
+    }
+
+    public Quantity multiply(Quantity other) {
+        return new Quantity(this.value.multiply(other.value));
     }
 
     @JsonValue
