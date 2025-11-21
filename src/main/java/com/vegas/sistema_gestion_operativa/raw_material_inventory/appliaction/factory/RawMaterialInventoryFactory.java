@@ -43,7 +43,7 @@ public class RawMaterialInventoryFactory {
                 .rawMaterialBatchId(batchId)
                 .userId(userId)
                 .movementDate(LocalDateTime.now())
-                .quantity(dto.quantity())
+                .quantity(new Quantity(dto.quantity()))
                 .build();
 
     }

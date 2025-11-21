@@ -1,5 +1,7 @@
 package com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.entity;
 
+import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
+import io.cucumber.java.ca.Quan;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -18,8 +20,8 @@ public class RawMaterialMovement {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Double quantity;
+    @Embedded
+    private Quantity quantity;
 
     @CreationTimestamp
     @Column(nullable = false)
