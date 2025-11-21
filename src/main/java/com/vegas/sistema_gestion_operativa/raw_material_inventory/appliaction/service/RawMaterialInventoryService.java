@@ -10,6 +10,7 @@ import com.vegas.sistema_gestion_operativa.raw_material_inventory.appliaction.dt
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.appliaction.dto.RegisterRawMaterialBatchDto;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.appliaction.dto.RegisterRawMaterialDto;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.appliaction.factory.RawMaterialInventoryFactory;
+import com.vegas.sistema_gestion_operativa.raw_material_inventory.appliaction.factory.RawMaterialMovementFactory;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.entity.RawMaterialBatch;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.entity.RawMaterialInventory;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.exceptions.NotEnoughStockException;
@@ -34,14 +35,16 @@ public class RawMaterialInventoryService implements IRawMaterialInventoryApi {
 
     private final IRawMaterialInventoryRepository rawMaterialInventoryRepository;
     private final RawMaterialInventoryFactory rawMaterialFactory;
+    private final RawMaterialMovementFactory rawMaterialMovementFactory;
     private final IBranchApi branchApi;
     private final IRawMateriaBatchRepository rawMateriaBatchRepository;
     private final IRawMaterialMovementRepository rawMaterialMovementRepository;
 
     @Autowired
-    public RawMaterialInventoryService(IRawMaterialInventoryRepository rawMaterialInventoryRepository, RawMaterialInventoryFactory rawMaterialFactory, IBranchApi branchApi, IRawMateriaBatchRepository rawMateriaBatchRepository, IRawMaterialMovementRepository rawMaterialMovementRepository) {
+    public RawMaterialInventoryService(IRawMaterialInventoryRepository rawMaterialInventoryRepository, RawMaterialInventoryFactory rawMaterialFactory, RawMaterialMovementFactory rawMaterialMovementFactory, IBranchApi branchApi, IRawMateriaBatchRepository rawMateriaBatchRepository, IRawMaterialMovementRepository rawMaterialMovementRepository) {
         this.rawMaterialInventoryRepository = rawMaterialInventoryRepository;
         this.rawMaterialFactory = rawMaterialFactory;
+        this.rawMaterialMovementFactory = rawMaterialMovementFactory;
         this.branchApi = branchApi;
         this.rawMateriaBatchRepository = rawMateriaBatchRepository;
         this.rawMaterialMovementRepository = rawMaterialMovementRepository;
@@ -91,7 +94,7 @@ public class RawMaterialInventoryService implements IRawMaterialInventoryApi {
         rawMaterialInventoryRepository.save(inventory);
 
         // Registrar el movimiento del lote de materia prima
-        var test = this.rawMaterialFactory.createMovementFromDto(
+        var test = this.rawMaterialMovementFactory.createMovementFromDto(
                 dto,
                 rawMaterialBatch.getId(),
                 userId

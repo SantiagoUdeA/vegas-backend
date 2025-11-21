@@ -37,15 +37,4 @@ public class RawMaterialInventoryFactory {
                 .build();
     }
 
-    public RawMaterialMovement createMovementFromDto(RegisterRawMaterialBatchDto dto, Long batchId, String userId) {
-        return RawMaterialMovement.builder()
-                .movementReason(MovementReason.ENTRY)
-                .rawMaterialBatchId(batchId)
-                .userId(userId)
-                .movementDate(LocalDateTime.now())
-                .quantity(new Quantity(dto.quantity()))
-                .build();
-
-    }
-
 }
