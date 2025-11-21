@@ -13,12 +13,14 @@ import com.vegas.sistema_gestion_operativa.raw_material.domain.exceptions.RawMat
 import com.vegas.sistema_gestion_operativa.raw_material.infrastructure.repository.IRawMaterialCategoryRepository;
 import com.vegas.sistema_gestion_operativa.raw_material.infrastructure.repository.IRawMaterialRepository;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class RawMaterialService {
 
     private final RawMaterialFactory rawMaterialFactory;
@@ -26,18 +28,6 @@ public class RawMaterialService {
     private final IRawMaterialCategoryRepository categoryRepository;
     private final IRawMaterialMapper rawMaterialMapper;
     private final IBranchApi branchApi;
-
-    @Autowired
-    public RawMaterialService(RawMaterialFactory rawMaterialFactory,
-                              IRawMaterialRepository rawMaterialRepository,
-                              IRawMaterialCategoryRepository categoryRepository,
-                              IRawMaterialMapper rawMaterialMapper, IBranchApi branchApi) {
-        this.rawMaterialFactory = rawMaterialFactory;
-        this.rawMaterialRepository = rawMaterialRepository;
-        this.categoryRepository = categoryRepository;
-        this.rawMaterialMapper = rawMaterialMapper;
-        this.branchApi = branchApi;
-    }
 
     public Page<RawMaterialResponseDto> findAll(
             Pageable pageable,
