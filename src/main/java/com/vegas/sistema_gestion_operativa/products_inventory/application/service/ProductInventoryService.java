@@ -88,12 +88,14 @@ public class ProductInventoryService {
             Map<Long, Quantity> cantidadesAReducir = new HashMap<>();
             for (var ingredient : productIngredients.get()) {
                 cantidadesAReducir.put(
-                        ingredient.getId(),
+                        ingredient.getRawMaterialId(),
                         ingredient.getQuantity().multiply(entryQuantity)
                 );
             }
-            this.rawMaterialInventoryApi.reduceStock(cantidadesAReducir);
+            this.rawMaterialInventoryApi.reduceStock(cantidadesAReducir, userId);
         }
+
+        // Registrar el movimiento del inventario de productos
 
         // Guardar y retornar el inventario actualizado
         ProductInventory saved = productInventoryRepository.save(inventory);

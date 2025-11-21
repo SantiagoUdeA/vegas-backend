@@ -11,8 +11,10 @@ import com.vegas.sistema_gestion_operativa.raw_material_inventory.appliaction.dt
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.appliaction.dto.RegisterRawMaterialDto;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.appliaction.factory.RawMaterialInventoryFactory;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.appliaction.factory.RawMaterialMovementFactory;
+import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.entity.MovementReason;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.entity.RawMaterialBatch;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.entity.RawMaterialInventory;
+import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.entity.RawMaterialMovement;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.exceptions.NotEnoughStockException;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.repository.IRawMateriaBatchRepository;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.repository.IRawMaterialInventoryRepository;
@@ -130,7 +132,7 @@ public class RawMaterialInventoryService implements IRawMaterialInventoryApi {
     }
 
     @Transactional
-    public void reduceStock(Map<Long, Quantity> quantities) throws NotEnoughStockException {
+    public void reduceStock(Map<Long, Quantity> quantities, String userId) throws NotEnoughStockException {
 
         // 1. Obtener todos los inventarios afectados
         List<RawMaterialInventory> items =
@@ -156,13 +158,22 @@ public class RawMaterialInventoryService implements IRawMaterialInventoryApi {
         }
 
         // 4. Reducir el stock ahora que todos ya está validado
+        List<RawMaterialMovement> movements = new ArrayList<>();
         for (Map.Entry<Long, Quantity> entry : quantities.entrySet()) {
             Long id = entry.getKey();
             Quantity qty = entry.getValue();
             inventoryMap.get(id).reduceStock(qty);
+            movements.add(RawMaterialMovement.builder()
+                    .movementReason(MovementReason.PRODUCTION)
+                    .userId(userId)
+                    .movementDate(java.time.LocalDateTime.now())
+                    .quantity(qty)
+                    .build()
+            );
         }
 
-        // 5. Guardar all en batch
+        // 5. Guardar la información de inventario y movimientos
+        rawMaterialMovementRepository.saveAll(movements);
         rawMaterialInventoryRepository.saveAll(inventoryMap.values());
     }
 }

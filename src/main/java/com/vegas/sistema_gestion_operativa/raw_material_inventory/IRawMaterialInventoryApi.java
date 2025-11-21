@@ -7,5 +7,5 @@ import java.util.Map;
 
 public interface IRawMaterialInventoryApi {
 
-    public void reduceStock(Map<Long, Quantity> rawMaterialQuantities) throws NotEnoughStockException;
+    public void reduceStock(Map<Long, Quantity> rawMaterialQuantities, String userId) throws NotEnoughStockException;
 }
