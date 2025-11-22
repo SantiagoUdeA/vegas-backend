@@ -13,7 +13,7 @@ public class RawMaterialMovementFactory {
 
     public RawMaterialMovement createMovementFromDto(RegisterRawMaterialBatchDto dto, Long batchId, String userId) {
         return RawMaterialMovement.builder()
-                .movementReason(MovementReason.ENTRY)
+                .movementReason(MovementReason.ENTRADA)
                 .rawMaterialBatchId(batchId)
                 .rawMaterialId(dto.rawMaterialId())
                 .userId(userId)
