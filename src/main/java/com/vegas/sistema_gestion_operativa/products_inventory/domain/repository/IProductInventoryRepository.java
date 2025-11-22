@@ -37,6 +37,7 @@ public interface IProductInventoryRepository extends JpaRepository<ProductInvent
 
     @Query(value = """
         SELECT
+            pi.id AS id,
             p.name AS productName,
             pc.name AS categoryName,
             pi.current_stock AS currentStock,
