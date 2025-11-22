@@ -25,7 +25,7 @@ public interface IProductInventoryRepository extends JpaRepository<ProductInvent
      */
     @Query(
             """
-            SELECT COALESCE(SUM(i.quantity.value * rmi.averageCost.value) / r.unitsProduced, 0.0)
+            SELECT COALESCE(SUM(i.quantity.value * rmi.averageCost.value) / MAX(r.unitsProduced), 0.0)
             FROM Ingredient i
             JOIN Recipe r ON i.recipe.id = r.id
             JOIN RawMaterialInventory rmi ON i.rawMaterialId = rmi.rawMaterialId
