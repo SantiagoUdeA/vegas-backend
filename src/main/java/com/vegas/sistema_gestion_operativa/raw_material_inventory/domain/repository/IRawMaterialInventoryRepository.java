@@ -16,6 +16,7 @@ public interface IRawMaterialInventoryRepository extends JpaRepository<RawMateri
 
     @Query(value = """
     SELECT\s
+        rmi.id AS id,
         rm.name AS rawMaterialName,
         rmc.name AS categoryName,
         rm.unit_of_measure AS unitOfMeasure,

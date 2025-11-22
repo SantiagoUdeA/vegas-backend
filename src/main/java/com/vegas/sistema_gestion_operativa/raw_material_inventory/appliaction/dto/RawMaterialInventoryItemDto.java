@@ -3,6 +3,7 @@ package com.vegas.sistema_gestion_operativa.raw_material_inventory.appliaction.d
 import java.time.LocalDateTime;
 
 public interface RawMaterialInventoryItemDto {
+    Long getId();
     String getRawMaterialName();
     String getCategoryName();
     String getUnitOfMeasure();
