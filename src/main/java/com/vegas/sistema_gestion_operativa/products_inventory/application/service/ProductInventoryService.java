@@ -11,8 +11,10 @@ import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.Pr
 import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.ProductInventoryResponseDto;
 import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.RegisterProductStockDto;
 import com.vegas.sistema_gestion_operativa.products_inventory.application.factory.ProductInventoryFactory;
+import com.vegas.sistema_gestion_operativa.products_inventory.application.factory.ProductInventoryMovementFactory;
 import com.vegas.sistema_gestion_operativa.products_inventory.application.mapper.ProductInventoryMapper;
 import com.vegas.sistema_gestion_operativa.products_inventory.domain.entity.ProductInventory;
+import com.vegas.sistema_gestion_operativa.products_inventory.domain.repository.IProductInventoryMovementRepository;
 import com.vegas.sistema_gestion_operativa.products_inventory.domain.repository.IProductInventoryRepository;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.IRawMaterialInventoryApi;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +36,8 @@ public class ProductInventoryService {
     private final IBranchApi branchApi;
     private final IProductApi productApi;
     private final IRawMaterialInventoryApi rawMaterialInventoryApi;
+    private final ProductInventoryMovementFactory productInventoryMovementFactory;
+    private final IProductInventoryMovementRepository productInventoryMovementRepository;
 
     /**
      * Obtiene el inventario de productos de una sede específica con paginación.
@@ -95,10 +99,14 @@ public class ProductInventoryService {
             this.rawMaterialInventoryApi.reduceStock(cantidadesAReducir, userId);
         }
 
-        // Registrar el movimiento del inventario de productos
-
-        // Guardar y retornar el inventario actualizado
+        // Guardar  el inventario actualizado
         ProductInventory saved = productInventoryRepository.save(inventory);
+
+        // Registrar movimiento en el inventario de productos
+        this.productInventoryMovementRepository.save(
+                this.productInventoryMovementFactory.createFromDto(dto, userId)
+        );
+
         return productInventoryMapper.toResponseDto(saved);
     }
 }
