@@ -160,16 +160,15 @@ public class RawMaterialInventoryService implements IRawMaterialInventoryApi {
         // 4. Reducir el stock ahora que todos ya está validado
         List<RawMaterialMovement> movements = new ArrayList<>();
         for (Map.Entry<Long, Quantity> entry : quantities.entrySet()) {
-            Long id = entry.getKey();
-            Quantity qty = entry.getValue();
-            inventoryMap.get(id).reduceStock(qty);
-            movements.add(RawMaterialMovement.builder()
-                    .movementReason(MovementReason.PRODUCTION)
-                    .userId(userId)
-                    .movementDate(java.time.LocalDateTime.now())
-                    .quantity(qty)
-                    .build()
-            );
+            Long rawMaterialId = entry.getKey();
+            Quantity quantity = entry.getValue();
+            inventoryMap.get(rawMaterialId).reduceStock(quantity);
+            movements.add(rawMaterialMovementFactory.createMovementForAdjustment(
+                    rawMaterialId,
+                    quantity,
+                    MovementReason.PRODUCT_ENTRY,
+                    userId
+            ));
         }
 
         // 5. Guardar la información de inventario y movimientos

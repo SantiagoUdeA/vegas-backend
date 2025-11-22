@@ -15,10 +15,20 @@ public class RawMaterialMovementFactory {
         return RawMaterialMovement.builder()
                 .movementReason(MovementReason.ENTRY)
                 .rawMaterialBatchId(batchId)
+                .rawMaterialId(dto.rawMaterialId())
                 .userId(userId)
                 .movementDate(LocalDateTime.now())
                 .quantity(new Quantity(dto.quantity()))
                 .build();
+    }
 
+    public RawMaterialMovement createMovementForAdjustment(Long rawMaterialId, Quantity quantity, MovementReason reason, String userId) {
+        return RawMaterialMovement.builder()
+                .movementReason(reason)
+                .rawMaterialId(rawMaterialId)
+                .userId(userId)
+                .movementDate(LocalDateTime.now())
+                .quantity(quantity)
+                .build();
     }
 }

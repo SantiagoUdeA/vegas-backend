@@ -6,6 +6,7 @@ import com.vegas.sistema_gestion_operativa.roles.domain.Role;
 import java.util.Arrays;
 
 public enum MovementReason {
+    PRODUCT_ENTRY,
     ENTRY,
     PRODUCTION,
     PURCHASE,

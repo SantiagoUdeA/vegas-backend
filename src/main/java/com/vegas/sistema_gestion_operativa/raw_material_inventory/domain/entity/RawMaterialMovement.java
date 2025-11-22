@@ -1,7 +1,6 @@
 package com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.entity;
 
 import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
-import io.cucumber.java.ca.Quan;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -38,6 +37,14 @@ public class RawMaterialMovement {
             columnDefinition = "BIGINT REFERENCES raw_material_batch(id)"
     )
     private Long rawMaterialBatchId;
+
+    @Column(
+            name = "raw_material_id",
+            nullable = false,
+            updatable = false,
+            columnDefinition = "BIGINT REFERENCES raw_material(id)"
+    )
+    private Long rawMaterialId;
 
     @Column(
             name = "user_id",
