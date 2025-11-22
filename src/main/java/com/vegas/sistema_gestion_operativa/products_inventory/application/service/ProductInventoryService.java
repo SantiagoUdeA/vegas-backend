@@ -87,10 +87,11 @@ public class ProductInventoryService {
         inventory.addStock(entryQuantity, unitCost);
 
         // Llamada al inventario de materias primas para reducir el stock si existe una fórmula
-        var productIngredients = productApi.getRawMaterialIngredients(dto.productId());
-        if(productIngredients.isPresent()){
+        var recipe = productApi.getIngredientsForProductUnit(dto.productId());
+
+        if(recipe.isPresent()){
             Map<Long, Quantity> cantidadesAReducir = new HashMap<>();
-            for (var ingredient : productIngredients.get()) {
+            for (var ingredient : recipe.get()) {
                 cantidadesAReducir.put(
                         ingredient.getRawMaterialId(),
                         ingredient.getQuantity().multiply(entryQuantity)

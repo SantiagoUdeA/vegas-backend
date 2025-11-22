@@ -34,7 +34,6 @@ public interface IProductMapper {
 
     // Mapeo de Ingredient a IngredientDto (para ProductDto)
     @Mapping(target = "recipeId", source = "recipe.id")
-    @Mapping(target = "unitOfMeasure", expression = "java(ingredient.getRawMaterial() != null ? ingredient.getRawMaterial().getUnitOfMeasure().name() : null)")
     @Mapping(target = "rawMaterialName", source = "rawMaterial.name")
     @Mapping(target = "rawMaterialUnitOfMeasure", expression = "java(ingredient.getRawMaterial() != null ? ingredient.getRawMaterial().getUnitOfMeasure().name() : null)")
     com.vegas.sistema_gestion_operativa.products.api.IngredientDto toIngredientDto(Ingredient ingredient);

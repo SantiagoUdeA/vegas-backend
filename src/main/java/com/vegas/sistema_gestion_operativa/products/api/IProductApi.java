@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface IProductApi {
 
-    Optional<List<IngredientDto>> getRawMaterialIngredients(@NotNull(message = "El ID del producto es obligatorio") Long productId) throws ProductNotFoundException;
+    Optional<List<IngredientDto>> getIngredientsForProductUnit(@NotNull(message = "El ID del producto es obligatorio") Long productId) throws ProductNotFoundException;
 }

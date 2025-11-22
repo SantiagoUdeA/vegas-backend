@@ -1,6 +1,7 @@
 package com.vegas.sistema_gestion_operativa.products.application.service;
 
 import com.vegas.sistema_gestion_operativa.branches.IBranchApi;
+import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 import com.vegas.sistema_gestion_operativa.products.api.IProductApi;
 import com.vegas.sistema_gestion_operativa.products.api.IngredientDto;
@@ -113,11 +114,15 @@ public class ProductService implements IProductApi {
     }
 
     @Override
-    public Optional<List<IngredientDto>> getRawMaterialIngredients(Long productId) throws ProductNotFoundException {
-        var product = this.retrieveProductById(productId);
-        if(product.getRecipe() == null) {
+    public Optional<List<IngredientDto>> getIngredientsForProductUnit(Long productId) throws ProductNotFoundException {
+        var recipe = this.retrieveProductById(productId).getRecipe();
+        if(recipe == null) {
             return Optional.empty();
         }
-        return Optional.of(product.getRecipe().getIngredients().stream().map(productMapper::toIngredientDto).toList());
+        return Optional.of(recipe.getIngredients().stream().map(ingredient -> IngredientDto.builder()
+                .id(ingredient.getId())
+                .rawMaterialId(ingredient.getRawMaterialId())
+                .quantity(ingredient.getQuantity().divide(new Quantity(recipe.getUnitsProduced())))
+                .build()).toList());
     }
 }

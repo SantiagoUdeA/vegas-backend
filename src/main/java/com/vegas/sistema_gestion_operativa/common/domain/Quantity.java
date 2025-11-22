@@ -50,6 +50,10 @@ public class Quantity {
         return new Quantity(this.value.multiply(other.value));
     }
 
+    public Quantity divide(Quantity other) {
+        return new Quantity(this.value.divide(other.value, 4, RoundingMode.HALF_UP));
+    }
+
     @JsonValue
     public BigDecimal getValue() {
         return value;
