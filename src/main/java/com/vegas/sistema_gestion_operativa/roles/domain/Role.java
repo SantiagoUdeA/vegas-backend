@@ -32,7 +32,8 @@ public enum Role {
                     PRODUCTS_VIEW,
                     RAW_MATERIALS_VIEW,
                     REPORTS_VIEW,
-                    DASHBOARD_VIEW
+                    DASHBOARD_VIEW,
+                    PROVIDERS_CREATE, PROVIDERS_EDIT, PROVIDERS_VIEW, PROVIDERS_DELETE
             )
     ),
 

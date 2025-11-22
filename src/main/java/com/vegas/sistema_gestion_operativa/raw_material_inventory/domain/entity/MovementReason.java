@@ -7,6 +7,7 @@ import java.util.Arrays;
 
 public enum MovementReason {
     PRODUCT_ENTRY,
+    SALIDA,
     ENTRY,
     PRODUCTION,
     PURCHASE,

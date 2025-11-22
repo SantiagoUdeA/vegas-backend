@@ -166,7 +166,7 @@ public class RawMaterialInventoryService implements IRawMaterialInventoryApi {
             movements.add(rawMaterialMovementFactory.createMovementForAdjustment(
                     rawMaterialId,
                     quantity,
-                    MovementReason.PRODUCT_ENTRY,
+                    MovementReason.SALIDA,
                     userId
             ));
         }
