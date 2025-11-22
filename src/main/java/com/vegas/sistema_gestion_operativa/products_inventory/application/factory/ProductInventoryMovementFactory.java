@@ -14,7 +14,7 @@ public class ProductInventoryMovementFactory {
     public final ProductInventoryMovement createFromDto(RegisterProductStockDto dto, String userId){
         return ProductInventoryMovement.builder()
                 .productId(dto.productId())
-                .movementReason(MovementReason.PRODUCT_ENTRY)
+                .movementReason(MovementReason.ENTRADA)
                 .quantity(new Quantity(dto.quantity()))
                 .userId(userId)
                 .movementDate(LocalDateTime.now())
