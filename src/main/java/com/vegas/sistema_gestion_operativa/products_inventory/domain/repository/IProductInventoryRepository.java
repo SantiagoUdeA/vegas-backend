@@ -14,9 +14,18 @@ public interface IProductInventoryRepository extends JpaRepository<ProductInvent
 
     Optional<ProductInventory> findByProductId(Long productId);
 
+    /*
+        Se suma el costo total de todos los ingredientes (cantidad × costo de cada uno)
+        y luego se divide entre unitsProduced
+
+        Si una receta usa 10 kg de harina que cuesta 5 $/kg = 50 $
+        Y usa 2 kg de azúcar que cuesta 3 $/kg = 6 $ total
+        Costo total de materias primas = $56
+        Si la receta produce 20 unidades, entonces el costo por unidad = 56 $ / 20 = 2.80$
+     */
     @Query(
             """
-            SELECT COALESCE(SUM(i.quantity.value * rmi.averageCost.value), 0.0)
+            SELECT COALESCE(SUM(i.quantity.value * rmi.averageCost.value) / r.unitsProduced, 0.0)
             FROM Ingredient i
             JOIN Recipe r ON i.recipe.id = r.id
             JOIN RawMaterialInventory rmi ON i.rawMaterialId = rmi.rawMaterialId
@@ -46,6 +55,5 @@ public interface IProductInventoryRepository extends JpaRepository<ProductInvent
     nativeQuery = true)
     Page<ProductInventoryItemDto> findInventoryItemsByBranchId(@Param("branchId") Long branchId, Pageable pageable);
 
-    Page<ProductInventory> findByBranchId(Long branchId, Pageable pageable);
 }
 
