@@ -36,8 +36,8 @@ public class Product {
     )
     private Money price;
 
-    @OneToOne(mappedBy = "product", fetch = FetchType.LAZY)
-    @JoinColumn(name = "address_id", referencedColumnName = "id")
+    @OneToOne(mappedBy = "product")
+    @JoinColumn(name = "id")
     private Recipe recipe;
 
     @Column(
