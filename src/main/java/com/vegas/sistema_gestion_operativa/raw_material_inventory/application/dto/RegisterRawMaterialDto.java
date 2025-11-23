@@ -1,4 +1,4 @@
-package com.vegas.sistema_gestion_operativa.raw_material_inventory.appliaction.dto;
+package com.vegas.sistema_gestion_operativa.raw_material_inventory.application.dto;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;

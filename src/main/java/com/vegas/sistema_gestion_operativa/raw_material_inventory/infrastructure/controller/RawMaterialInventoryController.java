@@ -1,8 +1,8 @@
 package com.vegas.sistema_gestion_operativa.raw_material_inventory.infrastructure.controller;
 
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
-import com.vegas.sistema_gestion_operativa.raw_material_inventory.appliaction.dto.RawMaterialInventoryItemDto;
-import com.vegas.sistema_gestion_operativa.raw_material_inventory.appliaction.service.RawMaterialInventoryService;
+import com.vegas.sistema_gestion_operativa.raw_material_inventory.application.dto.RawMaterialInventoryItemDto;
+import com.vegas.sistema_gestion_operativa.raw_material_inventory.application.service.RawMaterialInventoryService;
 import com.vegas.sistema_gestion_operativa.security.AuthUtils;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;

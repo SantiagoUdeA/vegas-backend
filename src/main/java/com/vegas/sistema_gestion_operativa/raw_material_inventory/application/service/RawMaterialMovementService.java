@@ -1,8 +1,8 @@
-package com.vegas.sistema_gestion_operativa.raw_material_inventory.appliaction.service;
+package com.vegas.sistema_gestion_operativa.raw_material_inventory.application.service;
 
 import com.vegas.sistema_gestion_operativa.branches.IBranchApi;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
-import com.vegas.sistema_gestion_operativa.raw_material_inventory.appliaction.dto.RawMaterialMovementDto;
+import com.vegas.sistema_gestion_operativa.raw_material_inventory.application.dto.RawMaterialMovementDto;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.repository.IRawMaterialMovementRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
