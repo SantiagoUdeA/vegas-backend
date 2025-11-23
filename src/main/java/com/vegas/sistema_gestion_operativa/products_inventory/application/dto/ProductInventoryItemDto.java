@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 public interface ProductInventoryItemDto {
     Long getId();
+    Long getProductId();
     String getProductName();
     String getCategoryName();
     Double getCurrentStock();
