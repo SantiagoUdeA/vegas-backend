@@ -14,6 +14,15 @@ public interface IProductInventoryRepository extends JpaRepository<ProductInvent
 
     Optional<ProductInventory> findByProductId(Long productId);
 
+    // 🔍 Obtener stock actual sin exponer la entidad
+    @Query(value = """
+        SELECT COALESCE(pi.current_stock, 0)
+        FROM product_inventory pi
+        WHERE pi.product_id = :productId
+    """, nativeQuery = true)
+    Double findCurrentStockByProductId(@Param("productId") Long productId);
+
+    // Listado de inventario por sede
     @Query(value = """
         SELECT
             pi.id AS id,
@@ -39,13 +48,15 @@ public interface IProductInventoryRepository extends JpaRepository<ProductInvent
         LEFT JOIN product_category pc ON p.category_id = pc.id
         WHERE pi.branch_id = :branchId
     """,
-    countQuery = """
+            countQuery = """
         SELECT COUNT(*)
         FROM product_inventory pi
         WHERE pi.branch_id = :branchId
     """,
-    nativeQuery = true)
-    Page<ProductInventoryItemDto> findInventoryItemsByBranchId(@Param("branchId") Long branchId, Pageable pageable);
+            nativeQuery = true)
+    Page<ProductInventoryItemDto> findInventoryItemsByBranchId(
+            @Param("branchId") Long branchId,
+            Pageable pageable
+    );
 
 }
-

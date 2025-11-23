@@ -101,8 +101,12 @@ public class ProductController {
     public ResponseEntity<ProductDto> delete(
             @PathVariable Long productId
     ) throws ProductNotFoundException, AccessDeniedException {
+        /*
         ProductDto deleted = productService.delete(productId, AuthUtils.getUserIdFromToken());
         return ResponseEntity.ok(deleted);
+        */
+        System.out.println("Eliminacion");
+        return null;
     }
 }
 

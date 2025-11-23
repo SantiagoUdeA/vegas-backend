@@ -1,6 +1,7 @@
 package com.vegas.sistema_gestion_operativa.products.application.service;
 
 import com.vegas.sistema_gestion_operativa.branches.IBranchApi;
+import com.vegas.sistema_gestion_operativa.common.domain.Money;
 import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 import com.vegas.sistema_gestion_operativa.products.api.IProductApi;
@@ -16,6 +17,8 @@ import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductNam
 import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductNotFoundException;
 import com.vegas.sistema_gestion_operativa.products.domain.repository.IProductCategoryRepository;
 import com.vegas.sistema_gestion_operativa.products.domain.repository.IProductRepository;
+import com.vegas.sistema_gestion_operativa.products_inventory.domain.repository.IProductInventoryRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +27,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+
+import com.vegas.sistema_gestion_operativa.products_inventory.domain.entity.ProductInventory;
+
 
 @Service
 public class ProductService implements IProductApi {
@@ -81,32 +87,55 @@ public class ProductService implements IProductApi {
             UpdateProductDto dto,
             String userId
     ) throws ProductNotFoundException, ProductCategoryNotFoundException, AccessDeniedException {
+
         var product = this.retrieveProductById(productId);
 
         branchApi.assertUserHasAccessToBranch(userId, product.getBranchId());
 
-        var category = this.categoryRepository.findById(dto.categoryId())
-                .orElseThrow(() -> new ProductCategoryNotFoundException(
-                        "La categoría con id " + dto.categoryId() + " no fue encontrada"));
+        // 🔵 Si desea cambiar categoría
+        if (dto.categoryId() != null) {
+            var category = this.categoryRepository.findById(dto.categoryId())
+                    .orElseThrow(() -> new ProductCategoryNotFoundException(
+                            "La categoría con id " + dto.categoryId() + " no fue encontrada"));
+            product.setCategory(category);
+        }
 
-        var updatedProduct = this.productMapper.partialUpdate(dto, category, product);
-        updatedProduct.setActive(true);
-        Product saved = this.productRepository.save(updatedProduct);
+        // 🔵 Cambiar precio
+        product.setPrice(new Money(dto.price()));
+
+        // 🔵 Mantener el nombre
+        // product.setName(product.getName()); // implícito
+
+        Product saved = this.productRepository.save(product);
         return productMapper.toResponseDto(saved);
     }
 
+    /*
     public ProductDto delete(
             Long productId,
             String userId
     ) throws ProductNotFoundException, AccessDeniedException {
+
         var product = this.retrieveProductById(productId);
 
+        // validar acceso
         branchApi.assertUserHasAccessToBranch(userId, product.getBranchId());
 
+        // obtener stock sin tocar la entidad
+        Double stock = inventoryRepository.findCurrentStockByProductId(productId);
+
+        if (stock != null && stock > 0) {
+            throw new IllegalStateException(
+                    "No se puede eliminar el producto porque aún tiene stock (" + stock + ")."
+            );
+        }
+
+        // eliminación lógica
         product.deactivate();
-        this.productRepository.save(product);
+        productRepository.save(product);
+
         return productMapper.toResponseDto(product);
-    }
+    }*/
 
     private Product retrieveProductById(Long id) throws ProductNotFoundException {
         return this.productRepository.findById(id)

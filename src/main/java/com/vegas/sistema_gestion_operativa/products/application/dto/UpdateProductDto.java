@@ -7,10 +7,6 @@ import org.hibernate.validator.constraints.Length;
 import java.math.BigDecimal;
 
 public record UpdateProductDto(
-        @NotNull(message = "El nombre del producto es obligatorio")
-        @Length(min = 3, max = 100, message = "El nombre debe tener entre 3 y 100 caracteres")
-        String name,
-
         Long categoryId,
 
         @NotNull(message = "El precio es obligatorio")

@@ -17,7 +17,7 @@ public interface IProductMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "name", source = "dto.name")
+    //@Mapping(target = "name", source = "dto.name")
     @Mapping(target = "category", source = "category")
     @Mapping(target = "price", source = "dto.price")
     Product partialUpdate(UpdateProductDto dto, ProductCategory category, @MappingTarget Product product);

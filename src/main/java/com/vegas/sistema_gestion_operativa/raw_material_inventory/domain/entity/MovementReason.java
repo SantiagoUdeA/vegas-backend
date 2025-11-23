@@ -23,7 +23,6 @@ public enum MovementReason {
     TRANSFER,
     RETURN;*/
 
-
     @JsonCreator
     public static MovementReason fromValue(String value) {
         if (value == null || value.isBlank()) {
