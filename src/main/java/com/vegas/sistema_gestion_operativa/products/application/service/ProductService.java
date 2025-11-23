@@ -17,6 +17,7 @@ import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductNam
 import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductNotFoundException;
 import com.vegas.sistema_gestion_operativa.products.domain.repository.IProductCategoryRepository;
 import com.vegas.sistema_gestion_operativa.products.domain.repository.IProductRepository;
+import com.vegas.sistema_gestion_operativa.products_inventory.api.IProductInventoryApi;
 import com.vegas.sistema_gestion_operativa.products_inventory.domain.repository.IProductInventoryRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,19 +111,15 @@ public class ProductService implements IProductApi {
         return productMapper.toResponseDto(saved);
     }
 
-    /*
-    public ProductDto delete(
-            Long productId,
-            String userId
-    ) throws ProductNotFoundException, AccessDeniedException {
+    @Transactional
+    public ProductDto delete(Long productId, String userId)
+            throws ProductNotFoundException, AccessDeniedException {
 
         var product = this.retrieveProductById(productId);
 
-        // validar acceso
         branchApi.assertUserHasAccessToBranch(userId, product.getBranchId());
 
-        // obtener stock sin tocar la entidad
-        Double stock = inventoryRepository.findCurrentStockByProductId(productId);
+        Double stock = productRepository.findCurrentStockByProductId(productId);
 
         if (stock != null && stock > 0) {
             throw new IllegalStateException(
@@ -130,12 +127,11 @@ public class ProductService implements IProductApi {
             );
         }
 
-        // eliminación lógica
         product.deactivate();
         productRepository.save(product);
 
         return productMapper.toResponseDto(product);
-    }*/
+    }
 
     private Product retrieveProductById(Long id) throws ProductNotFoundException {
         return this.productRepository.findById(id)

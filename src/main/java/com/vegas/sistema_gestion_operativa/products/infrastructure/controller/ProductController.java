@@ -98,15 +98,11 @@ public class ProductController {
      */
     @DeleteMapping("/{productId}")
     @PreAuthorize("hasPermission(null, 'PRODUCTS_DELETE')")
-    public ResponseEntity<ProductDto> delete(
-            @PathVariable Long productId
-    ) throws ProductNotFoundException, AccessDeniedException {
-        /*
+    public ResponseEntity<ProductDto> delete(@PathVariable Long productId)
+            throws ProductNotFoundException, AccessDeniedException {
+
         ProductDto deleted = productService.delete(productId, AuthUtils.getUserIdFromToken());
         return ResponseEntity.ok(deleted);
-        */
-        System.out.println("Eliminacion");
-        return null;
     }
 }
 
