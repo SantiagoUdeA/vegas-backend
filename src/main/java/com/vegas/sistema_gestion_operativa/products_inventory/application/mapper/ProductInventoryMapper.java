@@ -12,7 +12,6 @@ public class ProductInventoryMapper {
                 productInventory.getId(),
                 productInventory.getProductId(),
                 productInventory.getCurrentStock().getValue().doubleValue(),
-                productInventory.getAverageCost().getValue().doubleValue(),
                 productInventory.getUpdatedAt()
         );
     }

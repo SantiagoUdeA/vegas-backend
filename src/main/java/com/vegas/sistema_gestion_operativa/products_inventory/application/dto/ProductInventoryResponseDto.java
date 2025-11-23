@@ -6,7 +6,6 @@ public record ProductInventoryResponseDto(
     Long id,
     Long productId,
     Double currentStock,
-    Double averageCost,
     LocalDateTime updatedAt
 ) {
 }
