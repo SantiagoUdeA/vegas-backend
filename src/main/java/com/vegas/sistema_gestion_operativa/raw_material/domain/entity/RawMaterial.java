@@ -22,7 +22,7 @@ public class RawMaterial {
     private String name;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private UnitOfMeasure unitOfMeasure;
 
     @Column(columnDefinition = "boolean default true")
