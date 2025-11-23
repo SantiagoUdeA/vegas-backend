@@ -14,7 +14,6 @@ import com.vegas.sistema_gestion_operativa.raw_material.infrastructure.repositor
 import com.vegas.sistema_gestion_operativa.raw_material.infrastructure.repository.IRawMaterialRepository;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;

@@ -14,27 +14,6 @@ public interface IProductInventoryRepository extends JpaRepository<ProductInvent
 
     Optional<ProductInventory> findByProductId(Long productId);
 
-    /*
-        Se suma el costo total de todos los ingredientes (cantidad × costo de cada uno)
-        y luego se divide entre unitsProduced
-
-        Si una receta usa 10 kg de harina que cuesta 5 $/kg = 50 $
-        Y usa 2 kg de azúcar que cuesta 3 $/kg = 6 $ total
-        Costo total de materias primas = $56
-        Si la receta produce 20 unidades, entonces el costo por unidad = 56 $ / 20 = 2.80$
-     */
-    @Query(
-            """
-            SELECT COALESCE(SUM(i.quantity.value * rmi.averageCost.value) / MAX(r.unitsProduced), 0.0)
-            FROM Ingredient i
-            JOIN Recipe r ON i.recipe.id = r.id
-            JOIN RawMaterialInventory rmi ON i.rawMaterialId = rmi.rawMaterialId
-            WHERE r.product.id = :productId
-            AND r.active = true
-            """
-    )
-    Double calculateAverageProductCost(@Param("productId") Long productId);
-
     @Query(value = """
         SELECT
             pi.id AS id,
@@ -42,7 +21,18 @@ public interface IProductInventoryRepository extends JpaRepository<ProductInvent
             p.name AS productName,
             pc.name AS categoryName,
             pi.current_stock AS currentStock,
-            pi.average_cost AS averageCost,
+            COALESCE(
+                (
+                    SELECT SUM(i.quantity * rmi.average_cost) / MAX(r.units_produced)
+                    FROM recipe r
+                    JOIN ingredient i ON i.recipe_id = r.id
+                    JOIN raw_material_inventory rmi ON i.raw_material_id = rmi.raw_material_id
+                    WHERE r.product_id = p.id
+                      AND r.active = true
+                      AND rmi.branch_id = :branchId
+                ),
+                0.0
+            ) AS averageCost,
             pi.updated_at AS updatedAt
         FROM product_inventory pi
         JOIN product p ON pi.product_id = p.id

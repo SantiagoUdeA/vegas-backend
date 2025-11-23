@@ -15,7 +15,6 @@ public interface IRawMaterialMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "name", source = "dto.name")
-    @Mapping(target = "unitOfMeasure", source = "dto.unitOfMeasure")
     @Mapping(target = "category", source = "category")
     RawMaterial partialUpdate(UpdateRawMaterialDto dto, RawMaterialCategory category, @MappingTarget RawMaterial rawMaterial);
 

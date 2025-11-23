@@ -1,7 +1,6 @@
 package com.vegas.sistema_gestion_operativa.products_inventory.application.service;
 
 import com.vegas.sistema_gestion_operativa.branches.IBranchApi;
-import com.vegas.sistema_gestion_operativa.common.domain.Money;
 import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 import com.vegas.sistema_gestion_operativa.common.exceptions.ApiException;
@@ -79,12 +78,9 @@ public class ProductInventoryService {
                 .findByProductId(dto.productId())
                 .orElseGet(() -> productInventoryFactory.createFromDto(dto));
 
-        // Obtener costo unitario del producto
-        var unitCost = new Money(this.productInventoryRepository.calculateAverageProductCost(dto.productId()));
-
-        // Actualizar stock y costo promedio
+        // Actualizar stock
         Quantity entryQuantity = new Quantity(dto.quantity());
-        inventory.addStock(entryQuantity, unitCost);
+        inventory.addStock(entryQuantity);
 
         // Llamada al inventario de materias primas para reducir el stock si existe una fórmula
         var recipe = productApi.getIngredientsForProductUnit(dto.productId());

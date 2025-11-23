@@ -58,6 +58,16 @@ public class CognitoIdentityRequestFactory {
                 .build();
     }
 
+    public AdminEnableUserRequest createAdminEnableUserRequest(
+            String userPoolId,
+            String username
+    ) {
+        return AdminEnableUserRequest.builder()
+                .userPoolId(userPoolId)
+                .username(username)
+                .build();
+    }
+
     public AdminSetUserPasswordRequest createAdminSetUserPasswordRequest(
             String userPoolId,
             String username,

@@ -91,6 +91,15 @@ public class CognitoIdentityService implements IIdentityService {
         client.adminDisableUser(request);
     }
 
+    @Override
+    public void enableUser(String username) {
+        var request = cognitoIdentityRequestFactory.createAdminEnableUserRequest(
+                this.userPoolId,
+                username
+        );
+        client.adminEnableUser(request);
+    }
+
     private String getUserId(AdminCreateUserResponse response) {
         return response.user().attributes().stream()
                 .filter(attr -> "sub".equals(attr.name()))
