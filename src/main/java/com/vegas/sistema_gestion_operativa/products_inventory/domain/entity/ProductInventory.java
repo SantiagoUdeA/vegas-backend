@@ -54,7 +54,7 @@ public class ProductInventory {
      */
     public void addStock(Quantity quantity) {
         if(this.currentStock == null) this.currentStock = new Quantity(0.0);
-        else this.currentStock.add(quantity);
+        else this.currentStock = this.currentStock.add(quantity);
 
     }
 
