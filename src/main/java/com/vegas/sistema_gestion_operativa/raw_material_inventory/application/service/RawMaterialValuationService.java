@@ -25,7 +25,7 @@ public class RawMaterialValuationService {
 
         branchApi.assertUserHasAccessToBranch(userId, branchId);
 
-        List<RawMaterialValuationItemDto> items = repo.getValuationItems(branchId);
+        List<RawMaterialValuationItemDto> items = repo.findValuationItemsByBranchId(branchId);
 
         Double total = items.stream()
                 .mapToDouble(RawMaterialValuationItemDto::getValuation)

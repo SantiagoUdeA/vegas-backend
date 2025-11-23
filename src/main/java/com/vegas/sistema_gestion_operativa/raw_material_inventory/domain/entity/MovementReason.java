@@ -6,16 +6,22 @@ import com.vegas.sistema_gestion_operativa.roles.domain.Role;
 import java.util.Arrays;
 
 public enum MovementReason {
-    PRODUCT_ENTRY,
     ENTRADA,
     SALIDA,
-    ENTRY,
+    PRODUCCION,
+    COMPRA,
+    AUTOCONSUMO,
+    AJUSTE,
+    RETORNO,
+
+    PRODUCT_ENTRY;
+    /*ENTRY,
     PRODUCTION,
     PURCHASE,
     CONSUMPTION,
     ADJUSTMENT,
     TRANSFER,
-    RETURN;
+    RETURN;*/
 
 
     @JsonCreator
