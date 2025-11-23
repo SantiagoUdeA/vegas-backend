@@ -6,6 +6,7 @@ import com.vegas.sistema_gestion_operativa.users.domain.entity.User;
 import com.vegas.sistema_gestion_operativa.users.application.dto.CreateUserDto;
 import com.vegas.sistema_gestion_operativa.users.application.dto.UpdateUserDto;
 import com.vegas.sistema_gestion_operativa.users.domain.events.UserCreatedEvent;
+import com.vegas.sistema_gestion_operativa.users.domain.exceptions.UserAlreadyActiveException;
 import com.vegas.sistema_gestion_operativa.users.domain.exceptions.UserAlreadyExistsException;
 import com.vegas.sistema_gestion_operativa.users.domain.exceptions.UserAlreadyInactiveException;
 import com.vegas.sistema_gestion_operativa.users.domain.exceptions.UserNotFoundException;
@@ -171,4 +172,24 @@ public class UserService {
         return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User with id %s not found".formatted(userId)));
     }
 
+    /**
+    * Activates a user by their ID.
+    * @param issuerUseRoleName Role name of the user issuing the activation
+    * @param targetUserId ID of the user to activate
+    * @throws UserNotFoundException if the target user is not found
+     */
+    @Transactional
+    public void activateUser(String targetUserId, String issuerUseRoleName) throws UserNotFoundException, UserAlreadyActiveException {
+        var user = retrieveUser(targetUserId);
+
+        if(!this.roleApi.canManageUserWithRole(issuerUseRoleName, user.getRoleName()))
+            throw new AccessDeniedException("No tienes permisos para activar un usuario con el rol %s");
+
+        if(user.isActive())
+            throw new UserAlreadyActiveException("El usuario ya se encuentra activo");
+
+        identityService.enableUser(user.getEmail());
+        user.setActive(true);
+        userRepository.save(user);
+    }
 }

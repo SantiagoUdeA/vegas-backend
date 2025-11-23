@@ -26,6 +26,13 @@ public interface IIdentityService {
     void disableUser(String username);
 
     /**
+     * Enables a user in the identity provider.
+     *
+     * @param username the username or email of the user to enable
+     */
+    void enableUser(String username);
+
+    /**
      * Sets a permanent password for a user in the identity provider.
      *
      * @param username the username or email of the user
