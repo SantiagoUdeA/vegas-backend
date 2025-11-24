@@ -54,9 +54,16 @@ public class Quantity {
         return new Quantity(this.value.divide(other.value, 4, RoundingMode.HALF_UP));
     }
 
+    public boolean isLessThan(Quantity other) {
+        return this.value.compareTo(other.value) < 0;
+    }
+
+    public boolean isGreaterThanOrEqual(Quantity other) {
+        return this.value.compareTo(other.value) >= 0;
+    }
+
     @JsonValue
     public BigDecimal getValue() {
         return value;
     }
-
 }

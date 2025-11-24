@@ -142,4 +142,11 @@ public class ProductService implements IProductApi {
                 .quantity(ingredient.getQuantity().divide(new Quantity(recipe.getUnitsProduced())))
                 .build()).toList());
     }
+
+    @Override
+    public String getProductNameById(Long productId) throws ProductNotFoundException {
+        var product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException("Producto " + productId + " no encontrado"));
+        return product.getName();
+    }
 }

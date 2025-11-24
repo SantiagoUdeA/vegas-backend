@@ -11,7 +11,23 @@ import java.time.LocalDateTime;
 @Component
 public class ProductInventoryMovementFactory {
 
-    public final ProductInventoryMovement createFromDto(RegisterProductStockDto dto, String userId){
+    /**
+     * Movimiento por SALIDA (venta)
+     */
+    public ProductInventoryMovement createSaleMovement(RegisterProductStockDto dto, String userId) {
+        return ProductInventoryMovement.builder()
+                .productId(dto.productId())
+                .movementReason(MovementReason.SALIDA)
+                .quantity(new Quantity(dto.quantity()))
+                .userId(userId)
+                .movementDate(LocalDateTime.now())
+                .build();
+    }
+
+    /**
+     * Movimiento por ENTRADA (registro de stock, ajustes, anulación de ventas, etc.)
+     */
+    public ProductInventoryMovement createEntryMovement(RegisterProductStockDto dto, String userId) {
         return ProductInventoryMovement.builder()
                 .productId(dto.productId())
                 .movementReason(MovementReason.ENTRADA)
@@ -44,6 +60,16 @@ public class ProductInventoryMovementFactory {
                 .quantity(quantity)
                 .userId(userId)
                 .justification(justification)
+                .movementDate(LocalDateTime.now())
+                .build();
+    }
+
+    public ProductInventoryMovement createReturnEntryMovement(RegisterProductStockDto dto, String userId) {
+        return ProductInventoryMovement.builder()
+                .productId(dto.productId())
+                .movementReason(MovementReason.RETORNO)
+                .quantity(new Quantity(dto.quantity()))
+                .userId(userId)
                 .movementDate(LocalDateTime.now())
                 .build();
     }

@@ -23,10 +23,9 @@ public class ProductInventory {
     @Embedded
     @AttributeOverride(
             name = "value",
-            column = @Column(name = "current_stock", precision = 19, scale = 4)
+            column = @Column(name = "current_stock", precision = 19, scale = 4, nullable = false)
     )
-    private Quantity currentStock;
-
+    private Quantity currentStock = new Quantity(0.0);
 
     @Column(
             name = "branch_id",
@@ -44,22 +43,29 @@ public class ProductInventory {
     )
     private Long productId;
 
+    /**
+     * Costo promedio ponderado de inventario.
+     */
+    @Column(name = "average_cost", nullable = false)
+    private Double averageCost = 0.0;
+
     @Column
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
     /**
      * Agrega stock al inventario
-     *
-     * @param quantity cantidad a agregar
      */
     public void addStock(Quantity quantity) {
-        if(this.currentStock == null) this.currentStock = new Quantity(0.0);
-        else this.currentStock = this.currentStock.add(quantity);
-
+        if (this.currentStock == null) {
+            this.currentStock = quantity;
+        } else {
+            this.currentStock = this.currentStock.add(quantity);
+        }
     }
 
     /**
+<<<<<<< HEAD
      * Reduce stock del inventario
      *
      * @param quantity cantidad a reducir
@@ -72,5 +78,32 @@ public class ProductInventory {
         this.currentStock = this.currentStock.subtract(quantity);
     }
 
+=======
+     * Resta stock al inventario
+     */
+    public void subtractStock(Quantity quantity) {
+        if (this.currentStock == null) {
+            throw new IllegalStateException("No hay stock inicializado para restar.");
+        }
+        this.currentStock = this.currentStock.subtract(quantity);
+    }
+>>>>>>> 5b28dfe56cd8a06a432fbad6232c17017f1fb68b
 
+    /**
+     * Actualiza el costo promedio
+     */
+    public void updateAverageCost(Double newCost, double quantityAdded) {
+        double stockActual = this.currentStock != null ? this.currentStock.getValue().doubleValue() : 0.0;
+
+        if (stockActual <= 0) {
+            this.averageCost = newCost;
+            return;
+        }
+
+        // Fórmula costo promedio ponderado
+        double costoPrevioTotal = this.averageCost * stockActual;
+        double costoNuevoTotal = newCost * quantityAdded;
+
+        this.averageCost = (costoPrevioTotal + costoNuevoTotal) / (stockActual + quantityAdded);
+    }
 }
