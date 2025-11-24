@@ -56,4 +56,14 @@ public class SaleController {
         Page<SaleResponseDto> result = saleService.findAll(filters, PageRequest.of(page, size));
         return ResponseEntity.ok(result);
     }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasPermission(null, 'SALES_DELETE')")
+    public ResponseEntity<Void> delete(
+            @PathVariable Long id
+    ) throws AccessDeniedException, ApiException {
+
+        saleService.deleteSale(id, AuthUtils.getUserIdFromToken());
+        return ResponseEntity.noContent().build();
+    }
 }

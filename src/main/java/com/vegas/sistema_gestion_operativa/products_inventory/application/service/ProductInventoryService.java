@@ -125,4 +125,36 @@ public class ProductInventoryService {
                 productInventoryMovementFactory.createFromDto(movementDto, userId)
         );
     }
+
+    @Transactional
+    public void restoreProductStock(Long branchId, Long productId, int quantity, String userId)
+            throws ApiException {
+
+        branchApi.assertUserHasAccessToBranch(userId, branchId);
+
+        ProductInventory inventory = productInventoryRepository
+                .findByProductId(productId)
+                .orElseThrow(() -> new ApiException(
+                        "No existe inventario para el producto " + productId,
+                        HttpStatus.NOT_FOUND
+                ));
+
+        Quantity q = new Quantity(quantity);
+
+        // Reponer stock
+        inventory.addStock(q);
+        productInventoryRepository.save(inventory);
+
+        // Registrar movimiento (ENTRADA por anulación de venta)
+        RegisterProductStockDto movementDto = new RegisterProductStockDto(
+                productId,
+                branchId,
+                quantity,
+                inventory.getAverageCost()
+        );
+
+        productInventoryMovementRepository.save(
+                productInventoryMovementFactory.createFromDto(movementDto, userId)
+        );
+    }
 }

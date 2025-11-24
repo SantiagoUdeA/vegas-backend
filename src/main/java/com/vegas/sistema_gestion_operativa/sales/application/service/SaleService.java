@@ -1,5 +1,6 @@
 package com.vegas.sistema_gestion_operativa.sales.application.service;
 
+import com.vegas.sistema_gestion_operativa.branches.IBranchApi;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 import com.vegas.sistema_gestion_operativa.common.exceptions.ApiException;
 import com.vegas.sistema_gestion_operativa.security.AuthUtils;
@@ -13,6 +14,7 @@ import com.vegas.sistema_gestion_operativa.products_inventory.application.servic
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +25,7 @@ public class SaleService {
     private final ISaleRepository saleRepository;
     private final SaleFactory saleFactory;
     private final ProductInventoryService productInventoryService;
+    private final IBranchApi branchApi;
 
     @Transactional
     public Sale create(CreateSaleDto dto, String userId)
@@ -84,4 +87,32 @@ public class SaleService {
                 .build();
     }
 
+    @Transactional
+    public void deleteSale(Long saleId, String userId)
+            throws AccessDeniedException, ApiException {
+
+        Sale sale = saleRepository.findById(saleId)
+                .orElseThrow(() -> new ApiException("La venta no existe", HttpStatus.NOT_FOUND));
+
+        // Verificar acceso a la sede donde ocurrió la venta
+        branchApi.assertUserHasAccessToBranch(userId, sale.getBranchId());
+
+        // 1️⃣ Reponer stock por cada detalle
+        sale.getDetails().forEach(detail -> {
+            try {
+                productInventoryService.restoreProductStock(
+                        sale.getBranchId(),
+                        detail.getProductId(),
+                        detail.getQuantity(),
+                        userId
+                );
+            } catch (ApiException e) {
+                // Re-lanzamos como unchecked para no romper el forEach
+                throw new RuntimeException(e);
+            }
+        });
+
+        // 2️⃣ Eliminar la venta
+        saleRepository.delete(sale);
+    }
 }
