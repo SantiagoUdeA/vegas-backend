@@ -1,5 +1,6 @@
 package com.vegas.sistema_gestion_operativa.sales.domain.repository;
 
+import com.vegas.sistema_gestion_operativa.sales.application.dto.ProductSalesStatsDto;
 import com.vegas.sistema_gestion_operativa.sales.domain.entity.Sale;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
@@ -72,4 +73,63 @@ public class SaleCustomRepositoryImpl implements SaleCustomRepository {
 
         return new PageImpl<>(resultList, pageable, total);
     }
+
+    @Override
+    public List<ProductSalesStatsDto> findTopSellingProducts(Long branchId, LocalDate from, LocalDate to, int limit) {
+
+        StringBuilder sb = new StringBuilder(
+                "SELECT new com.vegas.sistema_gestion_operativa.sales.application.dto.ProductSalesStatsDto(" +
+                        "d.productId, p.name, SUM(d.quantity)) " +
+                        "FROM SaleDetail d " +
+                        "JOIN d.sale s " +
+                        "JOIN Product p ON p.id = d.productId " +
+                        "WHERE 1 = 1 "
+        );
+
+        if (branchId != null) sb.append(" AND s.branchId = :branchId ");
+        if (from != null) sb.append(" AND s.saleDate >= :from ");
+        if (to != null) sb.append(" AND s.saleDate <= :to ");
+
+        sb.append(" GROUP BY d.productId, p.name ORDER BY SUM(d.quantity) DESC");
+
+        var query = em.createQuery(sb.toString(), ProductSalesStatsDto.class);
+
+        if (branchId != null) query.setParameter("branchId", branchId);
+        if (from != null) query.setParameter("from", from.atStartOfDay());
+        if (to != null) query.setParameter("to", to.atTime(23, 59, 59));
+
+        query.setMaxResults(limit);
+
+        return query.getResultList();
+    }
+
+    @Override
+    public List<ProductSalesStatsDto> findLeastSellingProducts(Long branchId, LocalDate from, LocalDate to, int limit) {
+
+        StringBuilder sb = new StringBuilder(
+                "SELECT new com.vegas.sistema_gestion_operativa.sales.application.dto.ProductSalesStatsDto(" +
+                        "d.productId, p.name, SUM(d.quantity)) " +
+                        "FROM SaleDetail d " +
+                        "JOIN d.sale s " +
+                        "JOIN Product p ON p.id = d.productId " +
+                        "WHERE 1 = 1 "
+        );
+
+        if (branchId != null) sb.append(" AND s.branchId = :branchId ");
+        if (from != null) sb.append(" AND s.saleDate >= :from ");
+        if (to != null) sb.append(" AND s.saleDate <= :to ");
+
+        sb.append(" GROUP BY d.productId, p.name ORDER BY SUM(d.quantity) ASC");
+
+        var query = em.createQuery(sb.toString(), ProductSalesStatsDto.class);
+
+        if (branchId != null) query.setParameter("branchId", branchId);
+        if (from != null) query.setParameter("from", from.atStartOfDay());
+        if (to != null) query.setParameter("to", to.atTime(23, 59, 59));
+
+        query.setMaxResults(limit);
+
+        return query.getResultList();
+    }
+
 }

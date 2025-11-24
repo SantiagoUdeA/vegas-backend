@@ -4,6 +4,7 @@ import com.vegas.sistema_gestion_operativa.branches.IBranchApi;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 import com.vegas.sistema_gestion_operativa.common.exceptions.ApiException;
 import com.vegas.sistema_gestion_operativa.products.api.IProductApi;
+import com.vegas.sistema_gestion_operativa.sales.application.dto.ProductSalesStatsDto;
 import com.vegas.sistema_gestion_operativa.security.AuthUtils;
 import com.vegas.sistema_gestion_operativa.sales.application.dto.CreateSaleDto;
 import com.vegas.sistema_gestion_operativa.sales.application.dto.SaleFilterDto;
@@ -19,6 +20,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -131,4 +137,21 @@ public class SaleService {
         // 2️⃣ Eliminar la venta
         saleRepository.delete(sale);
     }
+
+    public Map<String, List<ProductSalesStatsDto>> getProductSalesStats(
+            Long branchId, LocalDate from, LocalDate to) {
+
+        List<ProductSalesStatsDto> top = saleRepository
+                .findTopSellingProducts(branchId, from, to, 5);
+
+        List<ProductSalesStatsDto> low = saleRepository
+                .findLeastSellingProducts(branchId, from, to, 5);
+
+        Map<String, List<ProductSalesStatsDto>> result = new HashMap<>();
+        result.put("topSelling", top);
+        result.put("leastSelling", low);
+
+        return result;
+    }
+
 }

@@ -66,4 +66,16 @@ public class SaleController {
         saleService.deleteSale(id, AuthUtils.getUserIdFromToken());
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/stats/product-sales")
+    @PreAuthorize("hasPermission(null, 'SALES_READ')")
+    public ResponseEntity<?> getProductSalesStats(
+            @RequestParam(required = false) Long branchId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to
+    ) {
+        return ResponseEntity.ok(
+                saleService.getProductSalesStats(branchId, from, to)
+        );
+    }
 }
