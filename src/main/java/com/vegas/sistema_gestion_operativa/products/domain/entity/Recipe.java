@@ -30,7 +30,7 @@ public class Recipe {
     private List<Ingredient> ingredients;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
+    @JoinColumn(name = "product_id")
     private Product product;
 
 }
