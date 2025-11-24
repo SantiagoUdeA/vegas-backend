@@ -9,6 +9,7 @@ import com.vegas.sistema_gestion_operativa.common.utils.PaginationUtils;
 import com.vegas.sistema_gestion_operativa.products.application.dto.CreateProductDto;
 import com.vegas.sistema_gestion_operativa.products.application.dto.UpdateProductDto;
 import com.vegas.sistema_gestion_operativa.products.application.service.ProductService;
+import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductCantBeDeletedException;
 import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductCategoryNotFoundException;
 import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductNameAlreadyExists;
 import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductNotFoundException;
@@ -99,7 +100,7 @@ public class ProductController {
     @DeleteMapping("/{productId}")
     @PreAuthorize("hasPermission(null, 'PRODUCTS_DELETE')")
     public ResponseEntity<ProductDto> delete(@PathVariable Long productId)
-            throws ProductNotFoundException, AccessDeniedException {
+            throws ProductNotFoundException, AccessDeniedException, ProductCantBeDeletedException {
 
         ProductDto deleted = productService.delete(productId, AuthUtils.getUserIdFromToken());
         return ResponseEntity.ok(deleted);

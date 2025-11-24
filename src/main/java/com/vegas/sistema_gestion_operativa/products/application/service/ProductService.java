@@ -12,6 +12,7 @@ import com.vegas.sistema_gestion_operativa.products.application.factory.ProductF
 import com.vegas.sistema_gestion_operativa.products.application.mapper.IProductMapper;
 import com.vegas.sistema_gestion_operativa.products.domain.entity.Product;
 import com.vegas.sistema_gestion_operativa.products.domain.entity.ProductCategory;
+import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductCantBeDeletedException;
 import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductCategoryNotFoundException;
 import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductNameAlreadyExists;
 import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductNotFoundException;
@@ -101,7 +102,7 @@ public class ProductService implements IProductApi {
 
     @Transactional
     public ProductDto delete(Long productId, String userId)
-            throws ProductNotFoundException, AccessDeniedException {
+            throws ProductNotFoundException, AccessDeniedException, ProductCantBeDeletedException {
 
         var product = this.retrieveProductById(productId);
 
@@ -110,9 +111,7 @@ public class ProductService implements IProductApi {
         Double stock = productRepository.findCurrentStockByProductId(productId);
 
         if (stock != null && stock > 0) {
-            throw new IllegalStateException(
-                    "No se puede eliminar el producto porque aún tiene stock (" + stock + ")."
-            );
+            throw  new ProductCantBeDeletedException("No se puede eliminar el producto porque aún tiene stock (" + stock + " unidades).");
         }
 
         product.deactivate();
