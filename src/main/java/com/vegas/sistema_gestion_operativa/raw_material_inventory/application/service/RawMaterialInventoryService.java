@@ -4,6 +4,7 @@ import com.vegas.sistema_gestion_operativa.branches.IBranchApi;
 import com.vegas.sistema_gestion_operativa.common.domain.Money;
 import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
+import com.vegas.sistema_gestion_operativa.products.application.dto.AdjustmentDto;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.IRawMaterialInventoryApi;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.application.dto.RawMaterialBatchDto;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.application.dto.RawMaterialInventoryItemDto;
@@ -15,6 +16,7 @@ import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.entity.
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.entity.RawMaterialBatch;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.entity.RawMaterialInventory;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.entity.RawMaterialMovement;
+import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.exceptions.InventoryItemNotFoundException;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.exceptions.NotEnoughStockException;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.repository.IRawMateriaBatchRepository;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.repository.IRawMaterialInventoryRepository;
@@ -174,5 +176,43 @@ public class RawMaterialInventoryService implements IRawMaterialInventoryApi {
         // 5. Guardar la información de inventario y movimientos
         rawMaterialMovementRepository.saveAll(movements);
         rawMaterialInventoryRepository.saveAll(inventoryMap.values());
+    }
+
+    /**
+     * Realiza un ajuste en el inventario de materia prima.
+     * Verifica que el usuario tenga acceso a la sede correspondiente.
+     * Reduce el stock del inventario según la cantidad especificada en el ajuste.
+     * Registra un movimiento de inventario asociado al ajuste.
+     * @param dto Datos del ajuste
+     * @param userId ID del usuario que realiza el ajuste
+     * @return El item de inventario ajustado
+     * @throws NotEnoughStockException si no hay suficiente stock para realizar el ajuste
+     * @throws InventoryItemNotFoundException si no se encuentra el item de inventario
+     * @throws AccessDeniedException si el usuario no tiene acceso a la sede correspondiente
+     */
+    public RawMaterialInventory doAdjustment(AdjustmentDto dto, String userId) throws NotEnoughStockException, InventoryItemNotFoundException, AccessDeniedException {
+        var item = this.rawMaterialInventoryRepository.findByRawMaterialId((dto.rawMaterialId()))
+                .orElseThrow(() -> new InventoryItemNotFoundException(
+                        "No se ha encontrado el item de inventario para la materia prima con id: " + dto.rawMaterialId()
+                ));
+
+        this.branchApi.assertUserHasAccessToBranch(
+                userId,
+                item.getBranchId()
+        );
+
+        item.reduceStock(dto.quantity());
+
+        rawMaterialMovementRepository.save(
+                rawMaterialMovementFactory.createMovementForAdjustment(
+                        item.getRawMaterialId(),
+                        dto.quantity(),
+                        dto.movementReason(),
+                        userId,
+                        dto.justification()
+                )
+        );
+
+        return rawMaterialInventoryRepository.save(item);
     }
 }

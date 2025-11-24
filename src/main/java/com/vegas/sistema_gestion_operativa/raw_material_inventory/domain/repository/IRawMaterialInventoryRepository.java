@@ -56,4 +56,6 @@ public interface IRawMaterialInventoryRepository extends JpaRepository<RawMateri
     );
 
     List<RawMaterialInventory> findByRawMaterialIdIn(List<Long> rawMaterialIds);
+
+    Optional<RawMaterialInventory> findByRawMaterialId(Long rawMaterialId);
 }

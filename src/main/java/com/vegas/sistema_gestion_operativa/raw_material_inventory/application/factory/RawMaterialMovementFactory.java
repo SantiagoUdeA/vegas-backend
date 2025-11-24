@@ -31,4 +31,15 @@ public class RawMaterialMovementFactory {
                 .quantity(quantity)
                 .build();
     }
+
+    public RawMaterialMovement createMovementForAdjustment(Long rawMaterialId, Quantity quantity, MovementReason reason, String userId, String justification) {
+        return RawMaterialMovement.builder()
+                .movementReason(reason)
+                .rawMaterialId(rawMaterialId)
+                .userId(userId)
+                .movementDate(LocalDateTime.now())
+                .quantity(quantity)
+                .justification(justification)
+                .build();
+    }
 }

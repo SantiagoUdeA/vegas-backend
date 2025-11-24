@@ -17,7 +17,8 @@ public interface IRawMaterialMovementRepository extends JpaRepository<RawMateria
             rmm.movementReason,
             rmb.batchNumber,
             rm.name,
-            concat(u.givenName, ' ', u.familyName)
+            concat(u.givenName, ' ', u.familyName),
+            rmm.justification
         )
         FROM RawMaterialMovement rmm
         JOIN RawMaterial rm ON rmm.rawMaterialId = rm.id

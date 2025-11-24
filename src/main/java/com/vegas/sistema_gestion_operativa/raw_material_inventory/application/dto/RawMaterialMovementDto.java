@@ -12,6 +12,7 @@ public record RawMaterialMovementDto(
         MovementReason movementReason,
         String rawMaterialBatchCode,
         String rawMaterialName,
-        String userName
+        String userName,
+        String justification
 ) {
 }

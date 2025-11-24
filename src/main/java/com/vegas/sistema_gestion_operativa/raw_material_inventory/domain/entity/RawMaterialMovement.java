@@ -30,6 +30,8 @@ public class RawMaterialMovement {
     @Column(nullable = false)
     private MovementReason movementReason;
 
+    private String justification;
+
     @Column(
             name = "raw_material_batch_id",
             nullable = true,

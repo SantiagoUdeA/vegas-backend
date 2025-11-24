@@ -1,7 +1,6 @@
 package com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.vegas.sistema_gestion_operativa.roles.domain.Role;
 
 import java.util.Arrays;
 
@@ -11,17 +10,13 @@ public enum MovementReason {
     PRODUCCION,
     COMPRA,
     AUTOCONSUMO,
-    AJUSTE,
     RETORNO,
+    AJUSTE_POR_MERMA,
+    AJUSTE_POR_PERDIDA_POR_ROBO,
+    AJUSTE_POR_ERROR_DE_CONTEO,
+
 
     PRODUCT_ENTRY;
-    /*ENTRY,
-    PRODUCTION,
-    PURCHASE,
-    CONSUMPTION,
-    ADJUSTMENT,
-    TRANSFER,
-    RETURN;*/
 
     @JsonCreator
     public static MovementReason fromValue(String value) {
@@ -32,7 +27,7 @@ public enum MovementReason {
         try {
             return MovementReason.valueOf(value.trim().toUpperCase());
         } catch (IllegalArgumentException ex) {
-            String allowed = Arrays.toString(Role.values());
+            String allowed = Arrays.toString(MovementReason.values());
             throw new IllegalArgumentException(
                     String.format("El movimiento '%s' no es válido. Valores permitidos: %s", value, allowed)
             );
