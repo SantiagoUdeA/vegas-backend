@@ -12,5 +12,6 @@ public record ProductInventoryMovementDto(
         String userName,
         Quantity quantity,
         MovementReason movementReason,
+        String justification,
         LocalDateTime movementDate
 ) {}

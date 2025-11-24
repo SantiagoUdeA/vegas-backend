@@ -33,6 +33,9 @@ public class ProductInventoryMovement {
     @Column(nullable = false)
     private MovementReason movementReason;
 
+    @Column(length = 500)
+    private String justification;
+
     @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime movementDate;

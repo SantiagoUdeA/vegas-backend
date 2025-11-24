@@ -42,4 +42,6 @@ public class RawMaterialInventoryController {
     public ResponseEntity<RawMaterialInventory> doAdjustment(@RequestBody @Valid AdjustmentDto dto) throws NotEnoughStockException, AccessDeniedException, InventoryItemNotFoundException {
         return ResponseEntity.ok(this.rawMaterialInventoryService.doAdjustment(dto, AuthUtils.getUserIdFromToken()));
     }
+
+
 }

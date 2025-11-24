@@ -15,6 +15,7 @@ public interface IProductInventoryMovementRepository extends JpaRepository<Produ
             concat(u.givenName, ' ', u.familyName),
             pim.quantity,
             pim.movementReason,
+            pim.justification,
             pim.movementDate
          )
         FROM ProductInventoryMovement pim

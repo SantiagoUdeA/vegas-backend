@@ -6,6 +6,7 @@ import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedExcepti
 import com.vegas.sistema_gestion_operativa.common.exceptions.ApiException;
 import com.vegas.sistema_gestion_operativa.products.api.IProductApi;
 import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductNotFoundException;
+import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.ProductAdjustmentDto;
 import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.ProductInventoryItemDto;
 import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.ProductInventoryResponseDto;
 import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.RegisterProductStockDto;
@@ -13,6 +14,8 @@ import com.vegas.sistema_gestion_operativa.products_inventory.application.factor
 import com.vegas.sistema_gestion_operativa.products_inventory.application.factory.ProductInventoryMovementFactory;
 import com.vegas.sistema_gestion_operativa.products_inventory.application.mapper.ProductInventoryMapper;
 import com.vegas.sistema_gestion_operativa.products_inventory.domain.entity.ProductInventory;
+import com.vegas.sistema_gestion_operativa.products_inventory.domain.exceptions.InsufficientStockException;
+import com.vegas.sistema_gestion_operativa.products_inventory.domain.exceptions.ProductInventoryNotFoundException;
 import com.vegas.sistema_gestion_operativa.products_inventory.domain.repository.IProductInventoryMovementRepository;
 import com.vegas.sistema_gestion_operativa.products_inventory.domain.repository.IProductInventoryRepository;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.IRawMaterialInventoryApi;
@@ -105,6 +108,50 @@ public class ProductInventoryService {
         );
 
         return productInventoryMapper.toResponseDto(saved);
+    }
+
+    /**
+     * Realiza un ajuste en el inventario de producto.
+     * Verifica que el usuario tenga acceso a la sede correspondiente.
+     * Reduce el stock del inventario según la cantidad especificada en el ajuste.
+     * Registra un movimiento de inventario asociado al ajuste.
+     *
+     * @param dto Datos del ajuste
+     * @param userId ID del usuario que realiza el ajuste
+     * @return El item de inventario ajustado
+     * @throws InsufficientStockException si no hay suficiente stock para realizar el ajuste
+     * @throws ProductInventoryNotFoundException si no se encuentra el item de inventario
+     * @throws AccessDeniedException si el usuario no tiene acceso a la sede correspondiente
+     */
+    @Transactional
+    public ProductInventory doAdjustment(ProductAdjustmentDto dto, String userId)
+            throws InsufficientStockException, ProductInventoryNotFoundException, AccessDeniedException {
+
+        // Obtener el item de inventario
+        var item = this.productInventoryRepository.findByProductId(dto.productId())
+                .orElseThrow(() -> new ProductInventoryNotFoundException(
+                        "No se ha encontrado el item de inventario para el producto con id: " + dto.productId()
+                ));
+
+        // Verificar acceso a la sede
+        this.branchApi.assertUserHasAccessToBranch(userId, item.getBranchId());
+
+        // Reducir stock
+        item.reduceStock(dto.quantity());
+
+        // Registrar movimiento
+        productInventoryMovementRepository.save(
+                productInventoryMovementFactory.createMovementForAdjustment(
+                        item.getProductId(),
+                        dto.quantity(),
+                        dto.movementReason(),
+                        userId,
+                        dto.justification()
+                )
+        );
+
+        // Guardar cambios
+        return productInventoryRepository.save(item);
     }
 }
 

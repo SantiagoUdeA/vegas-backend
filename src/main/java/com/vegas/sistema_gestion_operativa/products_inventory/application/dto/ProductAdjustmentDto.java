@@ -1,0 +1,23 @@
+package com.vegas.sistema_gestion_operativa.products_inventory.application.dto;
+
+import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
+import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.entity.MovementReason;
+import jakarta.validation.constraints.NotNull;
+
+public record ProductAdjustmentDto(
+
+        @NotNull(message = "El ID del producto es obligatorio")
+        Long productId,
+
+        @NotNull(message = "La cantidad es obligatoria")
+        Quantity quantity,
+
+        @NotNull(message = "La justificación es obligatoria")
+        String justification,
+
+        @NotNull(message = "El motivo del ajuste es obligatorio")
+        MovementReason movementReason
+) {
+
+}
+
