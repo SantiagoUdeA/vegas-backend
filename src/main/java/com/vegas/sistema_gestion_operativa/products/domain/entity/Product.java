@@ -37,7 +37,6 @@ public class Product {
     private Money price;
 
     @OneToOne(mappedBy = "product")
-    @JoinColumn(name = "id")
     private Recipe recipe;
 
     @Column(

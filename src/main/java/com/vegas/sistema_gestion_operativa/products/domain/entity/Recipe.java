@@ -29,8 +29,8 @@ public class Recipe {
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Ingredient> ingredients;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id")
+    @OneToOne
+    @JoinColumn(name = "product_id", nullable = true)
     private Product product;
 
 }
