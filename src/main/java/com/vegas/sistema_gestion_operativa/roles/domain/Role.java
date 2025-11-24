@@ -21,7 +21,8 @@ public enum Role {
                     PROVIDERS_CREATE, PROVIDERS_EDIT, PROVIDERS_VIEW, PROVIDERS_DELETE,
                     RAW_MATERIALS_CREATE, RAW_MATERIALS_EDIT, RAW_MATERIALS_DELETE, RAW_MATERIALS_VIEW,
                     REPORTS_VIEW, REPORTS_EXPORT,
-                    BRANCHES_VIEW
+                    BRANCHES_VIEW,
+                    SALES_CREATE
             )
     ),
 
@@ -33,7 +34,8 @@ public enum Role {
                     RAW_MATERIALS_VIEW,
                     REPORTS_VIEW,
                     DASHBOARD_VIEW,
-                    PROVIDERS_CREATE, PROVIDERS_EDIT, PROVIDERS_VIEW, PROVIDERS_DELETE
+                    PROVIDERS_CREATE, PROVIDERS_EDIT, PROVIDERS_VIEW, PROVIDERS_DELETE,
+                    SALES_CREATE
             )
     ),
 

@@ -67,6 +67,9 @@ public enum Permission {
     ALERTS_VIEW,
     ALERTS_CONFIGURE,
 
+    // Ventas
+    SALES_CREATE,
+
     // Dashboard
     DASHBOARD_VIEW;
 
