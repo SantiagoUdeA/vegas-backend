@@ -19,6 +19,7 @@ import com.vegas.sistema_gestion_operativa.raw_material_inventory.IRawMaterialIn
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,15 +40,7 @@ public class ProductInventoryService {
     private final IProductInventoryMovementRepository productInventoryMovementRepository;
 
     /**
-     * Obtiene el inventario de productos de una sede específica con paginación.
-     * Verifica que el usuario tenga acceso a la sede antes de devolver los datos.
-     * Incluye información del nombre del producto y su categoría.
-     *
-     * @param branchId ID de la sede
-     * @param pageable Parámetros de paginación (página, tamaño, orden)
-     * @param userId   ID del usuario que solicita el inventario
-     * @return Página de elementos del inventario de productos con información detallada
-     * @throws AccessDeniedException si el usuario no tiene acceso a la sede
+     * Obtener inventario de productos por sede
      */
     public Page<ProductInventoryItemDto> getInventoryByBranchId(Long branchId, Pageable pageable, String userId)
             throws AccessDeniedException {
@@ -56,55 +49,80 @@ public class ProductInventoryService {
     }
 
     /**
-     * Registra o actualiza stock de un producto en el inventario.
-     * Actualiza el stock y el costo promedio usando promedio ponderado.
-     * El branchId se obtiene del producto asociado.
-     *
-     * @param dto    Datos del stock a registrar
-     * @param userId ID del usuario que realiza la operación
-     * @return El inventario del producto actualizado
-     * @throws ProductNotFoundException si el producto no existe
-     * @throws AccessDeniedException si el usuario no tiene acceso a la sede del producto
+     * Registrar entradas de stock (compras, ajustes, etc.)
      */
     @Transactional
     public ProductInventoryResponseDto registerProductStock(RegisterProductStockDto dto, String userId)
             throws ProductNotFoundException, ApiException {
 
-        // Verificar que el usuario tenga acceso a la sede del producto
         branchApi.assertUserHasAccessToBranch(userId, dto.branchId());
 
-        // Obtener o crear inventario
         ProductInventory inventory = productInventoryRepository
                 .findByProductId(dto.productId())
                 .orElseGet(() -> productInventoryFactory.createFromDto(dto));
 
-        // Actualizar stock
         Quantity entryQuantity = new Quantity(dto.quantity());
         inventory.addStock(entryQuantity);
 
-        // Llamada al inventario de materias primas para reducir el stock si existe una fórmula
         var recipe = productApi.getIngredientsForProductUnit(dto.productId());
 
-        if(recipe.isPresent()){
+        if (recipe.isPresent()) {
             Map<Long, Quantity> cantidadesAReducir = new HashMap<>();
-            for (var ingredient : recipe.get()) {
-                cantidadesAReducir.put(
-                        ingredient.getRawMaterialId(),
-                        ingredient.getQuantity().multiply(entryQuantity)
-                );
-            }
-            this.rawMaterialInventoryApi.reduceStock(cantidadesAReducir, userId);
+            recipe.get().forEach(ingredient ->
+                    cantidadesAReducir.put(
+                            ingredient.getRawMaterialId(),
+                            ingredient.getQuantity().multiply(entryQuantity)
+                    )
+            );
+
+            rawMaterialInventoryApi.reduceStock(cantidadesAReducir, userId);
         }
 
-        // Guardar  el inventario actualizado
         ProductInventory saved = productInventoryRepository.save(inventory);
 
-        // Registrar movimiento en el inventario de productos
-        this.productInventoryMovementRepository.save(
-                this.productInventoryMovementFactory.createFromDto(dto, userId)
+        productInventoryMovementRepository.save(
+                productInventoryMovementFactory.createFromDto(dto, userId)
         );
 
         return productInventoryMapper.toResponseDto(saved);
     }
-}
 
+    /**
+     * 🔥 Consumir stock cuando se realiza una venta
+     */
+    @Transactional
+    public void consumeProductStock(Long branchId, Long productId, int quantity, String userId)
+            throws ApiException {
+
+        branchApi.assertUserHasAccessToBranch(userId, branchId);
+
+        ProductInventory inventory = productInventoryRepository
+                .findByProductId(productId)
+                .orElseThrow(() -> new ApiException("No existe inventario para el producto " + productId,
+                        HttpStatus.BAD_REQUEST)
+                );
+
+        Quantity q = new Quantity(quantity);
+
+        if (inventory.getCurrentStock().isLessThan(q)) {
+            throw new ApiException("Stock insuficiente para el producto " + productId,
+            HttpStatus.BAD_REQUEST);
+        }
+
+        // Descontar
+        inventory.subtractStock(q);
+        productInventoryRepository.save(inventory);
+
+        // Registrar movimiento (SALIDA)
+        RegisterProductStockDto movementDto = new RegisterProductStockDto(
+                branchId,
+                productId,
+                quantity,
+                inventory.getAverageCost()
+        );
+
+        productInventoryMovementRepository.save(
+                productInventoryMovementFactory.createFromDto(movementDto, userId)
+        );
+    }
+}

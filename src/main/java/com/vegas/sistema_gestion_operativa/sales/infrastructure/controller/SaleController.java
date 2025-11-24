@@ -1,6 +1,7 @@
 package com.vegas.sistema_gestion_operativa.sales.infrastructure.controller;
 
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
+import com.vegas.sistema_gestion_operativa.common.exceptions.ApiException;
 import com.vegas.sistema_gestion_operativa.sales.application.dto.CreateSaleDto;
 import com.vegas.sistema_gestion_operativa.sales.application.dto.SaleFilterDto;
 import com.vegas.sistema_gestion_operativa.sales.application.dto.SaleResponseDto;
@@ -31,7 +32,8 @@ public class SaleController {
 
     @PostMapping
     @PreAuthorize("hasPermission(null, 'SALES_CREATE')")
-    public ResponseEntity<Sale> create(@RequestBody @Valid CreateSaleDto dto) throws AccessDeniedException {
+    public ResponseEntity<Sale> create(@RequestBody @Valid CreateSaleDto dto)
+            throws AccessDeniedException, ApiException {
         Sale sale = saleService.create(dto, AuthUtils.getUserIdFromToken());
         return ResponseEntity.ok(sale);
     }
@@ -55,4 +57,3 @@ public class SaleController {
         return ResponseEntity.ok(result);
     }
 }
-

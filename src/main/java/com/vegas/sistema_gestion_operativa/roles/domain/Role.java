@@ -54,7 +54,7 @@ public enum Role {
                     ALERTS_VIEW, ALERTS_CONFIGURE,
                     DASHBOARD_VIEW,
                     BRANCHES_CREATE, BRANCHES_EDIT, BRANCHES_DELETE, BRANCHES_VIEW,
-                    SALES_READ
+                    SALES_CREATE, SALES_READ
             )
     ),
 

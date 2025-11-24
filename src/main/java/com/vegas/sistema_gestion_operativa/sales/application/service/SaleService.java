@@ -1,6 +1,7 @@
 package com.vegas.sistema_gestion_operativa.sales.application.service;
 
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
+import com.vegas.sistema_gestion_operativa.common.exceptions.ApiException;
 import com.vegas.sistema_gestion_operativa.security.AuthUtils;
 import com.vegas.sistema_gestion_operativa.sales.application.dto.CreateSaleDto;
 import com.vegas.sistema_gestion_operativa.sales.application.dto.SaleFilterDto;
@@ -8,6 +9,7 @@ import com.vegas.sistema_gestion_operativa.sales.application.dto.SaleResponseDto
 import com.vegas.sistema_gestion_operativa.sales.application.factory.SaleFactory;
 import com.vegas.sistema_gestion_operativa.sales.domain.entity.Sale;
 import com.vegas.sistema_gestion_operativa.sales.domain.repository.ISaleRepository;
+import com.vegas.sistema_gestion_operativa.products_inventory.application.service.ProductInventoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,9 +22,11 @@ public class SaleService {
 
     private final ISaleRepository saleRepository;
     private final SaleFactory saleFactory;
+    private final ProductInventoryService productInventoryService;
 
     @Transactional
-    public Sale create(CreateSaleDto dto, String userId) throws AccessDeniedException {
+    public Sale create(CreateSaleDto dto, String userId)
+            throws AccessDeniedException, ApiException {
 
         Sale sale = saleFactory.createFromDto(dto);
 
@@ -32,10 +36,19 @@ public class SaleService {
 
         sale.setEmployeeId(userId);
 
+        // 🔥 Descontar inventario por cada producto vendido
+        for (var detail : dto.getDetails()) {
+            productInventoryService.consumeProductStock(
+                    dto.getBranchId(),
+                    detail.getProductId(),
+                    detail.getQuantity(),
+                    userId
+            );
+        }
+
         return saleRepository.save(sale);
     }
 
-    // READ (paginado + filtros)
     @Transactional(readOnly = true)
     public Page<SaleResponseDto> findAll(SaleFilterDto filters, Pageable pageable) {
 
@@ -53,7 +66,7 @@ public class SaleService {
         return SaleResponseDto.builder()
                 .id(sale.getId())
                 .saleDate(sale.getSaleDate())
-                .total(sale.getTotal())  // <- si total es Money, usa getValue()
+                .total(sale.getTotal())
                 .branchId(sale.getBranchId())
                 .employeeId(sale.getEmployeeId())
                 .details(
@@ -61,9 +74,9 @@ public class SaleService {
                                 .map(d -> SaleResponseDto.DetailDto.builder()
                                         .id(d.getId())
                                         .productId(d.getProductId())
-                                        .quantity(d.getQuantity()) // si es Quantity
-                                        .unitPrice(d.getUnitPrice())           // si es Money
-                                        .subtotal(d.getSubtotal())             // si es Money
+                                        .quantity(d.getQuantity())
+                                        .unitPrice(d.getUnitPrice())
+                                        .subtotal(d.getSubtotal())
                                         .build()
                                 )
                                 .toList()
