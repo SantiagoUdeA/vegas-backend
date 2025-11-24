@@ -71,7 +71,7 @@ public class SaleService {
     }
 
     private SaleResponseDto mapToDto(Sale sale) {
-        String employeeName = userApi.getFullNameById(Long.valueOf(sale.getEmployeeId()));
+        String employeeName = userApi.getFullNameById(sale.getEmployeeId());
 
         return SaleResponseDto.builder()
                 .id(sale.getId())

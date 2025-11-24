@@ -14,14 +14,14 @@ public class IUserApiImpl implements IUserApi {
     }
 
     @Override
-    public String getFullNameById(Long userId) {
+    public String getFullNameById(String userId) {
         return userRepository.findById(userId)
                 .map(user -> user.getGivenName() + " " + user.getFamilyName())
                 .orElse("Usuario desconocido");
     }
 
     @Override
-    public String getRoleById(Long userId) {
+    public String getRoleById(String userId) {
         return userRepository.findById(userId)
                 .map(User::getRoleName)
                 .orElse("Rol desconocido");
