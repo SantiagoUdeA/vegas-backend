@@ -81,7 +81,7 @@ public class ProductInventoryService {
         ProductInventory saved = productInventoryRepository.save(inventory);
 
         productInventoryMovementRepository.save(
-                productInventoryMovementFactory.createFromDto(dto, userId)
+                productInventoryMovementFactory.createEntryMovement(dto, userId)
         );
 
         return productInventoryMapper.toResponseDto(saved);
@@ -122,7 +122,7 @@ public class ProductInventoryService {
         );
 
         productInventoryMovementRepository.save(
-                productInventoryMovementFactory.createFromDto(movementDto, userId)
+                productInventoryMovementFactory.createSaleMovement(movementDto, userId)
         );
     }
 
@@ -154,7 +154,7 @@ public class ProductInventoryService {
         );
 
         productInventoryMovementRepository.save(
-                productInventoryMovementFactory.createRestoreMovement(movementDto, userId)
+                productInventoryMovementFactory.createEntryMovement(movementDto, userId)
         );
     }
 }
