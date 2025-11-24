@@ -70,6 +70,7 @@ public enum Permission {
     // Ventas
     SALES_CREATE,
     SALES_READ,
+    SALES_DELETE,
 
     // Dashboard
     DASHBOARD_VIEW;
