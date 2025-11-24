@@ -3,6 +3,7 @@ package com.vegas.sistema_gestion_operativa.sales.application.service;
 import com.vegas.sistema_gestion_operativa.branches.IBranchApi;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 import com.vegas.sistema_gestion_operativa.common.exceptions.ApiException;
+import com.vegas.sistema_gestion_operativa.products.api.IProductApi;
 import com.vegas.sistema_gestion_operativa.security.AuthUtils;
 import com.vegas.sistema_gestion_operativa.sales.application.dto.CreateSaleDto;
 import com.vegas.sistema_gestion_operativa.sales.application.dto.SaleFilterDto;
@@ -11,6 +12,7 @@ import com.vegas.sistema_gestion_operativa.sales.application.factory.SaleFactory
 import com.vegas.sistema_gestion_operativa.sales.domain.entity.Sale;
 import com.vegas.sistema_gestion_operativa.sales.domain.repository.ISaleRepository;
 import com.vegas.sistema_gestion_operativa.products_inventory.application.service.ProductInventoryService;
+import com.vegas.sistema_gestion_operativa.users.api.IUserApi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +28,9 @@ public class SaleService {
     private final SaleFactory saleFactory;
     private final ProductInventoryService productInventoryService;
     private final IBranchApi branchApi;
+    private final IUserApi userApi;
+
+    private final IProductApi productApi;
 
     @Transactional
     public Sale create(CreateSaleDto dto, String userId)
@@ -66,23 +71,34 @@ public class SaleService {
     }
 
     private SaleResponseDto mapToDto(Sale sale) {
+        String employeeName = userApi.getFullNameById(Long.valueOf(sale.getEmployeeId()));
+
         return SaleResponseDto.builder()
                 .id(sale.getId())
                 .saleDate(sale.getSaleDate())
                 .total(sale.getTotal())
                 .branchId(sale.getBranchId())
                 .employeeId(sale.getEmployeeId())
+                .employeeName(employeeName)
                 .details(
-                        sale.getDetails().stream()
-                                .map(d -> SaleResponseDto.DetailDto.builder()
-                                        .id(d.getId())
-                                        .productId(d.getProductId())
-                                        .quantity(d.getQuantity())
-                                        .unitPrice(d.getUnitPrice())
-                                        .subtotal(d.getSubtotal())
-                                        .build()
-                                )
-                                .toList()
+                        sale.getDetails().stream().map(d -> {
+                            String productName;
+
+                            try {
+                                productName = productApi.getProductNameById(d.getProductId());
+                            } catch (Exception e) {
+                                productName = "Producto no encontrado";
+                            }
+
+                            return SaleResponseDto.DetailDto.builder()
+                                    .id(d.getId())
+                                    .productId(d.getProductId())
+                                    .productName(productName)
+                                    .quantity(d.getQuantity())
+                                    .unitPrice(d.getUnitPrice())
+                                    .subtotal(d.getSubtotal())
+                                    .build();
+                        }).toList()
                 )
                 .build();
     }

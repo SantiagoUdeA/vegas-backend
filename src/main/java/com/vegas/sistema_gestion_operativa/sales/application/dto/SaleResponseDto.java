@@ -15,6 +15,7 @@ public class SaleResponseDto {
     LocalDateTime saleDate;
     BigDecimal total;
     String employeeId;
+    String employeeName;
     Long branchId;
     List<DetailDto> details;
 
@@ -23,6 +24,7 @@ public class SaleResponseDto {
     public static class DetailDto {
         Long id;
         Long productId;
+        String productName;
         Integer quantity;
         BigDecimal unitPrice;
         BigDecimal subtotal;
