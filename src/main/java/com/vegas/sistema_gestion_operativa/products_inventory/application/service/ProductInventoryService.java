@@ -147,14 +147,14 @@ public class ProductInventoryService {
 
         // Registrar movimiento (ENTRADA por anulación de venta)
         RegisterProductStockDto movementDto = new RegisterProductStockDto(
-                productId,
                 branchId,
+                productId,
                 quantity,
                 inventory.getAverageCost()
         );
 
         productInventoryMovementRepository.save(
-                productInventoryMovementFactory.createFromDto(movementDto, userId)
+                productInventoryMovementFactory.createRestoreMovement(movementDto, userId)
         );
     }
 }
