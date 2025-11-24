@@ -1,7 +1,6 @@
 package com.vegas.sistema_gestion_operativa.products.application.service;
 
 import com.vegas.sistema_gestion_operativa.branches.IBranchApi;
-import com.vegas.sistema_gestion_operativa.common.domain.Money;
 import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 import com.vegas.sistema_gestion_operativa.products.api.IProductApi;
@@ -12,13 +11,12 @@ import com.vegas.sistema_gestion_operativa.products.application.dto.UpdateProduc
 import com.vegas.sistema_gestion_operativa.products.application.factory.ProductFactory;
 import com.vegas.sistema_gestion_operativa.products.application.mapper.IProductMapper;
 import com.vegas.sistema_gestion_operativa.products.domain.entity.Product;
+import com.vegas.sistema_gestion_operativa.products.domain.entity.ProductCategory;
 import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductCategoryNotFoundException;
 import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductNameAlreadyExists;
 import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductNotFoundException;
 import com.vegas.sistema_gestion_operativa.products.domain.repository.IProductCategoryRepository;
 import com.vegas.sistema_gestion_operativa.products.domain.repository.IProductRepository;
-import com.vegas.sistema_gestion_operativa.products_inventory.api.IProductInventoryApi;
-import com.vegas.sistema_gestion_operativa.products_inventory.domain.repository.IProductInventoryRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,8 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-
-import com.vegas.sistema_gestion_operativa.products_inventory.domain.entity.ProductInventory;
 
 
 @Service
@@ -93,22 +89,14 @@ public class ProductService implements IProductApi {
 
         branchApi.assertUserHasAccessToBranch(userId, product.getBranchId());
 
-        // 🔵 Si desea cambiar categoría
+        ProductCategory category = product.getCategory();
         if (dto.categoryId() != null) {
-            var category = this.categoryRepository.findById(dto.categoryId())
-                    .orElseThrow(() -> new ProductCategoryNotFoundException(
-                            "La categoría con id " + dto.categoryId() + " no fue encontrada"));
-            product.setCategory(category);
+            category = this.retrieveProductCategoryByIdOrThrow(dto.categoryId());
         }
 
-        // 🔵 Cambiar precio
-        product.setPrice(new Money(dto.price()));
-
-        // 🔵 Mantener el nombre
-        // product.setName(product.getName()); // implícito
-
-        Product saved = this.productRepository.save(product);
-        return productMapper.toResponseDto(saved);
+        return productMapper.toResponseDto(
+                this.productRepository.save(productMapper.partialUpdate(dto, category, product))
+        );
     }
 
     @Transactional
@@ -136,6 +124,11 @@ public class ProductService implements IProductApi {
     private Product retrieveProductById(Long id) throws ProductNotFoundException {
         return this.productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException("El producto con id " + id + " no fue encontrado"));
+    }
+
+    private ProductCategory retrieveProductCategoryByIdOrThrow(Long id) throws ProductCategoryNotFoundException {
+        return this.categoryRepository.findById(id)
+                .orElseThrow(() -> new ProductCategoryNotFoundException("La categoría con id " + id + " no fue encontrada"));
     }
 
     @Override
