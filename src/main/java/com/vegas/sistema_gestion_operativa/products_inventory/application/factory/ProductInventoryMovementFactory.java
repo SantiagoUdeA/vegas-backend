@@ -20,4 +20,28 @@ public class ProductInventoryMovementFactory {
                 .movementDate(LocalDateTime.now())
                 .build();
     }
+
+    /**
+     * Crea un movimiento de inventario para un ajuste
+     *
+     * @param productId ID del producto
+     * @param quantity cantidad del movimiento
+     * @param movementReason razón del movimiento
+     * @param userId ID del usuario que realiza el ajuste
+     * @return el movimiento creado
+     */
+    public ProductInventoryMovement createMovementForAdjustment(
+            Long productId,
+            Quantity quantity,
+            MovementReason movementReason,
+            String userId
+    ) {
+        return ProductInventoryMovement.builder()
+                .productId(productId)
+                .movementReason(movementReason)
+                .quantity(quantity)
+                .userId(userId)
+                .movementDate(LocalDateTime.now())
+                .build();
+    }
 }

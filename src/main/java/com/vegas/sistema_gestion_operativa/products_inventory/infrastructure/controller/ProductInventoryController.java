@@ -6,10 +6,14 @@ import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedExcepti
 import com.vegas.sistema_gestion_operativa.common.exceptions.ApiException;
 import com.vegas.sistema_gestion_operativa.common.utils.PaginationUtils;
 import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductNotFoundException;
+import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.ProductAdjustmentDto;
 import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.ProductInventoryItemDto;
 import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.ProductInventoryResponseDto;
 import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.RegisterProductStockDto;
 import com.vegas.sistema_gestion_operativa.products_inventory.application.service.ProductInventoryService;
+import com.vegas.sistema_gestion_operativa.products_inventory.domain.entity.ProductInventory;
+import com.vegas.sistema_gestion_operativa.products_inventory.domain.exceptions.InsufficientStockException;
+import com.vegas.sistema_gestion_operativa.products_inventory.domain.exceptions.ProductInventoryNotFoundException;
 import com.vegas.sistema_gestion_operativa.security.AuthUtils;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -75,6 +79,23 @@ public class ProductInventoryController {
                 AuthUtils.getUserIdFromToken()
         );
         return ResponseEntity.ok(inventory);
+    }
+
+    /**
+     * Realiza un ajuste en el inventario de un producto.
+     * Reduce el stock según la cantidad especificada.
+     *
+     * @param dto datos del ajuste (productId, quantity, reason, justification)
+     * @return inventario de producto actualizado
+     */
+    @PostMapping("/adjustment")
+    @PreAuthorize("hasPermission(null, 'INVENTORY_EDIT')")
+    public ResponseEntity<ProductInventory> doAdjustment(
+            @RequestBody @Valid ProductAdjustmentDto dto
+    ) throws InsufficientStockException, AccessDeniedException, ProductInventoryNotFoundException {
+        return ResponseEntity.ok(
+                this.productInventoryService.doAdjustment(dto, AuthUtils.getUserIdFromToken())
+        );
     }
 }
 
