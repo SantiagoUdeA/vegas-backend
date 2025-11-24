@@ -145,7 +145,8 @@ public class ProductInventoryService {
                         item.getProductId(),
                         dto.quantity(),
                         dto.movementReason(),
-                        userId
+                        userId,
+                        dto.justification()
                 )
         );
 
