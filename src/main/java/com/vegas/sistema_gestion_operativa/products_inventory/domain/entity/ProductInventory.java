@@ -65,7 +65,6 @@ public class ProductInventory {
     }
 
     /**
-<<<<<<< HEAD
      * Reduce stock del inventario
      *
      * @param quantity cantidad a reducir
@@ -78,16 +77,12 @@ public class ProductInventory {
         this.currentStock = this.currentStock.subtract(quantity);
     }
 
-=======
-     * Resta stock al inventario
-     */
     public void subtractStock(Quantity quantity) {
         if (this.currentStock == null) {
             throw new IllegalStateException("No hay stock inicializado para restar.");
         }
         this.currentStock = this.currentStock.subtract(quantity);
     }
->>>>>>> 5b28dfe56cd8a06a432fbad6232c17017f1fb68b
 
     /**
      * Actualiza el costo promedio
