@@ -154,7 +154,7 @@ public class ProductInventoryService {
         );
 
         productInventoryMovementRepository.save(
-                productInventoryMovementFactory.createEntryMovement(movementDto, userId)
+                productInventoryMovementFactory.createReturnEntryMovement(movementDto, userId)
         );
     }
 }

@@ -36,4 +36,17 @@ public class ProductInventoryMovementFactory {
                 .movementDate(LocalDateTime.now())
                 .build();
     }
+
+    /**
+     * Movimiento por ENTRADA debido a RETORNO (anulación de venta)
+     */
+    public ProductInventoryMovement createReturnEntryMovement(RegisterProductStockDto dto, String userId) {
+        return ProductInventoryMovement.builder()
+                .productId(dto.productId())
+                .movementReason(MovementReason.RETORNO)
+                .quantity(new Quantity(dto.quantity()))
+                .userId(userId)
+                .movementDate(LocalDateTime.now())
+                .build();
+    }
 }
