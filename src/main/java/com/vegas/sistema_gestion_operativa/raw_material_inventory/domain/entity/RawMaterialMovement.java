@@ -35,7 +35,6 @@ public class RawMaterialMovement {
 
     @Column(
             name = "raw_material_batch_id",
-            nullable = true,
             updatable = false,
             columnDefinition = "BIGINT REFERENCES raw_material_batch(id)"
     )
