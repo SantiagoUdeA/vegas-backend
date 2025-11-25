@@ -5,14 +5,14 @@ import com.vegas.sistema_gestion_operativa.common.dto.PaginationRequest;
 import com.vegas.sistema_gestion_operativa.common.exceptions.InvalidPropertyFilterException;
 import com.vegas.sistema_gestion_operativa.common.utils.PaginationUtils;
 import com.vegas.sistema_gestion_operativa.security.AuthUtils;
-import com.vegas.sistema_gestion_operativa.users.domain.entity.User;
 import com.vegas.sistema_gestion_operativa.users.application.dto.CreateUserDto;
 import com.vegas.sistema_gestion_operativa.users.application.dto.UpdateUserDto;
+import com.vegas.sistema_gestion_operativa.users.application.service.UserService;
+import com.vegas.sistema_gestion_operativa.users.domain.entity.User;
 import com.vegas.sistema_gestion_operativa.users.domain.exceptions.UserAlreadyActiveException;
 import com.vegas.sistema_gestion_operativa.users.domain.exceptions.UserAlreadyExistsException;
 import com.vegas.sistema_gestion_operativa.users.domain.exceptions.UserAlreadyInactiveException;
 import com.vegas.sistema_gestion_operativa.users.domain.exceptions.UserNotFoundException;
-import com.vegas.sistema_gestion_operativa.users.application.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +35,7 @@ public class UserController {
 
     /**
      * Constructor that injects the user service.
+     *
      * @param userService user service
      */
     public UserController(UserService userService) {
@@ -44,6 +45,7 @@ public class UserController {
     /**
      * Retrieves the list of all users.
      * Requires USERS_VIEW permission.
+     *
      * @return list of users
      */
     @GetMapping
@@ -56,6 +58,7 @@ public class UserController {
     /**
      * Creates a new user.
      * Requires USERS_CREATE permission.
+     *
      * @param dto data to create the user
      * @return created user
      */
@@ -68,7 +71,8 @@ public class UserController {
 
     /**
      * Updates an existing user.
-     * @param id ID of the user to update
+     *
+     * @param id  ID of the user to update
      * @param dto data to update the user
      * @return updated user
      */
@@ -79,22 +83,24 @@ public class UserController {
 
     /**
      * Deactivates a user by ID.
+     *
      * @param id ID of the user to deactivate
      * @return ResponseEntity with status OK
-     * @throws UserNotFoundException if the user is not found
+     * @throws UserNotFoundException        if the user is not found
      * @throws UserAlreadyInactiveException if the user is already inactive
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<String> desactivateUser(@PathVariable String id) throws UserNotFoundException, UserAlreadyInactiveException {
         userService.desactivate(id, AuthUtils.getRoleNameFromToken());
-        return  ResponseEntity.ok().build();
+        return ResponseEntity.ok().build();
     }
 
     /**
      * Activates a user by ID.
+     *
      * @param id ID of the user to activate
      * @return ResponseEntity with status OK
-     * @throws UserNotFoundException if the user is not found
+     * @throws UserNotFoundException      if the user is not found
      * @throws UserAlreadyActiveException if the user is already active
      */
     @PostMapping("/{id}/activate")

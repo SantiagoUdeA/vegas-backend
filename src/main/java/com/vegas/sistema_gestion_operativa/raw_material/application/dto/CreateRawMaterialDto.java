@@ -19,4 +19,5 @@ public record CreateRawMaterialDto(
 
         @NotNull(message = "La sede es obligatoria")
         Long branchId
-) {}
+) {
+}

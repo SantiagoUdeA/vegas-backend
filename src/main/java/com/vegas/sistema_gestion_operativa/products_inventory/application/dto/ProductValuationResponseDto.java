@@ -8,4 +8,5 @@ public record ProductValuationResponseDto(
         List<ProductValuationItemDto> items,
         Map<String, BigDecimal> valuationByCategory,
         BigDecimal totalValuation
-) {}
+) {
+}

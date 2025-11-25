@@ -5,8 +5,8 @@ import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 import com.vegas.sistema_gestion_operativa.products.api.IProductApi;
 import com.vegas.sistema_gestion_operativa.products.api.IngredientDto;
-import com.vegas.sistema_gestion_operativa.products.application.dto.CreateProductDto;
 import com.vegas.sistema_gestion_operativa.products.api.ProductDto;
+import com.vegas.sistema_gestion_operativa.products.application.dto.CreateProductDto;
 import com.vegas.sistema_gestion_operativa.products.application.dto.UpdateProductDto;
 import com.vegas.sistema_gestion_operativa.products.application.factory.ProductFactory;
 import com.vegas.sistema_gestion_operativa.products.application.mapper.IProductMapper;
@@ -18,7 +18,6 @@ import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductNam
 import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductNotFoundException;
 import com.vegas.sistema_gestion_operativa.products.domain.repository.IProductCategoryRepository;
 import com.vegas.sistema_gestion_operativa.products.domain.repository.IProductRepository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -68,7 +67,7 @@ public class ProductService implements IProductApi {
     ) throws ProductCategoryNotFoundException, ProductNameAlreadyExists, AccessDeniedException {
         branchApi.assertUserHasAccessToBranch(userId, dto.branchId());
 
-        if(this.productRepository.findByNameAndActiveTrueAndBranchId(dto.name(), dto.branchId()).isPresent()){
+        if (this.productRepository.findByNameAndActiveTrueAndBranchId(dto.name(), dto.branchId()).isPresent()) {
             throw new ProductNameAlreadyExists("El producto con nombre " + dto.name() + " ya existe en esta sede");
         }
 
@@ -111,7 +110,7 @@ public class ProductService implements IProductApi {
         Double stock = productRepository.findCurrentStockByProductId(productId);
 
         if (stock != null && stock > 0) {
-            throw  new ProductCantBeDeletedException("No se puede eliminar el producto porque aún tiene stock (" + stock + " unidades).");
+            throw new ProductCantBeDeletedException("No se puede eliminar el producto porque aún tiene stock (" + stock + " unidades).");
         }
 
         product.deactivate();
@@ -133,7 +132,7 @@ public class ProductService implements IProductApi {
     @Override
     public Optional<List<IngredientDto>> getIngredientsForProductUnit(Long productId) throws ProductNotFoundException {
         var recipe = this.retrieveProductById(productId).getRecipe();
-        if(recipe == null) {
+        if (recipe == null) {
             return Optional.empty();
         }
         return Optional.of(recipe.getIngredients().stream().map(ingredient -> IngredientDto.builder()

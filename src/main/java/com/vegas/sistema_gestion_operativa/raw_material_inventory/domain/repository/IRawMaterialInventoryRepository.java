@@ -17,36 +17,36 @@ public interface IRawMaterialInventoryRepository extends JpaRepository<RawMateri
 
     // 🟦 EXISTENTE — NO SE TOCA
     @Query(value = """
-        SELECT
-            rmi.id AS id,
-            rm.name AS rawMaterialName,
-            rmc.name AS categoryName,
-            rm.unit_of_measure AS unitOfMeasure,
-            rmi.current_stock AS currentStock,
-            rmi.average_cost AS averageCost,
-            rmi.updated_at AS updatedAt
-        FROM raw_material_inventory rmi
-        JOIN raw_material rm ON rmi.raw_material_id = rm.id
-        JOIN raw_material_category rmc ON rm.category_id = rmc.id
-        WHERE rmi.branch_id = :branchId
-    """, nativeQuery = true)
+                SELECT
+                    rmi.id AS id,
+                    rm.name AS rawMaterialName,
+                    rmc.name AS categoryName,
+                    rm.unit_of_measure AS unitOfMeasure,
+                    rmi.current_stock AS currentStock,
+                    rmi.average_cost AS averageCost,
+                    rmi.updated_at AS updatedAt
+                FROM raw_material_inventory rmi
+                JOIN raw_material rm ON rmi.raw_material_id = rm.id
+                JOIN raw_material_category rmc ON rm.category_id = rmc.id
+                WHERE rmi.branch_id = :branchId
+            """, nativeQuery = true)
     List<RawMaterialInventoryItemDto> findInventoryItemsByBranchId(@Param("branchId") Long branchId);
 
 
     // 🟩 NUEVO — PARA VALUACIÓN
     @Query(value = """
-        SELECT
-            rm.id AS rawMaterialId,
-            rm.name AS rawMaterialName,
-            rmc.name AS categoryName,
-            COALESCE(rmi.current_stock, 0) AS currentStock,
-            COALESCE(rmi.average_cost, 0) AS averageCost,
-            (COALESCE(rmi.current_stock, 0) * COALESCE(rmi.average_cost, 0)) AS valuation
-        FROM raw_material_inventory rmi
-        JOIN raw_material rm ON rmi.raw_material_id = rm.id
-        JOIN raw_material_category rmc ON rm.category_id = rmc.id
-        WHERE rmi.branch_id = :branchId
-    """, nativeQuery = true)
+                SELECT
+                    rm.id AS rawMaterialId,
+                    rm.name AS rawMaterialName,
+                    rmc.name AS categoryName,
+                    COALESCE(rmi.current_stock, 0) AS currentStock,
+                    COALESCE(rmi.average_cost, 0) AS averageCost,
+                    (COALESCE(rmi.current_stock, 0) * COALESCE(rmi.average_cost, 0)) AS valuation
+                FROM raw_material_inventory rmi
+                JOIN raw_material rm ON rmi.raw_material_id = rm.id
+                JOIN raw_material_category rmc ON rm.category_id = rmc.id
+                WHERE rmi.branch_id = :branchId
+            """, nativeQuery = true)
     List<RawMaterialValuationItemDto> findValuationItemsByBranchId(@Param("branchId") Long branchId);
 
 

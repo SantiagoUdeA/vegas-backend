@@ -1,7 +1,7 @@
 package com.vegas.sistema_gestion_operativa.branches.application.mapper;
 
-import com.vegas.sistema_gestion_operativa.branches.domain.entity.Branch;
 import com.vegas.sistema_gestion_operativa.branches.application.dto.UpdateBranchDto;
+import com.vegas.sistema_gestion_operativa.branches.domain.entity.Branch;
 import org.mapstruct.*;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)

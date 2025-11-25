@@ -10,21 +10,21 @@ import org.springframework.data.jpa.repository.Query;
 public interface IRawMaterialMovementRepository extends JpaRepository<RawMaterialMovement, Long> {
 
     @Query("""
-        SELECT new com.vegas.sistema_gestion_operativa.raw_material_inventory.application.dto.RawMaterialMovementDto(
-            rmm.id,
-            rmm.quantity,
-            rmm.movementDate,
-            rmm.movementReason,
-            rmb.batchNumber,
-            rm.name,
-            concat(u.givenName, ' ', u.familyName),
-            rmm.justification
-        )
-        FROM RawMaterialMovement rmm
-        JOIN RawMaterial rm ON rmm.rawMaterialId = rm.id
-        JOIN User u ON rmm.userId = u.id
-        LEFT JOIN RawMaterialBatch rmb ON rmm.rawMaterialBatchId = rmb.id
-        WHERE rm.branchId = :branchId
-    """)
+                SELECT new com.vegas.sistema_gestion_operativa.raw_material_inventory.application.dto.RawMaterialMovementDto(
+                    rmm.id,
+                    rmm.quantity,
+                    rmm.movementDate,
+                    rmm.movementReason,
+                    rmb.batchNumber,
+                    rm.name,
+                    concat(u.givenName, ' ', u.familyName),
+                    rmm.justification
+                )
+                FROM RawMaterialMovement rmm
+                JOIN RawMaterial rm ON rmm.rawMaterialId = rm.id
+                JOIN User u ON rmm.userId = u.id
+                LEFT JOIN RawMaterialBatch rmb ON rmm.rawMaterialBatchId = rmb.id
+                WHERE rm.branchId = :branchId
+            """)
     Page<RawMaterialMovementDto> findAllByBranchId(Pageable pageable, Long branchId);
 }

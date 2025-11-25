@@ -29,10 +29,10 @@ public class RawMaterialBatchController {
     @PostMapping
     public ResponseEntity<RawMaterialBatch> registerRawMaterialBatch(@RequestBody RegisterRawMaterialBatchDto dto) {
         return ResponseEntity.ok(
-            this.rawMaterialInventoryService.registerRawMaterialBatch(
-                    dto,
-                    AuthUtils.getUserIdFromToken()
-            )
+                this.rawMaterialInventoryService.registerRawMaterialBatch(
+                        dto,
+                        AuthUtils.getUserIdFromToken()
+                )
         );
     }
 

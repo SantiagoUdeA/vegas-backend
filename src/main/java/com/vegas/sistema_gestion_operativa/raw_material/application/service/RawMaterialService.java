@@ -1,6 +1,7 @@
 package com.vegas.sistema_gestion_operativa.raw_material.application.service;
 
 import com.vegas.sistema_gestion_operativa.branches.IBranchApi;
+import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 import com.vegas.sistema_gestion_operativa.raw_material.application.dto.CreateRawMaterialDto;
 import com.vegas.sistema_gestion_operativa.raw_material.application.dto.RawMaterialResponseDto;
 import com.vegas.sistema_gestion_operativa.raw_material.application.dto.UpdateRawMaterialDto;
@@ -12,7 +13,6 @@ import com.vegas.sistema_gestion_operativa.raw_material.domain.exceptions.RawMat
 import com.vegas.sistema_gestion_operativa.raw_material.domain.exceptions.RawMaterialNotFoundException;
 import com.vegas.sistema_gestion_operativa.raw_material.infrastructure.repository.IRawMaterialCategoryRepository;
 import com.vegas.sistema_gestion_operativa.raw_material.infrastructure.repository.IRawMaterialRepository;
-import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -47,7 +47,7 @@ public class RawMaterialService {
             throw new RawMaterialNameAlreadyExists(dto.name());
         }
 
-        if(dto.categoryId() != null){
+        if (dto.categoryId() != null) {
             categoryRepository.findById(dto.categoryId())
                     .orElseThrow(() -> new RawMaterialCategoryNotFoundException(dto.categoryId()));
         }

@@ -1,6 +1,7 @@
 package com.vegas.sistema_gestion_operativa.sales.application.dto;
 
 import lombok.Data;
+
 import java.time.LocalDate;
 
 @Data

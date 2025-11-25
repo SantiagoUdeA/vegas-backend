@@ -28,9 +28,23 @@ import java.util.Optional;
 public class SecurityConfig {
 
     /**
+     * Configures the method security expression handler with a custom permission evaluator.
+     *
+     * @param permissionEvaluator custom permission evaluator
+     * @return configured MethodSecurityExpressionHandler
+     */
+    @Bean
+    static MethodSecurityExpressionHandler methodSecurityExpressionHandler(CustomPermissionEvaluator permissionEvaluator) {
+        DefaultMethodSecurityExpressionHandler handler = new DefaultMethodSecurityExpressionHandler();
+        handler.setPermissionEvaluator(permissionEvaluator);
+        return handler;
+    }
+
+    /**
      * Configures the security filter chain.
      * Permits access to Swagger UI and API docs without authentication.
      * Secures other endpoints with JWT-based OAuth2 resource server.
+     *
      * @param http HttpSecurity to configure
      * @return configured SecurityFilterChain
      * @throws Exception in case of configuration errors
@@ -50,6 +64,7 @@ public class SecurityConfig {
 
     /**
      * Configures the JWT authentication converter to extract roles from custom claims.
+     *
      * @return configured JwtAuthenticationConverter
      */
     @Bean
@@ -60,20 +75,9 @@ public class SecurityConfig {
     }
 
     /**
-     * Configures the method security expression handler with a custom permission evaluator.
-     * @param permissionEvaluator custom permission evaluator
-     * @return configured MethodSecurityExpressionHandler
-     */
-    @Bean
-    static MethodSecurityExpressionHandler methodSecurityExpressionHandler(CustomPermissionEvaluator permissionEvaluator) {
-        DefaultMethodSecurityExpressionHandler handler = new DefaultMethodSecurityExpressionHandler();
-        handler.setPermissionEvaluator(permissionEvaluator);
-        return handler;
-    }
-
-    /**
      * Extracts authorities from JWT claims.
      * Maps the "custom:role" claim to a Spring Security authority.
+     *
      * @param jwt JWT token
      * @return collection of granted authorities
      */

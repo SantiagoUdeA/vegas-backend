@@ -76,7 +76,7 @@ public enum Permission {
     DASHBOARD_VIEW;
 
     @JsonCreator
-    public static Permission fromValue(String value) throws  IllegalArgumentException {
+    public static Permission fromValue(String value) throws IllegalArgumentException {
         if (value == null || value.isBlank()) {
             throw new IllegalArgumentException("El permiso no puede ser nulo o vacío");
         }

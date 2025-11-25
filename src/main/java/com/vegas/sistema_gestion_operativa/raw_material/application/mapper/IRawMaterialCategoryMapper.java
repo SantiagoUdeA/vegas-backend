@@ -1,4 +1,3 @@
-
 package com.vegas.sistema_gestion_operativa.raw_material.application.mapper;
 
 import com.vegas.sistema_gestion_operativa.raw_material.application.dto.RawMaterialCategoryResponseDto;

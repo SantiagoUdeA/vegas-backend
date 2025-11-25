@@ -10,7 +10,8 @@ import org.springframework.stereotype.Service;
 import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.*;
+import software.amazon.awssdk.services.cognitoidentityprovider.model.AdminCreateUserResponse;
+import software.amazon.awssdk.services.cognitoidentityprovider.model.AttributeType;
 
 /**
  * Service for interacting with AWS Cognito Identity Provider.
@@ -20,9 +21,8 @@ import software.amazon.awssdk.services.cognitoidentityprovider.model.*;
 @Slf4j
 public class CognitoIdentityService implements IIdentityService {
 
-    private CognitoIdentityProviderClient client;
     private final CognitoIdentityRequestFactory cognitoIdentityRequestFactory;
-
+    private CognitoIdentityProviderClient client;
     @Value("${aws.cognito.userPoolId}")
     private String userPoolId;
 
@@ -52,7 +52,7 @@ public class CognitoIdentityService implements IIdentityService {
      * Sets its password as permanent with idNumber and does not send an invitation email.
      *
      * @param email      the email of the new user
-     * @param givenName the given name (first name) of the new user
+     * @param givenName  the given name (first name) of the new user
      * @param familyName the family name (last name) of the new user
      * @param roleName   the role to assign to the new user
      * @return the ID of the created user

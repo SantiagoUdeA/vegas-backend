@@ -1,7 +1,7 @@
 package com.vegas.sistema_gestion_operativa.products.application.service;
 
-import com.vegas.sistema_gestion_operativa.products.application.dto.CreateProductCategoryDto;
 import com.vegas.sistema_gestion_operativa.products.api.ProductCategoryDto;
+import com.vegas.sistema_gestion_operativa.products.application.dto.CreateProductCategoryDto;
 import com.vegas.sistema_gestion_operativa.products.application.dto.UpdateProductCategoryDto;
 import com.vegas.sistema_gestion_operativa.products.application.factory.ProductCategoryFactory;
 import com.vegas.sistema_gestion_operativa.products.application.mapper.IProductCategoryMapper;
@@ -37,7 +37,7 @@ public class ProductCategoryService {
 
     public ProductCategoryDto create(CreateProductCategoryDto dto) throws ProductCategoryNameAlreadyExistsException {
         var category = this.categoryRepository.findByName(dto.name());
-        if(category.isPresent())
+        if (category.isPresent())
             throw new ProductCategoryNameAlreadyExistsException("Ya existe una categoría con el nombre: " + dto.name());
 
         ProductCategory newCategory = this.categoryRepository.save(this.categoryFactory.createFromDto(dto));

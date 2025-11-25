@@ -37,7 +37,7 @@ public class RawMaterialCategoryService {
 
     public RawMaterialCategoryResponseDto create(CreateRawMaterialCategoryDto dto) throws RawMaterialCategoryNameAlreadyExistsException {
         var category = this.categoryRepository.findByName(dto.name());
-        if(category.isPresent())
+        if (category.isPresent())
             throw new RawMaterialCategoryNameAlreadyExistsException("Ya existe una categoría con el nombre: " + dto.name());
 
         RawMaterialCategory newCategory = this.categoryRepository.save(this.categoryFactory.createFromDto(dto));

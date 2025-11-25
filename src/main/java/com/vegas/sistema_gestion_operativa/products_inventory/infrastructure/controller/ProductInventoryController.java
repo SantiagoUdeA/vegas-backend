@@ -44,7 +44,7 @@ public class ProductInventoryController {
      * Returns detailed information including product name and category.
      *
      * @param paginationRequest pagination parameters
-     * @param branchId ID of the branch
+     * @param branchId          ID of the branch
      * @return paginated list of product inventory items with product and category information
      */
     @GetMapping

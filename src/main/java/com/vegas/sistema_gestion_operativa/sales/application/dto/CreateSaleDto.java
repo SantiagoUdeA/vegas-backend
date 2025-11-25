@@ -17,7 +17,7 @@ public class CreateSaleDto {
 
     @Value
     @Builder
-    public static class DetailCreateDto{
+    public static class DetailCreateDto {
         @NotNull
         Long productId;
         @NotNull

@@ -7,4 +7,5 @@ public record ValidationErrorResponse(
         String message,
         List<FieldErrorResponse> errors,
         String timestamp
-) {}
+) {
+}

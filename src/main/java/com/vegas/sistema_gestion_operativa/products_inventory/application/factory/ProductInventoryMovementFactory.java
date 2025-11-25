@@ -40,11 +40,11 @@ public class ProductInventoryMovementFactory {
     /**
      * Crea un movimiento de inventario para un ajuste
      *
-     * @param productId ID del producto
-     * @param quantity cantidad del movimiento
+     * @param productId      ID del producto
+     * @param quantity       cantidad del movimiento
      * @param movementReason razón del movimiento
-     * @param userId ID del usuario que realiza el ajuste
-     * @param justification justificación del ajuste
+     * @param userId         ID del usuario que realiza el ajuste
+     * @param justification  justificación del ajuste
      * @return el movimiento creado
      */
     public ProductInventoryMovement createMovementForAdjustment(

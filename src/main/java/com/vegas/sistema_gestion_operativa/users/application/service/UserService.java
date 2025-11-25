@@ -2,16 +2,16 @@ package com.vegas.sistema_gestion_operativa.users.application.service;
 
 import com.vegas.sistema_gestion_operativa.common.exceptions.InvalidPropertyFilterException;
 import com.vegas.sistema_gestion_operativa.roles.IRoleApi;
-import com.vegas.sistema_gestion_operativa.users.domain.entity.User;
 import com.vegas.sistema_gestion_operativa.users.application.dto.CreateUserDto;
 import com.vegas.sistema_gestion_operativa.users.application.dto.UpdateUserDto;
+import com.vegas.sistema_gestion_operativa.users.application.factory.UserFactory;
+import com.vegas.sistema_gestion_operativa.users.application.mapper.IUserMapper;
+import com.vegas.sistema_gestion_operativa.users.domain.entity.User;
 import com.vegas.sistema_gestion_operativa.users.domain.events.UserCreatedEvent;
 import com.vegas.sistema_gestion_operativa.users.domain.exceptions.UserAlreadyActiveException;
 import com.vegas.sistema_gestion_operativa.users.domain.exceptions.UserAlreadyExistsException;
 import com.vegas.sistema_gestion_operativa.users.domain.exceptions.UserAlreadyInactiveException;
 import com.vegas.sistema_gestion_operativa.users.domain.exceptions.UserNotFoundException;
-import com.vegas.sistema_gestion_operativa.users.application.factory.UserFactory;
-import com.vegas.sistema_gestion_operativa.users.application.mapper.IUserMapper;
 import com.vegas.sistema_gestion_operativa.users.infrastructure.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -58,17 +58,16 @@ public class UserService {
 
     /**
      * Retrieves all users from the repository.
+     *
      * @return list of users
      */
     public Page<User> findAll(String userId, String userRoleName, Pageable pageable) throws InvalidPropertyFilterException {
         try {
-            if(this.roleApi.isRootRole(userRoleName)){
+            if (this.roleApi.isRootRole(userRoleName)) {
                 return userRepository.findAllByRoleName("OWNER", pageable);
-            }
-            else if(this.roleApi.isAdminRole(userRoleName)) {
+            } else if (this.roleApi.isAdminRole(userRoleName)) {
                 return userRepository.findUsersByRolesInBranchesWithUser(List.of("CASHIER"), userId, pageable);
-            }
-            else if(this.roleApi.isOwnerRole(userRoleName))
+            } else if (this.roleApi.isOwnerRole(userRoleName))
                 return userRepository.findUsersByRolesInBranchesWithUser(List.of("ADMIN", "CASHIER"), userId, pageable);
         } catch (InvalidDataAccessApiUsageException e) {
             throw new InvalidPropertyFilterException(e);
@@ -79,6 +78,7 @@ public class UserService {
     /**
      * Creates a new user from the provided DTO and saves it in the repository and then
      * uses cognito identity service to save it in Cognito.
+     *
      * @param newUser DTO containing user data
      * @return the created user
      */
@@ -86,7 +86,7 @@ public class UserService {
     public User create(CreateUserDto newUser, String userRoleName) throws UserAlreadyExistsException {
 
         // Verificar si el usuario tiene permisos para crear un usuario con el rol especificado
-        if(!this.roleApi.canManageUserWithRole(userRoleName, newUser.roleName()))
+        if (!this.roleApi.canManageUserWithRole(userRoleName, newUser.roleName()))
             throw new AccessDeniedException("No tienes permisos para crear un usuario con el rol %s".formatted(newUser.roleName()));
 
         // Validar que el usuario no exista previamente
@@ -125,14 +125,15 @@ public class UserService {
 
     /**
      * Updates an existing user with the provided DTO.
+     *
      * @param targetUserId ID of the user to update
-     * @param dto DTO containing updated user data
+     * @param dto          DTO containing updated user data
      * @return the updated user
      * @throws UserNotFoundException if the user is not found
      */
     @Transactional
     public User update(String targetUserId, UpdateUserDto dto, String userRoleName) throws UserNotFoundException {
-        if(!this.roleApi.canManageUserWithRole(userRoleName, dto.roleName()))
+        if (!this.roleApi.canManageUserWithRole(userRoleName, dto.roleName()))
             throw new AccessDeniedException("No tienes permisos para editar un usuario con el rol %s".formatted(dto.roleName()));
         var user = retrieveUser(targetUserId);
         var updatedUser = userMapper.partialUpdate(dto, user);
@@ -142,16 +143,17 @@ public class UserService {
 
     /**
      * Deactivates a user by their ID.
+     *
      * @param userId ID of the user to deactivate
      * @throws UserNotFoundException if the user is not found
      */
     public void desactivate(String userId, String userRoleName) throws UserNotFoundException, UserAlreadyInactiveException {
         var user = retrieveUser(userId);
 
-        if(!this.roleApi.canManageUserWithRole(userRoleName, user.getRoleName()))
+        if (!this.roleApi.canManageUserWithRole(userRoleName, user.getRoleName()))
             throw new AccessDeniedException("No tienes permisos para desactivar un usuario con el rol %s".formatted(user.getRoleName()));
 
-        if(!user.isActive()) throw new UserAlreadyInactiveException("El usuario ya se encuentra inactivo");
+        if (!user.isActive()) throw new UserAlreadyInactiveException("El usuario ya se encuentra inactivo");
 
         identityService.disableUser(user.getEmail());
         user.setActive(false);
@@ -159,11 +161,13 @@ public class UserService {
     }
 
     private void validateUserDoesntExists(String email) throws UserAlreadyExistsException {
-        if(userRepository.findByEmail(email).isPresent()) throw new UserAlreadyExistsException("Ya existe un usuario con el correo electrónico: " + email);
+        if (userRepository.findByEmail(email).isPresent())
+            throw new UserAlreadyExistsException("Ya existe un usuario con el correo electrónico: " + email);
     }
 
     /**
      * Retrieves a user by their ID.
+     *
      * @param userId ID of the user to retrieve
      * @return the retrieved user
      * @throws UserNotFoundException if the user is not found
@@ -173,19 +177,20 @@ public class UserService {
     }
 
     /**
-    * Activates a user by their ID.
-    * @param issuerUseRoleName Role name of the user issuing the activation
-    * @param targetUserId ID of the user to activate
-    * @throws UserNotFoundException if the target user is not found
+     * Activates a user by their ID.
+     *
+     * @param issuerUseRoleName Role name of the user issuing the activation
+     * @param targetUserId      ID of the user to activate
+     * @throws UserNotFoundException if the target user is not found
      */
     @Transactional
     public void activateUser(String targetUserId, String issuerUseRoleName) throws UserNotFoundException, UserAlreadyActiveException {
         var user = retrieveUser(targetUserId);
 
-        if(!this.roleApi.canManageUserWithRole(issuerUseRoleName, user.getRoleName()))
+        if (!this.roleApi.canManageUserWithRole(issuerUseRoleName, user.getRoleName()))
             throw new AccessDeniedException("No tienes permisos para activar un usuario con el rol %s");
 
-        if(user.isActive())
+        if (user.isActive())
             throw new UserAlreadyActiveException("El usuario ya se encuentra activo");
 
         identityService.enableUser(user.getEmail());

@@ -1,11 +1,10 @@
-
 package com.vegas.sistema_gestion_operativa.products.infrastructure.controller;
 
-import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
-import com.vegas.sistema_gestion_operativa.products.api.ProductDto;
 import com.vegas.sistema_gestion_operativa.common.dto.PageResponse;
 import com.vegas.sistema_gestion_operativa.common.dto.PaginationRequest;
+import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 import com.vegas.sistema_gestion_operativa.common.utils.PaginationUtils;
+import com.vegas.sistema_gestion_operativa.products.api.ProductDto;
 import com.vegas.sistema_gestion_operativa.products.application.dto.CreateProductDto;
 import com.vegas.sistema_gestion_operativa.products.application.dto.UpdateProductDto;
 import com.vegas.sistema_gestion_operativa.products.application.service.ProductService;
@@ -41,7 +40,7 @@ public class ProductController {
      * Retrieves all products with their recipes and ingredients.
      *
      * @param paginationRequest pagination parameters
-     * @param branchId branch identifier
+     * @param branchId          branch identifier
      * @return paginated list of products with recipes
      */
     @GetMapping

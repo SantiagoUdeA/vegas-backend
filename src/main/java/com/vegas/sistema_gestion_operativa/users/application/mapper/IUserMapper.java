@@ -1,8 +1,8 @@
 package com.vegas.sistema_gestion_operativa.users.application.mapper;
 
+import com.vegas.sistema_gestion_operativa.users.application.dto.UpdateUserDto;
 import com.vegas.sistema_gestion_operativa.users.application.dto.UserDto;
 import com.vegas.sistema_gestion_operativa.users.domain.entity.User;
-import com.vegas.sistema_gestion_operativa.users.application.dto.UpdateUserDto;
 import org.mapstruct.*;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)

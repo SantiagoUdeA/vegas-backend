@@ -9,11 +9,11 @@ public interface IIdentityService {
     /**
      * Creates a new user in the identity provider with the specified attributes.
      *
-     * @param email       the email of the new user
-     * @param givenName   the given name (first name) of the new user
-     * @param familyName  the family name (last name) of the new user
-     * @param roleName    the role to assign to the new user
-     * @param idNumber    the identification number of the user
+     * @param email      the email of the new user
+     * @param givenName  the given name (first name) of the new user
+     * @param familyName the family name (last name) of the new user
+     * @param roleName   the role to assign to the new user
+     * @param idNumber   the identification number of the user
      * @return the ID of the created user
      */
     String createUser(String email, String givenName, String familyName, String roleName, String idNumber);

@@ -26,11 +26,11 @@ public class ProviderService {
         this.providerMapper = providerMapper;
     }
 
-    public Page<Provider> findAll(Pageable pageable){
+    public Page<Provider> findAll(Pageable pageable) {
         return providerRepository.findAllByActiveTrue(pageable);
     }
 
-    public Provider create(CreateProviderDto dto){
+    public Provider create(CreateProviderDto dto) {
         return this.providerRepository.save(this.providerFactory.createFromDto(dto));
     }
 

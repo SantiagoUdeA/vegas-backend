@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Component
 public class RawMaterialInventoryFactory {
 
-    public RawMaterialInventory createFromDto(RegisterRawMaterialDto dto){
+    public RawMaterialInventory createFromDto(RegisterRawMaterialDto dto) {
         return RawMaterialInventory.builder()
                 .rawMaterialId(dto.rawMaterialId())
                 .branchId(dto.branchId())
@@ -22,7 +22,7 @@ public class RawMaterialInventoryFactory {
                 .build();
     }
 
-    public RawMaterialBatch createBatchFromDto(RegisterRawMaterialBatchDto dto){
+    public RawMaterialBatch createBatchFromDto(RegisterRawMaterialBatchDto dto) {
         return RawMaterialBatch.builder()
                 .rawMaterialId(dto.rawMaterialId())
                 .quantity(new Quantity(dto.quantity()))

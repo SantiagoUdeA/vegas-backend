@@ -65,7 +65,7 @@ public class RawMaterialInventoryService implements IRawMaterialInventoryApi {
      * @return El lote de materia prima registrado
      */
     @Transactional
-    public RawMaterialBatch registerRawMaterialBatch(RegisterRawMaterialBatchDto dto, String userId){
+    public RawMaterialBatch registerRawMaterialBatch(RegisterRawMaterialBatchDto dto, String userId) {
         // Obtener unidad de medida de la materia prima
 
 
@@ -183,12 +183,13 @@ public class RawMaterialInventoryService implements IRawMaterialInventoryApi {
      * Verifica que el usuario tenga acceso a la sede correspondiente.
      * Reduce el stock del inventario según la cantidad especificada en el ajuste.
      * Registra un movimiento de inventario asociado al ajuste.
-     * @param dto Datos del ajuste
+     *
+     * @param dto    Datos del ajuste
      * @param userId ID del usuario que realiza el ajuste
      * @return El item de inventario ajustado
-     * @throws NotEnoughStockException si no hay suficiente stock para realizar el ajuste
+     * @throws NotEnoughStockException        si no hay suficiente stock para realizar el ajuste
      * @throws InventoryItemNotFoundException si no se encuentra el item de inventario
-     * @throws AccessDeniedException si el usuario no tiene acceso a la sede correspondiente
+     * @throws AccessDeniedException          si el usuario no tiene acceso a la sede correspondiente
      */
     public RawMaterialInventory doAdjustment(AdjustmentDto dto, String userId) throws NotEnoughStockException, InventoryItemNotFoundException, AccessDeniedException {
         var item = this.rawMaterialInventoryRepository.findByRawMaterialId((dto.rawMaterialId()))

@@ -96,12 +96,12 @@ public class ProductInventoryService {
      * Reduce el stock del inventario según la cantidad especificada en el ajuste.
      * Registra un movimiento de inventario asociado al ajuste.
      *
-     * @param dto Datos del ajuste
+     * @param dto    Datos del ajuste
      * @param userId ID del usuario que realiza el ajuste
      * @return El item de inventario ajustado
-     * @throws InsufficientStockException si no hay suficiente stock para realizar el ajuste
+     * @throws InsufficientStockException        si no hay suficiente stock para realizar el ajuste
      * @throws ProductInventoryNotFoundException si no se encuentra el item de inventario
-     * @throws AccessDeniedException si el usuario no tiene acceso a la sede correspondiente
+     * @throws AccessDeniedException             si el usuario no tiene acceso a la sede correspondiente
      */
     @Transactional
     public ProductInventory doAdjustment(ProductAdjustmentDto dto, String userId)
@@ -153,7 +153,7 @@ public class ProductInventoryService {
 
         if (inventory.getCurrentStock().isLessThan(q)) {
             throw new ApiException("Stock insuficiente para el producto " + productId,
-            HttpStatus.BAD_REQUEST);
+                    HttpStatus.BAD_REQUEST);
         }
 
         // Descontar

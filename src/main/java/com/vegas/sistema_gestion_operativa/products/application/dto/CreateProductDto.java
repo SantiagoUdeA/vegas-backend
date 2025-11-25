@@ -20,5 +20,6 @@ public record CreateProductDto(
 
         @NotNull(message = "La sede es obligatoria")
         Long branchId
-) {}
+) {
+}
 

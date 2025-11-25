@@ -12,7 +12,7 @@ public class PermissionService {
     }
 
     public boolean canCreateUserWithRole(Role userRole, Role newUserRole) {
-        if(newUserRole.equals(Role.ROOT)) {
+        if (newUserRole.equals(Role.ROOT)) {
             return false; // Rol inválido
         }
         if (userRole.equals(Role.OWNER)) {

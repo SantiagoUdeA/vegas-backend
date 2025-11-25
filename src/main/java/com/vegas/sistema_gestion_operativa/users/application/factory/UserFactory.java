@@ -1,7 +1,7 @@
 package com.vegas.sistema_gestion_operativa.users.application.factory;
 
-import com.vegas.sistema_gestion_operativa.users.domain.entity.User;
 import com.vegas.sistema_gestion_operativa.users.application.dto.CreateUserDto;
+import com.vegas.sistema_gestion_operativa.users.domain.entity.User;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,8 +12,9 @@ public class UserFactory {
 
     /**
      * Creates a User entity from a CreateUserDto and a given ID.
+     *
      * @param user the CreateUserDto containing user details
-     * @param id the unique identifier for the user
+     * @param id   the unique identifier for the user
      * @return a User entity
      */
     public User createFromDto(CreateUserDto user, String id) {

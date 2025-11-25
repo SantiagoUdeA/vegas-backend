@@ -15,7 +15,7 @@ public class RawMaterialFactory {
                 .branchId(dto.branchId())
                 .active(true);
 
-        if(dto.categoryId() != null){
+        if (dto.categoryId() != null) {
             RawMaterialCategory category = RawMaterialCategory.builder().id(dto.categoryId()).build();
             builder.category(category);
         }

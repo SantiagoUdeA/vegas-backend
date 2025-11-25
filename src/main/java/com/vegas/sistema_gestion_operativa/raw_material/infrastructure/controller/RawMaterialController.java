@@ -66,8 +66,7 @@ public class RawMaterialController {
     @PreAuthorize("hasPermission(null, 'RAW_MATERIALS_CREATE')")
     public ResponseEntity<RawMaterialResponseDto> create(
             @RequestBody @Valid CreateRawMaterialDto dto
-    ) throws RawMaterialCategoryNotFoundException, RawMaterialNameAlreadyExists, AccessDeniedException
-    {
+    ) throws RawMaterialCategoryNotFoundException, RawMaterialNameAlreadyExists, AccessDeniedException {
         RawMaterialResponseDto rawMaterial = rawMaterialService.create(dto, AuthUtils.getUserIdFromToken());
         return ResponseEntity.ok(rawMaterial);
     }

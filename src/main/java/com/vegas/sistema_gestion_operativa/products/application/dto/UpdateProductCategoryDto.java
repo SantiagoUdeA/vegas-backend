@@ -10,5 +10,6 @@ public record UpdateProductCategoryDto(
 
         @Length(max = 255, message = "La descripción no puede exceder 255 caracteres")
         String description
-) {}
+) {
+}
 

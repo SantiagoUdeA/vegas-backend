@@ -9,5 +9,6 @@ public record UpdateRawMaterialDto(
         String name,
 
         Long categoryId
-) {}
+) {
+}
 

@@ -32,7 +32,7 @@ public class RecipeService {
     private final IBranchApi branchApi;
 
     @Transactional
-    public Recipe createRecipe(CreateRecipeDto dto){
+    public Recipe createRecipe(CreateRecipeDto dto) {
         var receta = recipeFactory.createFromDto(dto);
         var recipe = recipeRepository.save(receta);
         var ingredients = recipeFactory.createIngredientsFromDto(dto.ingredients(), recipe.getId());
@@ -47,15 +47,15 @@ public class RecipeService {
 
         branchApi.assertUserHasAccessToBranch(userId, recipe.getProduct().getBranchId());
 
-        if(dto.unitsProduced() != null){
+        if (dto.unitsProduced() != null) {
             recipe.setUnitsProduced(dto.unitsProduced());
         }
 
-        if (dto.unitsProduced() != null){
+        if (dto.unitsProduced() != null) {
             recipe.setUnitsProduced(dto.unitsProduced());
         }
 
-        if (dto.ingredients() != null){
+        if (dto.ingredients() != null) {
             // Eliminar ingredientes existentes
             ingredientsRepository.deleteAll(recipe.getIngredients());
             recipe.getIngredients().clear();

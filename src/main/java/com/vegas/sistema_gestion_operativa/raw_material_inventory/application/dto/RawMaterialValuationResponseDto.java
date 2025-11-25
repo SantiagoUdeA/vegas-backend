@@ -7,4 +7,5 @@ public record RawMaterialValuationResponseDto(
         Double totalValuation,
         Map<String, Double> valuationByCategory,
         List<RawMaterialValuationItemDto> items
-) {}
+) {
+}

@@ -9,4 +9,5 @@ public record ProductValuationItemDto(
         BigDecimal currentStock,
         BigDecimal averageCost,
         BigDecimal valuation
-) {}
+) {
+}

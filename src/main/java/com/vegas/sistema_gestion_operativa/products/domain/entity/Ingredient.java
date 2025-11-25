@@ -1,7 +1,7 @@
 package com.vegas.sistema_gestion_operativa.products.domain.entity;
 
-import com.vegas.sistema_gestion_operativa.raw_material.domain.entity.RawMaterial;
 import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
+import com.vegas.sistema_gestion_operativa.raw_material.domain.entity.RawMaterial;
 import jakarta.persistence.*;
 import lombok.*;
 

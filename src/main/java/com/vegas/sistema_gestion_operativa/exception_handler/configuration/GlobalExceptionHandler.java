@@ -28,6 +28,7 @@ public class GlobalExceptionHandler {
 
     /**
      * Handles custom ApiException and returns its status and message.
+     *
      * @param ex the ApiException thrown
      * @return ResponseEntity with status and message from the exception
      */
@@ -56,6 +57,7 @@ public class GlobalExceptionHandler {
 
     /**
      * Handles validation errors when @Valid fails on DTOs.
+     *
      * @param ex the exception thrown by validation
      * @return a map with field errors
      */
@@ -114,6 +116,7 @@ public class GlobalExceptionHandler {
 
     /**
      * Handles RuntimeException (e.g., business logic errors like "User already exists").
+     *
      * @param ex the runtime exception
      * @return error message with HTTP 500
      */

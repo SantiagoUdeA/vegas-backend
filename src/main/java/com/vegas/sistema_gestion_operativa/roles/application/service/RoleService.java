@@ -24,7 +24,7 @@ public class RoleService implements IRoleApi {
     /**
      * Verifica si un usuario con un rol específico puede crear o editar usuarios con otro rol.
      *
-     * @param userRoleName el nombre del rol del usuario que realiza la acción
+     * @param userRoleName   el nombre del rol del usuario que realiza la acción
      * @param targetRoleName el nombre del rol del usuario objetivo
      * @return true si el usuario puede gestionar el rol objetivo, false en caso contrario
      */
@@ -40,7 +40,8 @@ public class RoleService implements IRoleApi {
 
         return switch (userRole) {
             case ROOT -> targetRole.equals(Role.OWNER); // ROOT solo puede gestionar OWNER
-            case OWNER -> targetRole.equals(Role.ADMIN) || targetRole.equals(Role.CASHIER); // OWNER puede gestionar ADMIN y CASHIER
+            case OWNER ->
+                    targetRole.equals(Role.ADMIN) || targetRole.equals(Role.CASHIER); // OWNER puede gestionar ADMIN y CASHIER
             case ADMIN -> targetRole.equals(Role.CASHIER); // ADMIN solo puede gestionar CASHIER
             default -> false;
         };

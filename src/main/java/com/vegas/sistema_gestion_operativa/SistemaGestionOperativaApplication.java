@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class SistemaGestionOperativaApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(SistemaGestionOperativaApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(SistemaGestionOperativaApplication.class, args);
+    }
 
 }

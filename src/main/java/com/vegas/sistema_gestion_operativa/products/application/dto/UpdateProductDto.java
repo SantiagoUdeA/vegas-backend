@@ -13,5 +13,6 @@ public record UpdateProductDto(
         BigDecimal price,
 
         String name
-) {}
+) {
+}
 

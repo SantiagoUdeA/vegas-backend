@@ -1,6 +1,7 @@
 package com.vegas.sistema_gestion_operativa.users.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+
 import java.util.Arrays;
 
 public enum IdType {

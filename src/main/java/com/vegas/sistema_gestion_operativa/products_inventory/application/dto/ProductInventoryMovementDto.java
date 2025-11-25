@@ -14,4 +14,5 @@ public record ProductInventoryMovementDto(
         MovementReason movementReason,
         String justification,
         LocalDateTime movementDate
-) {}
+) {
+}

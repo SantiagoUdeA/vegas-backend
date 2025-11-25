@@ -14,4 +14,5 @@ public record UpdateProviderDto(
 
         @Length(max = 20, message = "El número de teléfono no puede exceder 20 caracteres")
         String phoneNumber
-){}
+) {
+}
