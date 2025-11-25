@@ -1,10 +1,10 @@
 package com.vegas.sistema_gestion_operativa.sales.application.service;
 
 import com.vegas.sistema_gestion_operativa.branches.IBranchApi;
-import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 import com.vegas.sistema_gestion_operativa.common.exceptions.ApiException;
 import com.vegas.sistema_gestion_operativa.products.api.IProductApi;
-import com.vegas.sistema_gestion_operativa.products_inventory.application.service.ProductInventoryService;
+import com.vegas.sistema_gestion_operativa.products_inventory.IProductInventoryApi;
+import com.vegas.sistema_gestion_operativa.products_inventory.domain.exceptions.ProductInventoryNotFoundException;
 import com.vegas.sistema_gestion_operativa.sales.application.dto.CreateSaleDto;
 import com.vegas.sistema_gestion_operativa.sales.application.dto.ProductSalesStatsDto;
 import com.vegas.sistema_gestion_operativa.sales.application.dto.SaleFilterDto;
@@ -32,7 +32,7 @@ public class SaleService {
 
     private final ISaleRepository saleRepository;
     private final SaleFactory saleFactory;
-    private final ProductInventoryService productInventoryService;
+    private final IProductInventoryApi productInventoryApi;
     private final IBranchApi branchApi;
     private final IUserApi userApi;
 
@@ -40,7 +40,7 @@ public class SaleService {
 
     @Transactional
     public Sale create(CreateSaleDto dto, String userId)
-            throws AccessDeniedException, ApiException {
+            throws ApiException, ProductInventoryNotFoundException {
 
         Sale sale = saleFactory.createFromDto(dto);
 
@@ -52,7 +52,7 @@ public class SaleService {
 
         // 🔥 Descontar inventario por cada producto vendido
         for (var detail : dto.getDetails()) {
-            productInventoryService.consumeProductStock(
+            productInventoryApi.consumeProductStock(
                     dto.getBranchId(),
                     detail.getProductId(),
                     detail.getQuantity(),
@@ -111,7 +111,7 @@ public class SaleService {
 
     @Transactional
     public void deleteSale(Long saleId, String userId)
-            throws AccessDeniedException, ApiException {
+            throws ApiException, ProductInventoryNotFoundException {
 
         Sale sale = saleRepository.findById(saleId)
                 .orElseThrow(() -> new ApiException("La venta no existe", HttpStatus.NOT_FOUND));
@@ -119,22 +119,17 @@ public class SaleService {
         // Verificar acceso a la sede donde ocurrió la venta
         branchApi.assertUserHasAccessToBranch(userId, sale.getBranchId());
 
-        // 1️⃣ Reponer stock por cada detalle
-        sale.getDetails().forEach(detail -> {
-            try {
-                productInventoryService.restoreProductStock(
-                        sale.getBranchId(),
-                        detail.getProductId(),
-                        detail.getQuantity(),
-                        userId
-                );
-            } catch (ApiException e) {
-                // Re-lanzamos como unchecked para no romper el forEach
-                throw new RuntimeException(e);
-            }
-        });
+        // Reponer stock por cada detalle
+        for (var detail : sale.getDetails()) {
+            productInventoryApi.restoreProductStock(
+                    sale.getBranchId(),
+                    detail.getProductId(),
+                    detail.getQuantity(),
+                    userId
+            );
+        }
 
-        // 2️⃣ Eliminar la venta
+        // Eliminar la venta
         saleRepository.delete(sale);
     }
 

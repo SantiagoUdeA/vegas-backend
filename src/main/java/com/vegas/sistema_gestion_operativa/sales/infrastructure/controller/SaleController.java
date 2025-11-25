@@ -1,7 +1,7 @@
 package com.vegas.sistema_gestion_operativa.sales.infrastructure.controller;
 
-import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 import com.vegas.sistema_gestion_operativa.common.exceptions.ApiException;
+import com.vegas.sistema_gestion_operativa.products_inventory.domain.exceptions.ProductInventoryNotFoundException;
 import com.vegas.sistema_gestion_operativa.sales.application.dto.CreateSaleDto;
 import com.vegas.sistema_gestion_operativa.sales.application.dto.SaleFilterDto;
 import com.vegas.sistema_gestion_operativa.sales.application.dto.SaleResponseDto;
@@ -33,7 +33,7 @@ public class SaleController {
     @PostMapping
     @PreAuthorize("hasPermission(null, 'SALES_CREATE')")
     public ResponseEntity<Sale> create(@RequestBody @Valid CreateSaleDto dto)
-            throws AccessDeniedException, ApiException {
+            throws ApiException, ProductInventoryNotFoundException {
         Sale sale = saleService.create(dto, AuthUtils.getUserIdFromToken());
         return ResponseEntity.ok(sale);
     }
@@ -61,7 +61,7 @@ public class SaleController {
     @PreAuthorize("hasPermission(null, 'SALES_DELETE')")
     public ResponseEntity<Void> delete(
             @PathVariable Long id
-    ) throws AccessDeniedException, ApiException {
+    ) throws ApiException, ProductInventoryNotFoundException {
 
         saleService.deleteSale(id, AuthUtils.getUserIdFromToken());
         return ResponseEntity.noContent().build();
