@@ -1,6 +1,7 @@
 package com.vegas.sistema_gestion_operativa.raw_material_inventory.application.service;
 
 import com.vegas.sistema_gestion_operativa.branches.IBranchApi;
+import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.application.dto.RawMaterialValuationItemDto;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.application.dto.RawMaterialValuationResponseDto;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.repository.IRawMaterialInventoryRepository;
@@ -21,7 +22,7 @@ public class RawMaterialValuationService {
         this.branchApi = branchApi;
     }
 
-    public RawMaterialValuationResponseDto calculateValuation(Long branchId, String userId) throws Exception {
+    public RawMaterialValuationResponseDto calculateValuation(Long branchId, String userId) throws AccessDeniedException {
 
         branchApi.assertUserHasAccessToBranch(userId, branchId);
 
