@@ -13,7 +13,7 @@ import com.vegas.sistema_gestion_operativa.sales.application.factory.SaleFactory
 import com.vegas.sistema_gestion_operativa.sales.domain.entity.Sale;
 import com.vegas.sistema_gestion_operativa.sales.domain.repository.ISaleRepository;
 import com.vegas.sistema_gestion_operativa.security.AuthUtils;
-import com.vegas.sistema_gestion_operativa.users.api.IUserApi;
+import com.vegas.sistema_gestion_operativa.users.IUserApi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

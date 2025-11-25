@@ -2,6 +2,7 @@ package com.vegas.sistema_gestion_operativa.users.application.service;
 
 import com.vegas.sistema_gestion_operativa.common.exceptions.InvalidPropertyFilterException;
 import com.vegas.sistema_gestion_operativa.roles.IRoleApi;
+import com.vegas.sistema_gestion_operativa.users.IUserApi;
 import com.vegas.sistema_gestion_operativa.users.application.dto.CreateUserDto;
 import com.vegas.sistema_gestion_operativa.users.application.dto.UpdateUserDto;
 import com.vegas.sistema_gestion_operativa.users.application.factory.UserFactory;
@@ -31,7 +32,7 @@ import java.util.Optional;
  */
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements IUserApi {
 
     private final IIdentityService identityService;
     private final IRoleApi roleApi;
@@ -180,5 +181,19 @@ public class UserService {
         identityService.enableUser(user.getEmail());
         user.setActive(true);
         userRepository.save(user);
+    }
+
+    @Override
+    public String getFullNameById(String userId) {
+        return userRepository.findById(userId)
+                .map(user -> user.getGivenName() + " " + user.getFamilyName())
+                .orElse("Usuario desconocido");
+    }
+
+    @Override
+    public String getRoleById(String userId) {
+        return userRepository.findById(userId)
+                .map(User::getRoleName)
+                .orElse("Rol desconocido");
     }
 }
