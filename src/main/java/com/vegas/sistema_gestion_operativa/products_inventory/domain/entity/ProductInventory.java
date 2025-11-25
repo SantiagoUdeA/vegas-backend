@@ -1,7 +1,7 @@
 package com.vegas.sistema_gestion_operativa.products_inventory.domain.entity;
 
 import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
-import com.vegas.sistema_gestion_operativa.products_inventory.domain.exceptions.InsufficientStockException;
+import com.vegas.sistema_gestion_operativa.products_inventory.domain.exceptions.NotEnoughProductStockException;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -68,11 +68,11 @@ public class ProductInventory {
      * Reduce stock del inventario
      *
      * @param quantity cantidad a reducir
-     * @throws InsufficientStockException si no hay suficiente stock
+     * @throws NotEnoughProductStockException si no hay suficiente stock
      */
-    public void reduceStock(Quantity quantity) throws InsufficientStockException {
+    public void reduceStock(Quantity quantity) throws NotEnoughProductStockException {
         if (this.currentStock == null || this.currentStock.getValue().compareTo(quantity.getValue()) < 0) {
-            throw new InsufficientStockException("No hay suficiente stock para realizar esta operación.");
+            throw new NotEnoughProductStockException("No hay suficiente stock para realizar esta operación.");
         }
         this.currentStock = this.currentStock.subtract(quantity);
     }

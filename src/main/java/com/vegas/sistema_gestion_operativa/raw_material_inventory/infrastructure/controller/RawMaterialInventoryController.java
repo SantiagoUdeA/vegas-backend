@@ -1,12 +1,12 @@
 package com.vegas.sistema_gestion_operativa.raw_material_inventory.infrastructure.controller;
 
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
-import com.vegas.sistema_gestion_operativa.products.application.dto.RawMaterialAdjustmentDto;
+import com.vegas.sistema_gestion_operativa.raw_material_inventory.application.dto.RawMaterialAdjustmentDto;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.application.dto.RawMaterialInventoryItemDto;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.application.service.RawMaterialInventoryService;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.entity.RawMaterialInventory;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.exceptions.InventoryItemNotFoundException;
-import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.exceptions.NotEnoughStockException;
+import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.exceptions.NotEnoughRawMaterialStockException;
 import com.vegas.sistema_gestion_operativa.security.AuthUtils;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -42,7 +42,7 @@ public class RawMaterialInventoryController {
 
     @PostMapping("/adjustment")
     @PreAuthorize("hasPermission(null, 'INVENTORY_EDIT')")
-    public ResponseEntity<RawMaterialInventory> doAdjustment(@RequestBody @Valid RawMaterialAdjustmentDto dto) throws NotEnoughStockException, AccessDeniedException, InventoryItemNotFoundException {
+    public ResponseEntity<RawMaterialInventory> doAdjustment(@RequestBody @Valid RawMaterialAdjustmentDto dto) throws NotEnoughRawMaterialStockException, AccessDeniedException, InventoryItemNotFoundException {
         return ResponseEntity.ok(this.rawMaterialInventoryService.doAdjustment(dto, AuthUtils.getUserIdFromToken()));
     }
 

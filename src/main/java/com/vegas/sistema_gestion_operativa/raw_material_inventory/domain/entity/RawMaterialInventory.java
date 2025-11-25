@@ -2,7 +2,7 @@ package com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.entity
 
 import com.vegas.sistema_gestion_operativa.common.domain.Money;
 import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
-import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.exceptions.NotEnoughStockException;
+import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.exceptions.NotEnoughRawMaterialStockException;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -75,9 +75,9 @@ public class RawMaterialInventory {
         this.averageCost = newAverageCost;
     }
 
-    public void reduceStock(Quantity quantity) throws NotEnoughStockException {
+    public void reduceStock(Quantity quantity) throws NotEnoughRawMaterialStockException {
         if (this.currentStock.getValue().compareTo(quantity.getValue()) < 0) {
-            throw new NotEnoughStockException("No hay suficiente stock para realizar esta operación.");
+            throw new NotEnoughRawMaterialStockException("No hay suficiente stock para realizar esta operación.");
         }
         this.currentStock = this.currentStock.subtract(quantity);
     }

@@ -5,7 +5,6 @@ import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 import com.vegas.sistema_gestion_operativa.common.exceptions.ApiException;
 import com.vegas.sistema_gestion_operativa.products.api.IProductApi;
-import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductNotFoundException;
 import com.vegas.sistema_gestion_operativa.products_inventory.IProductInventoryApi;
 import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.ProductAdjustmentDto;
 import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.ProductInventoryItemDto;
@@ -15,12 +14,11 @@ import com.vegas.sistema_gestion_operativa.products_inventory.application.factor
 import com.vegas.sistema_gestion_operativa.products_inventory.application.factory.ProductInventoryMovementFactory;
 import com.vegas.sistema_gestion_operativa.products_inventory.application.mapper.ProductInventoryMapper;
 import com.vegas.sistema_gestion_operativa.products_inventory.domain.entity.ProductInventory;
-import com.vegas.sistema_gestion_operativa.products_inventory.domain.exceptions.InsufficientStockException;
+import com.vegas.sistema_gestion_operativa.products_inventory.domain.exceptions.NotEnoughProductStockException;
 import com.vegas.sistema_gestion_operativa.products_inventory.domain.exceptions.ProductInventoryNotFoundException;
 import com.vegas.sistema_gestion_operativa.products_inventory.domain.repository.IProductInventoryMovementRepository;
 import com.vegas.sistema_gestion_operativa.products_inventory.domain.repository.IProductInventoryRepository;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.IRawMaterialInventoryApi;
-import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.exceptions.NotEnoughStockException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -70,12 +68,11 @@ public class ProductInventoryService implements IProductInventoryApi {
      * @param dto    stock entry payload
      * @param userId user performing the operation
      * @return updated product inventory state
-     * @throws ProductNotFoundException when the product does not exist
-     * @throws ApiException             when ingredient or stock processing fails
+     * @throws ApiException when ingredient or stock processing fails or when the product does not exist
      */
     @Transactional
     public ProductInventoryResponseDto registerProductStock(RegisterProductStockDto dto, String userId)
-            throws ProductNotFoundException, ApiException {
+            throws ApiException {
 
         branchApi.assertUserHasAccessToBranch(userId, dto.branchId());
 
@@ -116,13 +113,13 @@ public class ProductInventoryService implements IProductInventoryApi {
      * @param dto    adjustment payload
      * @param userId user executing the adjustment
      * @return updated inventory item
-     * @throws InsufficientStockException        when available stock is insufficient
+     * @throws NotEnoughProductStockException    when available stock is insufficient
      * @throws ProductInventoryNotFoundException when the inventory item does not exist
      * @throws AccessDeniedException             when the user lacks branch access
      */
     @Transactional
     public ProductInventory doAdjustment(ProductAdjustmentDto dto, String userId)
-            throws InsufficientStockException, ProductInventoryNotFoundException, AccessDeniedException {
+            throws NotEnoughProductStockException, ProductInventoryNotFoundException, AccessDeniedException {
 
         // Obtener el item de inventario
         var item = findInventoryItemByProductIdOrThrow(dto.productId());
@@ -157,12 +154,12 @@ public class ProductInventoryService implements IProductInventoryApi {
      * @param quantity  units to consume
      * @param userId    user performing the operation
      * @throws AccessDeniedException             if the user cannot operate on the branch
-     * @throws NotEnoughStockException           if there is not enough stock
+     * @throws NotEnoughProductStockException    if there is not enough stock
      * @throws ProductInventoryNotFoundException if the product has no inventory record
      */
     @Transactional
     public void consumeProductStock(Long branchId, Long productId, int quantity, String userId)
-            throws AccessDeniedException, NotEnoughStockException, ProductInventoryNotFoundException {
+            throws AccessDeniedException, ProductInventoryNotFoundException, NotEnoughProductStockException {
 
         branchApi.assertUserHasAccessToBranch(userId, branchId);
 
@@ -174,7 +171,7 @@ public class ProductInventoryService implements IProductInventoryApi {
         Quantity q = new Quantity(quantity);
 
         if (inventory.getCurrentStock().isLessThan(q)) {
-            throw new NotEnoughStockException("Stock insuficiente para el producto " + productId);
+            throw new NotEnoughProductStockException("Stock insuficiente para el producto " + productId);
         }
 
         // Descontar
