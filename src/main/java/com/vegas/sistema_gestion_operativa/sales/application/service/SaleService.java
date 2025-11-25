@@ -1,18 +1,16 @@
 package com.vegas.sistema_gestion_operativa.sales.application.service;
 
 import com.vegas.sistema_gestion_operativa.branches.IBranchApi;
+import com.vegas.sistema_gestion_operativa.common.domain.Money;
 import com.vegas.sistema_gestion_operativa.common.exceptions.ApiException;
 import com.vegas.sistema_gestion_operativa.products.api.IProductApi;
+import com.vegas.sistema_gestion_operativa.products.api.ProductDto;
 import com.vegas.sistema_gestion_operativa.products_inventory.IProductInventoryApi;
-import com.vegas.sistema_gestion_operativa.products_inventory.domain.exceptions.ProductInventoryNotFoundException;
-import com.vegas.sistema_gestion_operativa.sales.application.dto.CreateSaleDto;
-import com.vegas.sistema_gestion_operativa.sales.application.dto.ProductSalesStatsDto;
-import com.vegas.sistema_gestion_operativa.sales.application.dto.SaleFilterDto;
-import com.vegas.sistema_gestion_operativa.sales.application.dto.SaleResponseDto;
-import com.vegas.sistema_gestion_operativa.sales.application.factory.SaleFactory;
+import com.vegas.sistema_gestion_operativa.sales.application.dto.*;
 import com.vegas.sistema_gestion_operativa.sales.domain.entity.Sale;
+import com.vegas.sistema_gestion_operativa.sales.domain.entity.SaleDetail;
+import com.vegas.sistema_gestion_operativa.sales.domain.repository.ISaleDetailRepository;
 import com.vegas.sistema_gestion_operativa.sales.domain.repository.ISaleRepository;
-import com.vegas.sistema_gestion_operativa.security.AuthUtils;
 import com.vegas.sistema_gestion_operativa.users.IUserApi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,6 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,35 +31,68 @@ import java.util.Map;
 public class SaleService {
 
     private final ISaleRepository saleRepository;
-    private final SaleFactory saleFactory;
+    private final ISaleDetailRepository saleDetailRepository;
     private final IProductInventoryApi productInventoryApi;
     private final IBranchApi branchApi;
     private final IUserApi userApi;
-
     private final IProductApi productApi;
 
+    /**
+     * Crea una nueva venta
+     *
+     * @param dto    datos de la venta
+     * @param userId ID del usuario que crea la venta
+     * @return la venta creada
+     * @throws ApiException ocurre si el producto no es encontrado o hay stock insuficiente
+     */
     @Transactional
     public Sale create(CreateSaleDto dto, String userId)
-            throws ApiException, ProductInventoryNotFoundException {
+            throws ApiException {
 
-        Sale sale = saleFactory.createFromDto(dto);
+        List<SaleDetail> details = new ArrayList<>();
 
-        if (userId == null || userId.isBlank()) {
-            userId = AuthUtils.getUserIdFromToken();
+        // Construir la venta
+        Sale sale = Sale.builder()
+                .saleDate(LocalDateTime.now())
+                .branchId(dto.branchId())
+                .employeeId(userId)
+                .build();
+
+        // Construir detalles de la venta con precios y subtotales
+        for (CreateSaleDetailDto createSaleDetailDto : dto.details()) {
+
+            ProductDto product = productApi.getProductByIdOrThrow(createSaleDetailDto.productId());
+
+            SaleDetail saleDetail = SaleDetail.builder()
+                    .productId(createSaleDetailDto.productId())
+                    .quantity(createSaleDetailDto.quantity())
+                    .unitPrice(product.getPrice())
+                    .subtotal(product.getPrice().multiply(createSaleDetailDto.quantity()))
+                    .sale(sale)
+                    .build();
+
+            details.add(saleDetail);
         }
 
-        sale.setEmployeeId(userId);
+        // Establecer total de la venta y detalles
+        sale.setDetails(details);
+        sale.setTotal(details.stream().reduce(
+                new Money(0.0),
+                (currentValue, detail) -> currentValue.add(detail.getSubtotal()), Money::add)
+        );
 
-        // 🔥 Descontar inventario por cada producto vendido
-        for (var detail : dto.getDetails()) {
+
+        // Descontar inventario por cada producto vendido
+        for (var detail : dto.details()) {
             productInventoryApi.consumeProductStock(
-                    dto.getBranchId(),
-                    detail.getProductId(),
-                    detail.getQuantity(),
+                    dto.branchId(),
+                    detail.productId(),
+                    detail.quantity(),
                     userId
             );
         }
 
+        this.saleDetailRepository.saveAll(details);
         return saleRepository.save(sale);
     }
 
@@ -111,7 +144,7 @@ public class SaleService {
 
     @Transactional
     public void deleteSale(Long saleId, String userId)
-            throws ApiException, ProductInventoryNotFoundException {
+            throws ApiException {
 
         Sale sale = saleRepository.findById(saleId)
                 .orElseThrow(() -> new ApiException("La venta no existe", HttpStatus.NOT_FOUND));

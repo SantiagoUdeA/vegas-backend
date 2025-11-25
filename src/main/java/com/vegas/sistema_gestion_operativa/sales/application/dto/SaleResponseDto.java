@@ -1,9 +1,10 @@
 package com.vegas.sistema_gestion_operativa.sales.application.dto;
 
+import com.vegas.sistema_gestion_operativa.common.domain.Money;
+import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
 import lombok.Builder;
 import lombok.Value;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -13,7 +14,7 @@ public class SaleResponseDto {
 
     Long id;
     LocalDateTime saleDate;
-    BigDecimal total;
+    Money total;
     String employeeId;
     String employeeName;
     Long branchId;
@@ -25,8 +26,8 @@ public class SaleResponseDto {
         Long id;
         Long productId;
         String productName;
-        Integer quantity;
-        BigDecimal unitPrice;
-        BigDecimal subtotal;
+        Quantity quantity;
+        Money unitPrice;
+        Money subtotal;
     }
 }

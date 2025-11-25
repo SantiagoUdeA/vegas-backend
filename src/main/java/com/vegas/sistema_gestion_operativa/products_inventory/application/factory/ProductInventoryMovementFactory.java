@@ -18,7 +18,7 @@ public class ProductInventoryMovementFactory {
         return ProductInventoryMovement.builder()
                 .productId(dto.productId())
                 .movementReason(MovementReason.SALIDA)
-                .quantity(new Quantity(dto.quantity()))
+                .quantity(dto.quantity())
                 .userId(userId)
                 .movementDate(LocalDateTime.now())
                 .build();
@@ -31,7 +31,7 @@ public class ProductInventoryMovementFactory {
         return ProductInventoryMovement.builder()
                 .productId(dto.productId())
                 .movementReason(MovementReason.ENTRADA)
-                .quantity(new Quantity(dto.quantity()))
+                .quantity(dto.quantity())
                 .userId(userId)
                 .movementDate(LocalDateTime.now())
                 .build();
@@ -68,7 +68,7 @@ public class ProductInventoryMovementFactory {
         return ProductInventoryMovement.builder()
                 .productId(dto.productId())
                 .movementReason(MovementReason.RETORNO)
-                .quantity(new Quantity(dto.quantity()))
+                .quantity(dto.quantity())
                 .userId(userId)
                 .movementDate(LocalDateTime.now())
                 .build();

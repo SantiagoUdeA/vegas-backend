@@ -1,11 +1,10 @@
 package com.vegas.sistema_gestion_operativa.products.api;
 
+import com.vegas.sistema_gestion_operativa.common.domain.Money;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.math.BigDecimal;
 
 @Data
 @Builder
@@ -15,7 +14,7 @@ public class ProductDto {
     private Long id;
     private String name;
     private ProductCategoryDto category;
-    private BigDecimal price;
+    private Money price;
     private RecipeDto recipe;
 }
 

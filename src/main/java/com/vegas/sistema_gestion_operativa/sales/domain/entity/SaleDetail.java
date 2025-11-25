@@ -1,10 +1,10 @@
 package com.vegas.sistema_gestion_operativa.sales.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.vegas.sistema_gestion_operativa.common.domain.Money;
+import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.math.BigDecimal;
 
 @Entity
 @Getter
@@ -20,14 +20,23 @@ public class SaleDetail {
     @Column(name = "detail_id")
     private Long id;
 
+    @Embedded
     @Column(name = "quantity", nullable = false)
-    private Integer quantity;
+    private Quantity quantity;
 
-    @Column(name = "unit_price", precision = 14, scale = 2, nullable = false)
-    private BigDecimal unitPrice;
+    @Embedded
+    @AttributeOverride(
+            name = "value",
+            column = @Column(name = "unit_price", precision = 19, scale = 4, nullable = false)
+    )
+    private Money unitPrice;
 
-    @Column(name = "subtotal", precision = 14, scale = 2, nullable = false)
-    private BigDecimal subtotal;
+    @Embedded
+    @AttributeOverride(
+            name = "value",
+            column = @Column(name = "subtotal", precision = 19, scale = 4, nullable = false)
+    )
+    private Money subtotal;
 
     @Column(name = "product_id", nullable = false, updatable = false, columnDefinition = "BIGINT REFERENCES product(id)")
     private Long productId;

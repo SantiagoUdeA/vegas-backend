@@ -1,5 +1,6 @@
 package com.vegas.sistema_gestion_operativa.products_inventory.application.dto;
 
+import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
 import jakarta.validation.constraints.NotNull;
 
 public record RegisterProductStockDto(
@@ -10,7 +11,7 @@ public record RegisterProductStockDto(
         Long productId,
 
         @NotNull(message = "La cantidad es obligatoria")
-        Integer quantity,
+        Quantity quantity,
 
         Double cost  // ← nuevo campo opcional
 ) {

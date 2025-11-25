@@ -1,10 +1,10 @@
 package com.vegas.sistema_gestion_operativa.sales.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.vegas.sistema_gestion_operativa.common.domain.Money;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -25,10 +25,13 @@ public class Sale {
     @Column(name = "sale_date", nullable = false)
     private LocalDateTime saleDate;
 
-    @Column(name = "total", precision = 14, scale = 2, nullable = false)
-    private BigDecimal total;
+    @Embedded
+    @AttributeOverride(
+            name = "value",
+            column = @Column(name = "total", precision = 19, scale = 4, nullable = false)
+    )
+    private Money total;
 
-    // employee is a user in the system; user id is stored as VARCHAR
     @Column(name = "employee_id", nullable = false, updatable = false, columnDefinition = "VARCHAR(255) REFERENCES users(id)")
     private String employeeId;
 

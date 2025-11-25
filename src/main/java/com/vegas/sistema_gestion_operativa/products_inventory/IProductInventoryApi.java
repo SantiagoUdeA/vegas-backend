@@ -1,5 +1,6 @@
 package com.vegas.sistema_gestion_operativa.products_inventory;
 
+import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
 import com.vegas.sistema_gestion_operativa.common.exceptions.ApiException;
 
 public interface IProductInventoryApi {
@@ -13,7 +14,7 @@ public interface IProductInventoryApi {
      * @param userId    ID of the user performing the operation.
      * @throws ApiException if there is an error during the operation.
      */
-    void consumeProductStock(Long branchId, Long productId, int quantity, String userId) throws ApiException;
+    void consumeProductStock(Long branchId, Long productId, Quantity quantity, String userId) throws ApiException;
 
     /**
      * Restore stock of a product in a specific branch.
@@ -24,5 +25,5 @@ public interface IProductInventoryApi {
      * @param userId    ID of the user performing the operation.
      * @throws ApiException if there is an error during the operation.
      */
-    void restoreProductStock(Long branchId, Long productId, int quantity, String userId) throws ApiException;
+    void restoreProductStock(Long branchId, Long productId, Quantity quantity, String userId) throws ApiException;
 }

@@ -3,6 +3,7 @@ package com.vegas.sistema_gestion_operativa.products.application.service;
 import com.vegas.sistema_gestion_operativa.branches.IBranchApi;
 import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
+import com.vegas.sistema_gestion_operativa.common.exceptions.ApiException;
 import com.vegas.sistema_gestion_operativa.products.api.IProductApi;
 import com.vegas.sistema_gestion_operativa.products.api.IngredientDto;
 import com.vegas.sistema_gestion_operativa.products.api.ProductDto;
@@ -122,6 +123,10 @@ public class ProductService implements IProductApi {
     private Product retrieveProductById(Long id) throws ProductNotFoundException {
         return this.productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException("El producto con id " + id + " no fue encontrado"));
+    }
+
+    public ProductDto getProductByIdOrThrow(Long productId) throws ApiException {
+        return this.productMapper.toResponseDto(this.retrieveProductById(productId));
     }
 
     private ProductCategory retrieveProductCategoryByIdOrThrow(Long id) throws ProductCategoryNotFoundException {

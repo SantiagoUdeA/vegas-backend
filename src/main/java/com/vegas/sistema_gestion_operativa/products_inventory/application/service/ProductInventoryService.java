@@ -80,8 +80,7 @@ public class ProductInventoryService implements IProductInventoryApi {
                 .findByProductId(dto.productId())
                 .orElseGet(() -> productInventoryFactory.createFromDto(dto));
 
-        Quantity entryQuantity = new Quantity(dto.quantity());
-        inventory.addStock(entryQuantity);
+        inventory.addStock(dto.quantity());
 
         var recipe = productApi.getIngredientsForProductUnit(dto.productId());
 
@@ -90,7 +89,7 @@ public class ProductInventoryService implements IProductInventoryApi {
             recipe.get().forEach(ingredient ->
                     cantidadesAReducir.put(
                             ingredient.getRawMaterialId(),
-                            ingredient.getQuantity().multiply(entryQuantity)
+                            ingredient.getQuantity().multiply(dto.quantity())
                     )
             );
 
@@ -158,7 +157,7 @@ public class ProductInventoryService implements IProductInventoryApi {
      * @throws ProductInventoryNotFoundException if the product has no inventory record
      */
     @Transactional
-    public void consumeProductStock(Long branchId, Long productId, int quantity, String userId)
+    public void consumeProductStock(Long branchId, Long productId, Quantity quantity, String userId)
             throws AccessDeniedException, ProductInventoryNotFoundException, NotEnoughProductStockException {
 
         branchApi.assertUserHasAccessToBranch(userId, branchId);
@@ -168,14 +167,13 @@ public class ProductInventoryService implements IProductInventoryApi {
                 .orElseThrow(() -> new ProductInventoryNotFoundException("No existe inventario para el producto " + productId)
                 );
 
-        Quantity q = new Quantity(quantity);
 
-        if (inventory.getCurrentStock().isLessThan(q)) {
+        if (inventory.getCurrentStock().isLessThan(quantity)) {
             throw new NotEnoughProductStockException("Stock insuficiente para el producto " + productId);
         }
 
         // Descontar
-        inventory.subtractStock(q);
+        inventory.subtractStock(quantity);
         productInventoryRepository.save(inventory);
 
         // Registrar movimiento (SALIDA)
@@ -203,7 +201,7 @@ public class ProductInventoryService implements IProductInventoryApi {
      * @throws ProductInventoryNotFoundException if the product inventory does not exist
      */
     @Transactional
-    public void restoreProductStock(Long branchId, Long productId, int quantity, String userId)
+    public void restoreProductStock(Long branchId, Long productId, Quantity quantity, String userId)
             throws AccessDeniedException, ProductInventoryNotFoundException {
 
         branchApi.assertUserHasAccessToBranch(userId, branchId);
@@ -211,7 +209,7 @@ public class ProductInventoryService implements IProductInventoryApi {
         ProductInventory inventory = this.findInventoryItemByProductIdOrThrow(productId);
 
         // Reponer stock
-        inventory.addStock(new Quantity(quantity));
+        inventory.addStock(quantity);
         productInventoryRepository.save(inventory);
 
         // Registrar movimiento (ENTRADA por anulación de venta)
