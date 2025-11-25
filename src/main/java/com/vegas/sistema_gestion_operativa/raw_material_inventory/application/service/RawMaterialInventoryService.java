@@ -2,6 +2,7 @@ package com.vegas.sistema_gestion_operativa.raw_material_inventory.application.s
 
 import com.vegas.sistema_gestion_operativa.branches.IBranchApi;
 import com.vegas.sistema_gestion_operativa.common.domain.Money;
+import com.vegas.sistema_gestion_operativa.common.domain.MovementReason;
 import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 import com.vegas.sistema_gestion_operativa.products.application.dto.AdjustmentDto;
@@ -12,7 +13,6 @@ import com.vegas.sistema_gestion_operativa.raw_material_inventory.application.dt
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.application.dto.RegisterRawMaterialDto;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.application.factory.RawMaterialInventoryFactory;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.application.factory.RawMaterialMovementFactory;
-import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.entity.MovementReason;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.entity.RawMaterialBatch;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.entity.RawMaterialInventory;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.entity.RawMaterialMovement;

@@ -1,4 +1,4 @@
-package com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.entity;
+package com.vegas.sistema_gestion_operativa.common.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 

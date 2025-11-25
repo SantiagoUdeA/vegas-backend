@@ -1,8 +1,8 @@
 package com.vegas.sistema_gestion_operativa.raw_material_inventory.application.factory;
 
+import com.vegas.sistema_gestion_operativa.common.domain.MovementReason;
 import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.application.dto.RegisterRawMaterialBatchDto;
-import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.entity.MovementReason;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.entity.RawMaterialMovement;
 import org.springframework.stereotype.Component;
 

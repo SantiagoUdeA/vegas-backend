@@ -1,7 +1,7 @@
 package com.vegas.sistema_gestion_operativa.products.application.dto;
 
+import com.vegas.sistema_gestion_operativa.common.domain.MovementReason;
 import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
-import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.entity.MovementReason;
 import jakarta.validation.constraints.NotNull;
 
 public record AdjustmentDto(
