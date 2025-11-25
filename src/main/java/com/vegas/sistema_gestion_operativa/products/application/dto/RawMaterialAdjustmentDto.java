@@ -4,7 +4,7 @@ import com.vegas.sistema_gestion_operativa.common.domain.MovementReason;
 import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
 import jakarta.validation.constraints.NotNull;
 
-public record AdjustmentDto(
+public record RawMaterialAdjustmentDto(
 
         @NotNull(message = "El ID del material es obligatorio")
         Long rawMaterialId,

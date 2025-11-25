@@ -5,7 +5,7 @@ import com.vegas.sistema_gestion_operativa.common.domain.Money;
 import com.vegas.sistema_gestion_operativa.common.domain.MovementReason;
 import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
-import com.vegas.sistema_gestion_operativa.products.application.dto.AdjustmentDto;
+import com.vegas.sistema_gestion_operativa.products.application.dto.RawMaterialAdjustmentDto;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.IRawMaterialInventoryApi;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.application.dto.RawMaterialBatchDto;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.application.dto.RawMaterialInventoryItemDto;
@@ -191,7 +191,7 @@ public class RawMaterialInventoryService implements IRawMaterialInventoryApi {
      * @throws InventoryItemNotFoundException si no se encuentra el item de inventario
      * @throws AccessDeniedException          si el usuario no tiene acceso a la sede correspondiente
      */
-    public RawMaterialInventory doAdjustment(AdjustmentDto dto, String userId) throws NotEnoughStockException, InventoryItemNotFoundException, AccessDeniedException {
+    public RawMaterialInventory doAdjustment(RawMaterialAdjustmentDto dto, String userId) throws NotEnoughStockException, InventoryItemNotFoundException, AccessDeniedException {
         var item = this.rawMaterialInventoryRepository.findByRawMaterialId((dto.rawMaterialId()))
                 .orElseThrow(() -> new InventoryItemNotFoundException(
                         "No se ha encontrado el item de inventario para la materia prima con id: " + dto.rawMaterialId()
