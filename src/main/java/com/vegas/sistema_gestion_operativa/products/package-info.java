@@ -1,5 +1,6 @@
 @ApplicationModule(
-        displayName = "Products Catalog"
+        displayName = "Products Catalog",
+        allowedDependencies = "raw_material"
 )
 package com.vegas.sistema_gestion_operativa.products;
 
