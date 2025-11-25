@@ -13,7 +13,7 @@ import com.vegas.sistema_gestion_operativa.users.domain.exceptions.UserAlreadyEx
 import com.vegas.sistema_gestion_operativa.users.domain.exceptions.UserAlreadyInactiveException;
 import com.vegas.sistema_gestion_operativa.users.domain.exceptions.UserNotFoundException;
 import com.vegas.sistema_gestion_operativa.users.infrastructure.repository.IUserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
@@ -30,6 +30,7 @@ import java.util.Optional;
  * Handles business logic for retrieving and creating users.
  */
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final IIdentityService identityService;
@@ -38,23 +39,6 @@ public class UserService {
     private final UserFactory userFactory;
     private final IUserMapper userMapper;
     private final ApplicationEventPublisher eventPublisher;
-
-    @Autowired
-    public UserService(
-            IIdentityService identityService,
-            IRoleApi roleApi,
-            IUserRepository userRepository,
-            UserFactory userFactory,
-            IUserMapper userMapper,
-            ApplicationEventPublisher eventPublisher
-    ) {
-        this.identityService = identityService;
-        this.roleApi = roleApi;
-        this.userRepository = userRepository;
-        this.userFactory = userFactory;
-        this.userMapper = userMapper;
-        this.eventPublisher = eventPublisher;
-    }
 
     /**
      * Retrieves all users from the repository.
