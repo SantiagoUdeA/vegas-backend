@@ -22,6 +22,7 @@ public enum Role {
                     RAW_MATERIALS_CREATE, RAW_MATERIALS_EDIT, RAW_MATERIALS_DELETE, RAW_MATERIALS_VIEW,
                     REPORTS_VIEW, REPORTS_EXPORT,
                     BRANCHES_VIEW,
+                    DASHBOARD_VIEW,
                     SALES_CREATE, SALES_READ, SALES_DELETE
             )
     ),
