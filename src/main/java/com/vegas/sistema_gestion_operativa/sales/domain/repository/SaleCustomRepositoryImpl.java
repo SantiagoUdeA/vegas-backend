@@ -79,7 +79,7 @@ public class SaleCustomRepositoryImpl implements SaleCustomRepository {
 
         StringBuilder sb = new StringBuilder(
                 "SELECT new com.vegas.sistema_gestion_operativa.sales.application.dto.ProductSalesStatsDto(" +
-                        "d.productId, p.name, SUM(d.quantity)) " +
+                        "d.productId, p.name, SUM(d.quantity.value)) " +
                         "FROM SaleDetail d " +
                         "JOIN d.sale s " +
                         "JOIN Product p ON p.id = d.productId " +
@@ -90,8 +90,12 @@ public class SaleCustomRepositoryImpl implements SaleCustomRepository {
         if (from != null) sb.append(" AND s.saleDate >= :from ");
         if (to != null) sb.append(" AND s.saleDate <= :to ");
 
-        sb.append(" GROUP BY d.productId, p.name ORDER BY SUM(d.quantity) DESC");
+        sb.append(" GROUP BY d.productId, p.name ORDER BY SUM(d.quantity.value) DESC");
 
+        return getProductSalesStatsDto(branchId, from, to, limit, sb);
+    }
+
+    private List<ProductSalesStatsDto> getProductSalesStatsDto(Long branchId, LocalDate from, LocalDate to, int limit, StringBuilder sb) {
         var query = em.createQuery(sb.toString(), ProductSalesStatsDto.class);
 
         if (branchId != null) query.setParameter("branchId", branchId);
@@ -108,7 +112,7 @@ public class SaleCustomRepositoryImpl implements SaleCustomRepository {
 
         StringBuilder sb = new StringBuilder(
                 "SELECT new com.vegas.sistema_gestion_operativa.sales.application.dto.ProductSalesStatsDto(" +
-                        "d.productId, p.name, SUM(d.quantity)) " +
+                        "d.productId, p.name, SUM(d.quantity.value)) " +
                         "FROM SaleDetail d " +
                         "JOIN d.sale s " +
                         "JOIN Product p ON p.id = d.productId " +
@@ -119,17 +123,9 @@ public class SaleCustomRepositoryImpl implements SaleCustomRepository {
         if (from != null) sb.append(" AND s.saleDate >= :from ");
         if (to != null) sb.append(" AND s.saleDate <= :to ");
 
-        sb.append(" GROUP BY d.productId, p.name ORDER BY SUM(d.quantity) ASC");
+        sb.append(" GROUP BY d.productId, p.name ORDER BY SUM(d.quantity.value) ASC");
 
-        var query = em.createQuery(sb.toString(), ProductSalesStatsDto.class);
-
-        if (branchId != null) query.setParameter("branchId", branchId);
-        if (from != null) query.setParameter("from", from.atStartOfDay());
-        if (to != null) query.setParameter("to", to.atTime(23, 59, 59));
-
-        query.setMaxResults(limit);
-
-        return query.getResultList();
+        return getProductSalesStatsDto(branchId, from, to, limit, sb);
     }
 
 }
