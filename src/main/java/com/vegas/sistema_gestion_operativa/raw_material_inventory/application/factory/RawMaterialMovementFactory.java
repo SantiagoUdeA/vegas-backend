@@ -2,11 +2,10 @@ package com.vegas.sistema_gestion_operativa.raw_material_inventory.application.f
 
 import com.vegas.sistema_gestion_operativa.common.domain.MovementReason;
 import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
+import com.vegas.sistema_gestion_operativa.common.utils.DateTimeUtils;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.application.dto.RegisterRawMaterialBatchDto;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.entity.RawMaterialMovement;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDateTime;
 
 @Component
 public class RawMaterialMovementFactory {
@@ -17,7 +16,7 @@ public class RawMaterialMovementFactory {
                 .rawMaterialBatchId(batchId)
                 .rawMaterialId(dto.rawMaterialId())
                 .userId(userId)
-                .movementDate(LocalDateTime.now())
+                .movementDate(DateTimeUtils.nowInBogota())
                 .quantity(new Quantity(dto.quantity()))
                 .build();
     }
@@ -27,7 +26,7 @@ public class RawMaterialMovementFactory {
                 .movementReason(reason)
                 .rawMaterialId(rawMaterialId)
                 .userId(userId)
-                .movementDate(LocalDateTime.now())
+                .movementDate(DateTimeUtils.nowInBogota())
                 .quantity(quantity)
                 .build();
     }
@@ -37,7 +36,7 @@ public class RawMaterialMovementFactory {
                 .movementReason(reason)
                 .rawMaterialId(rawMaterialId)
                 .userId(userId)
-                .movementDate(LocalDateTime.now())
+                .movementDate(DateTimeUtils.nowInBogota())
                 .quantity(quantity)
                 .justification(justification)
                 .build();

@@ -2,11 +2,10 @@ package com.vegas.sistema_gestion_operativa.products_inventory.application.facto
 
 import com.vegas.sistema_gestion_operativa.common.domain.MovementReason;
 import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
+import com.vegas.sistema_gestion_operativa.common.utils.DateTimeUtils;
 import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.RegisterProductStockDto;
 import com.vegas.sistema_gestion_operativa.products_inventory.domain.entity.ProductInventoryMovement;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDateTime;
 
 @Component
 public class ProductInventoryMovementFactory {
@@ -20,7 +19,7 @@ public class ProductInventoryMovementFactory {
                 .movementReason(MovementReason.SALIDA)
                 .quantity(dto.quantity())
                 .userId(userId)
-                .movementDate(LocalDateTime.now())
+                .movementDate(DateTimeUtils.nowInBogota())
                 .build();
     }
 
@@ -33,7 +32,7 @@ public class ProductInventoryMovementFactory {
                 .movementReason(MovementReason.ENTRADA)
                 .quantity(dto.quantity())
                 .userId(userId)
-                .movementDate(LocalDateTime.now())
+                .movementDate(DateTimeUtils.nowInBogota())
                 .build();
     }
 
@@ -60,7 +59,7 @@ public class ProductInventoryMovementFactory {
                 .quantity(quantity)
                 .userId(userId)
                 .justification(justification)
-                .movementDate(LocalDateTime.now())
+                .movementDate(DateTimeUtils.nowInBogota())
                 .build();
     }
 
@@ -70,7 +69,7 @@ public class ProductInventoryMovementFactory {
                 .movementReason(MovementReason.RETORNO)
                 .quantity(dto.quantity())
                 .userId(userId)
-                .movementDate(LocalDateTime.now())
+                .movementDate(DateTimeUtils.nowInBogota())
                 .build();
     }
 }

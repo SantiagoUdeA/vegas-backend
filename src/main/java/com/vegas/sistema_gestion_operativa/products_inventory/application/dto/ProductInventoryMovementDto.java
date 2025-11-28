@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 public record ProductInventoryMovementDto(
         Long id,
         String productName,
+        String productCategoryName,
         String userName,
         Quantity quantity,
         MovementReason movementReason,
