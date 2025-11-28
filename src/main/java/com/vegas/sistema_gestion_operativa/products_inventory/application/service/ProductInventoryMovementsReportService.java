@@ -8,6 +8,7 @@ import com.vegas.sistema_gestion_operativa.common.utils.PdfBuilder;
 import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.GenerateReportDto;
 import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.ProductInventoryMovementDto;
 import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.ProductMovementsReportDto;
+import com.vegas.sistema_gestion_operativa.products_inventory.domain.exceptions.NoMovementsForReportGenerationException;
 import com.vegas.sistema_gestion_operativa.products_inventory.domain.repository.IProductInventoryMovementRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,7 @@ public class ProductInventoryMovementsReportService {
      * @return Byte array representing the generated PDF report
      * @throws AccessDeniedException if the user does not have access to the specified branch
      */
-    public byte[] generateReport(GenerateReportDto dto, String userId) throws AccessDeniedException {
+    public byte[] generateReport(GenerateReportDto dto, String userId) throws AccessDeniedException, NoMovementsForReportGenerationException {
 
         // Verify user access to the branch
         this.branchApi.assertUserHasAccessToBranch(userId, dto.branchId());
@@ -41,6 +42,9 @@ public class ProductInventoryMovementsReportService {
                 dto.fromDate(),
                 dto.toDate()
         );
+
+        if (movements.isEmpty())
+            throw new NoMovementsForReportGenerationException("No se encontraron movimientos para los criterios proporcionados.");
 
         ProductMovementsReportDto report = productInventoryMovementRepository.createMovementsReport(
                 dto.branchId(),

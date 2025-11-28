@@ -4,6 +4,7 @@ import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedExcepti
 import com.vegas.sistema_gestion_operativa.common.utils.DateTimeUtils;
 import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.GenerateReportDto;
 import com.vegas.sistema_gestion_operativa.products_inventory.application.service.ProductInventoryMovementsReportService;
+import com.vegas.sistema_gestion_operativa.products_inventory.domain.exceptions.NoMovementsForReportGenerationException;
 import com.vegas.sistema_gestion_operativa.security.AuthUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -36,7 +37,7 @@ public class ProductInventoryMovementsReportController {
 
             @RequestParam Long branchId,
             @RequestParam(required = false) Long categoryId
-    ) throws AccessDeniedException {
+    ) throws AccessDeniedException, NoMovementsForReportGenerationException {
         var dto = new GenerateReportDto(
                 branchId,
                 categoryId,
