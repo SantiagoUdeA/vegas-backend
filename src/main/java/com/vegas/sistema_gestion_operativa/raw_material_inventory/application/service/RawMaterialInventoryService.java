@@ -25,9 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -62,9 +60,6 @@ public class RawMaterialInventoryService implements IRawMaterialInventoryApi {
      */
     @Transactional
     public RawMaterialBatch registerRawMaterialBatch(RegisterRawMaterialBatchDto dto, String userId) {
-        // Obtener unidad de medida de la materia prima
-
-
         // Crear un lote de materia prima
         RawMaterialBatch rawMaterialBatch = this.rawMateriaBatchRepository.save(
                 this.rawMaterialFactory.createBatchFromDto(dto)
@@ -77,15 +72,7 @@ public class RawMaterialInventoryService implements IRawMaterialInventoryApi {
         );
 
         // Obtener o crear inventario
-        var inventory = rawMaterialInventoryRepository
-                .findByRawMaterialIdAndBranchId(dto.rawMaterialId(), dto.branchId())
-                .orElseGet(() -> rawMaterialFactory.createFromDto(
-                        new RegisterRawMaterialDto(
-                                dto.rawMaterialId(),
-                                dto.branchId(),
-                                0.0
-                        )
-                ));
+        var inventory = getOrCreateInventory(dto.rawMaterialId(), dto.branchId());
 
         // Actualizar stock y costo promedio
         Quantity entryQuantity = new Quantity(BigDecimal.valueOf(dto.quantity()));
@@ -94,14 +81,13 @@ public class RawMaterialInventoryService implements IRawMaterialInventoryApi {
         rawMaterialInventoryRepository.save(inventory);
 
         // Registrar el movimiento del lote de materia prima
-        var test = this.rawMaterialMovementFactory.createMovementFromDto(
+        var movement = this.rawMaterialMovementFactory.createMovementFromDto(
                 dto,
                 rawMaterialBatch.getId(),
                 userId
         );
-        rawMaterialMovementRepository.save(
-                test
-        );
+
+        rawMaterialMovementRepository.save(movement);
 
         return rawMaterialBatch;
     }
@@ -131,31 +117,13 @@ public class RawMaterialInventoryService implements IRawMaterialInventoryApi {
 
     @Transactional
     public void reduceStock(Map<Long, Quantity> quantities, String userId) throws NotEnoughRawMaterialStockException {
-
         // 1. Obtener todos los inventarios afectados
-        List<RawMaterialInventory> items =
-                rawMaterialInventoryRepository.findByRawMaterialIdIn(
-                        new ArrayList<>(quantities.keySet())
-                );
+        Map<Long, RawMaterialInventory> inventoryMap = loadInventoriesByIds(quantities.keySet());
 
-        // 2. Convertir a mapa para acceso O(1)
-        Map<Long, RawMaterialInventory> inventoryMap = items.stream()
-                .collect(Collectors.toMap(RawMaterialInventory::getRawMaterialId, i -> i));
+        // 2. Validar existencia y stock suficiente
+        validateItemsExistFor(quantities.keySet(), inventoryMap);
 
-        // 3. Validar existencia y stock suficiente
-        for (var entry : quantities.entrySet()) {
-            Long rawMaterialId = entry.getKey();
-            RawMaterialInventory item = inventoryMap.get(rawMaterialId);
-
-            if (item == null) {
-                throw new NotEnoughRawMaterialStockException(
-                        // TODO Especificar el nombre de la materia prima
-                        "No hay suficiente inventario para una de las materias primas (id: " + rawMaterialId + ")"
-                );
-            }
-        }
-
-        // 4. Reducir el stock ahora que todos ya está validado
+        // 3. Reducir el stock ahora que todo ya está validado
         List<RawMaterialMovement> movements = new ArrayList<>();
         for (Map.Entry<Long, Quantity> entry : quantities.entrySet()) {
             Long rawMaterialId = entry.getKey();
@@ -169,9 +137,35 @@ public class RawMaterialInventoryService implements IRawMaterialInventoryApi {
             ));
         }
 
-        // 5. Guardar la información de inventario y movimientos
-        rawMaterialMovementRepository.saveAll(movements);
-        rawMaterialInventoryRepository.saveAll(inventoryMap.values());
+        // 4. Guardar la información de inventario y movimientos
+        persistInventoryAndMovements(inventoryMap.values(), movements);
+    }
+
+    @Override
+    public void increaseStock(Map<Long, Quantity> rawMaterialQuantities, String userId) {
+
+        // 1. Obtener todos los inventarios afectados
+        Map<Long, RawMaterialInventory> inventoryMap = loadInventoriesByIds(rawMaterialQuantities.keySet());
+
+        // 2. Aumentar el stock
+        List<RawMaterialMovement> movements = new ArrayList<>();
+        for (Map.Entry<Long, Quantity> entry : rawMaterialQuantities.entrySet()) {
+            Long rawMaterialId = entry.getKey();
+            Quantity quantity = entry.getValue();
+            RawMaterialInventory item = inventoryMap.get(rawMaterialId);
+            if (item != null) {
+                item.addStock(quantity);
+                movements.add(rawMaterialMovementFactory.createMovementForAdjustment(
+                        rawMaterialId,
+                        quantity,
+                        MovementReason.ENTRADA,
+                        userId
+                ));
+            }
+        }
+
+        // 3. Guardar la información de inventario y movimientos
+        persistInventoryAndMovements(inventoryMap.values(), movements);
     }
 
     /**
@@ -188,18 +182,22 @@ public class RawMaterialInventoryService implements IRawMaterialInventoryApi {
      * @throws AccessDeniedException              si el usuario no tiene acceso a la sede correspondiente
      */
     public RawMaterialInventory doAdjustment(RawMaterialAdjustmentDto dto, String userId) throws NotEnoughRawMaterialStockException, InventoryItemNotFoundException, AccessDeniedException {
+        // Obtener el item de inventario
         var item = this.rawMaterialInventoryRepository.findByRawMaterialId((dto.rawMaterialId()))
                 .orElseThrow(() -> new InventoryItemNotFoundException(
                         "No se ha encontrado el item de inventario para la materia prima con id: " + dto.rawMaterialId()
                 ));
 
+        // Verificar acceso del usuario a la sede
         this.branchApi.assertUserHasAccessToBranch(
                 userId,
                 item.getBranchId()
         );
 
+        // Realizar el ajuste reduciendo el stock
         item.reduceStock(dto.quantity());
 
+        // Registrar el movimiento asociado al ajuste
         rawMaterialMovementRepository.save(
                 rawMaterialMovementFactory.createMovementForAdjustment(
                         item.getRawMaterialId(),
@@ -210,6 +208,42 @@ public class RawMaterialInventoryService implements IRawMaterialInventoryApi {
                 )
         );
 
+        // Guardar y retornar el item ajustado
         return rawMaterialInventoryRepository.save(item);
+    }
+
+    // ===================== Métodos privados reutilizables =====================
+
+    private Map<Long, RawMaterialInventory> loadInventoriesByIds(Set<Long> rawMaterialIds) {
+        List<RawMaterialInventory> items = rawMaterialInventoryRepository.findByRawMaterialIdIn(new ArrayList<>(rawMaterialIds));
+        return items.stream().collect(Collectors.toMap(RawMaterialInventory::getRawMaterialId, i -> i));
+    }
+
+    private void validateItemsExistFor(Set<Long> requestedIds, Map<Long, RawMaterialInventory> inventoryMap) throws NotEnoughRawMaterialStockException {
+        for (Long id : requestedIds) {
+            if (!inventoryMap.containsKey(id)) {
+                throw new NotEnoughRawMaterialStockException(
+                        // TODO Especificar el nombre de la materia prima
+                        "No hay suficiente inventario para una de las materias primas (id: " + id + ")"
+                );
+            }
+        }
+    }
+
+    private void persistInventoryAndMovements(Collection<RawMaterialInventory> inventories, List<RawMaterialMovement> movements) {
+        rawMaterialMovementRepository.saveAll(movements);
+        rawMaterialInventoryRepository.saveAll(inventories);
+    }
+
+    private RawMaterialInventory getOrCreateInventory(Long rawMaterialId, Long branchId) {
+        return rawMaterialInventoryRepository
+                .findByRawMaterialIdAndBranchId(rawMaterialId, branchId)
+                .orElseGet(() -> rawMaterialFactory.createFromDto(
+                        new RegisterRawMaterialDto(
+                                rawMaterialId,
+                                branchId,
+                                0.0
+                        )
+                ));
     }
 }

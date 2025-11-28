@@ -55,6 +55,40 @@ public class RawMaterialInventory {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    /**
+     * Agrega una cantidad de stock al inventario y recalcula el costo promedio
+     * utilizando la fórmula del **promedio ponderado**.
+     *
+     * <p>Este método está diseñado para mantener la consistencia del inventario
+     * cuando ingresa nueva materia prima con un costo unitario potencialmente diferente
+     * al costo promedio actual. El cálculo del nuevo costo promedio se realiza usando
+     * value objects (`Quantity` y `Money`) para garantizar exactitud y evitar manejar
+     * tipos numéricos primitivos que puedan introducir errores.
+     *
+     * <p><b>Fórmula utilizada (Promedio Ponderado):</b><br>
+     *
+     * <pre>
+     *   costoPromedioNuevo =
+     *       (costoPromedioActual * stockActual + costoUnitarioEntrada * cantidadEntrada)
+     *       ---------------------------------------------------------------------------
+     *                              (stockActual + cantidadEntrada)
+     * </pre>
+     *
+     * <p><b>Pasos que realiza el método:</b>
+     * <ul>
+     *   <li>Calcula el valor total del inventario actual (stock * costo promedio).</li>
+     *   <li>Calcula el valor total de la nueva entrada (cantidad * costo unitario).</li>
+     *   <li>Obtiene el valor total combinado del inventario.</li>
+     *   <li>Suma la cantidad ingresada al stock existente.</li>
+     *   <li>Divide el valor total del inventario entre el nuevo stock para obtener
+     *       el nuevo costo promedio.</li>
+     *   <li>Actualiza el estado interno del inventario.</li>
+     * </ul>
+     *
+     * @param quantity Cantidad ingresada al inventario.
+     * @param unitCost Costo unitario de la materia prima ingresada.
+     * @throws ArithmeticException si se intenta dividir entre cero (solo posible si los value objects lo permiten).
+     */
     public void addStock(Quantity quantity, Money unitCost) {
         // Calcular valor del inventario actual
         Money currentValue = this.averageCost.multiply(this.currentStock);
@@ -75,6 +109,21 @@ public class RawMaterialInventory {
         this.averageCost = newAverageCost;
     }
 
+    /**
+     * Agrega una cantidad de stock al inventario.
+     *
+     * @param quantity Cantidad a agregar.
+     */
+    public void addStock(Quantity quantity) {
+        this.currentStock = this.currentStock.add(quantity);
+    }
+
+    /**
+     * Reduce el stock del inventario restando la cantidad indicada.
+     *
+     * @param quantity Cantidad a reducir.
+     * @throws NotEnoughRawMaterialStockException Si no hay suficiente stock para realizar la operación.
+     */
     public void reduceStock(Quantity quantity) throws NotEnoughRawMaterialStockException {
         if (this.currentStock.getValue().compareTo(quantity.getValue()) < 0) {
             throw new NotEnoughRawMaterialStockException("No hay suficiente stock para realizar esta operación.");
