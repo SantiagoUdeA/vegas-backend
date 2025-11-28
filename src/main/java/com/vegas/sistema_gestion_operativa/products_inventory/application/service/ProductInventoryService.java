@@ -1,6 +1,7 @@
 package com.vegas.sistema_gestion_operativa.products_inventory.application.service;
 
 import com.vegas.sistema_gestion_operativa.branches.IBranchApi;
+import com.vegas.sistema_gestion_operativa.common.domain.MovementReason;
 import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 import com.vegas.sistema_gestion_operativa.common.exceptions.ApiException;
@@ -146,7 +147,8 @@ public class ProductInventoryService implements IProductInventoryApi {
                                     ),
                                     Map::putAll
                             ),
-                    userId
+                    userId,
+                    MovementReason.RETORNO
             );
 
 

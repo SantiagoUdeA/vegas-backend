@@ -142,7 +142,7 @@ public class RawMaterialInventoryService implements IRawMaterialInventoryApi {
     }
 
     @Override
-    public void increaseStock(Map<Long, Quantity> rawMaterialQuantities, String userId) {
+    public void increaseStock(Map<Long, Quantity> rawMaterialQuantities, String userId, MovementReason reason) {
 
         // 1. Obtener todos los inventarios afectados
         Map<Long, RawMaterialInventory> inventoryMap = loadInventoriesByIds(rawMaterialQuantities.keySet());
@@ -158,7 +158,7 @@ public class RawMaterialInventoryService implements IRawMaterialInventoryApi {
                 movements.add(rawMaterialMovementFactory.createMovementForAdjustment(
                         rawMaterialId,
                         quantity,
-                        MovementReason.ENTRADA,
+                        reason,
                         userId
                 ));
             }
