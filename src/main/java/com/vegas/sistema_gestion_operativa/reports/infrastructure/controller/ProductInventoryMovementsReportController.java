@@ -25,7 +25,7 @@ public class ProductInventoryMovementsReportController {
 
     private final ProductInventoryMovementsReportService productInventoryMovementsReportService;
 
-    @GetMapping(produces = MediaType.APPLICATION_PDF_VALUE)
+    @GetMapping(produces = {MediaType.APPLICATION_PDF_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<byte[]> generateReport(
             @RequestParam
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
@@ -45,13 +45,15 @@ public class ProductInventoryMovementsReportController {
                 DateTimeUtils.toEndOfDay(toDate)
         );
 
+        var report = productInventoryMovementsReportService.generateReport(
+                dto,
+                AuthUtils.getUserIdFromToken()
+        );
+
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline;")
-                .body(productInventoryMovementsReportService.generateReport(
-                        dto,
-                        AuthUtils.getUserIdFromToken()
-                ));
+                .body(report);
     }
 
 }
