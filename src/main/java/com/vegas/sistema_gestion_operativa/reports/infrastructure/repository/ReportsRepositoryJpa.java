@@ -1,6 +1,6 @@
 package com.vegas.sistema_gestion_operativa.reports.infrastructure.repository;
 
-import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.ProductInventoryMovementDto;
+import com.vegas.sistema_gestion_operativa.products_inventory.api.ProductInventoryMovementDto;
 import com.vegas.sistema_gestion_operativa.reports.application.dto.ProductMovementsReportDto;
 import com.vegas.sistema_gestion_operativa.reports.domain.repository.IReportsRepository;
 import jakarta.persistence.EntityManager;
@@ -24,7 +24,7 @@ public class ReportsRepositoryJpa implements IReportsRepository {
             LocalDateTime toDate
     ) {
         String jpql = """
-                SELECT new com.vegas.sistema_gestion_operativa.products_inventory.application.dto.ProductInventoryMovementDto(
+                SELECT new com.vegas.sistema_gestion_operativa.products_inventory.api.ProductInventoryMovementDto(
                     pim.id,
                     p.name,
                     p.category.name,

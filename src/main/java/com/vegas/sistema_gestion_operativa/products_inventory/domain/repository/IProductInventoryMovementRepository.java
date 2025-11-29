@@ -1,6 +1,6 @@
 package com.vegas.sistema_gestion_operativa.products_inventory.domain.repository;
 
-import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.ProductInventoryMovementDto;
+import com.vegas.sistema_gestion_operativa.products_inventory.api.ProductInventoryMovementDto;
 import com.vegas.sistema_gestion_operativa.products_inventory.domain.entity.ProductInventoryMovement;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface IProductInventoryMovementRepository extends JpaRepository<ProductInventoryMovement, Long> {
     @Query("""
-                SELECT new com.vegas.sistema_gestion_operativa.products_inventory.application.dto.ProductInventoryMovementDto(
+                SELECT new com.vegas.sistema_gestion_operativa.products_inventory.api.ProductInventoryMovementDto(
                     pim.id,
                     p.name,
                     p.category.name,
@@ -25,5 +25,5 @@ public interface IProductInventoryMovementRepository extends JpaRepository<Produ
                 WHERE p.branchId = :branchId
             """)
     Page<ProductInventoryMovementDto> findAllByBranchId(Pageable pageable, Long branchId);
-    
+
 }

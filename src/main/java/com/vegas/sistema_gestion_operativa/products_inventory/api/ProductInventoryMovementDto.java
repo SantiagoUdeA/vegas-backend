@@ -1,4 +1,4 @@
-package com.vegas.sistema_gestion_operativa.products_inventory.application.dto;
+package com.vegas.sistema_gestion_operativa.products_inventory.api;
 
 
 import com.vegas.sistema_gestion_operativa.common.domain.MovementReason;

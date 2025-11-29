@@ -2,7 +2,7 @@ package com.vegas.sistema_gestion_operativa.products_inventory.application.servi
 
 import com.vegas.sistema_gestion_operativa.branches.IBranchApi;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
-import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.ProductInventoryMovementDto;
+import com.vegas.sistema_gestion_operativa.products_inventory.api.ProductInventoryMovementDto;
 import com.vegas.sistema_gestion_operativa.products_inventory.domain.repository.IProductInventoryMovementRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

@@ -1,6 +1,6 @@
 package com.vegas.sistema_gestion_operativa.reports.domain.repository;
 
-import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.ProductInventoryMovementDto;
+import com.vegas.sistema_gestion_operativa.products_inventory.api.ProductInventoryMovementDto;
 import com.vegas.sistema_gestion_operativa.reports.application.dto.ProductMovementsReportDto;
 
 import java.time.LocalDateTime;

@@ -4,7 +4,7 @@ import com.vegas.sistema_gestion_operativa.common.dto.PageResponse;
 import com.vegas.sistema_gestion_operativa.common.dto.PaginationRequest;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 import com.vegas.sistema_gestion_operativa.common.utils.PaginationUtils;
-import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.ProductInventoryMovementDto;
+import com.vegas.sistema_gestion_operativa.products_inventory.api.ProductInventoryMovementDto;
 import com.vegas.sistema_gestion_operativa.products_inventory.application.service.ProductInventoryMovementService;
 import com.vegas.sistema_gestion_operativa.security.AuthUtils;
 import jakarta.validation.constraints.NotNull;

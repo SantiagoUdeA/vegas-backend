@@ -4,9 +4,9 @@ import com.lowagie.text.pdf.PdfPTable;
 import com.vegas.sistema_gestion_operativa.branches.IBranchApi;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 import com.vegas.sistema_gestion_operativa.common.utils.DateTimeUtils;
-import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.ProductInventoryMovementDto;
+import com.vegas.sistema_gestion_operativa.products_inventory.api.ProductInventoryMovementDto;
 import com.vegas.sistema_gestion_operativa.products_inventory.domain.exceptions.NoMovementsForReportGenerationException;
-import com.vegas.sistema_gestion_operativa.reports.application.dto.GenerateReportDto;
+import com.vegas.sistema_gestion_operativa.reports.application.dto.GenerateMovementReportDto;
 import com.vegas.sistema_gestion_operativa.reports.application.dto.ProductMovementsReportDto;
 import com.vegas.sistema_gestion_operativa.reports.domain.repository.IReportsRepository;
 import com.vegas.sistema_gestion_operativa.reports.utils.PdfBuilder;
@@ -17,7 +17,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ProductInventoryMovementsReportService {
+public class InventoryMovementsReportService {
 
     private final IReportsRepository reportsRepository;
     private final IBranchApi branchApi;
@@ -30,7 +30,7 @@ public class ProductInventoryMovementsReportService {
      * @return Byte array representing the generated PDF report
      * @throws AccessDeniedException if the user does not have access to the specified branch
      */
-    public byte[] generateReport(GenerateReportDto dto, String userId) throws AccessDeniedException, NoMovementsForReportGenerationException {
+    public byte[] generateReport(GenerateMovementReportDto dto, String userId) throws AccessDeniedException, NoMovementsForReportGenerationException {
 
         // Verify user access to the branch
         this.branchApi.assertUserHasAccessToBranch(userId, dto.branchId());

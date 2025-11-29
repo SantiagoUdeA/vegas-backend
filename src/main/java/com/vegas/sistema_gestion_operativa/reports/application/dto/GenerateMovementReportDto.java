@@ -5,7 +5,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 
-public record GenerateReportDto(
+public record GenerateMovementReportDto(
 
         @Param("branchId")
         @NotNull(message = "La sucursal no puede ser nula")
