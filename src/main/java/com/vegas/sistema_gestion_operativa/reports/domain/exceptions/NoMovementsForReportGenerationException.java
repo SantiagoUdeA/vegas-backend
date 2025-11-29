@@ -1,4 +1,4 @@
-package com.vegas.sistema_gestion_operativa.products_inventory.domain.exceptions;
+package com.vegas.sistema_gestion_operativa.reports.domain.exceptions;
 
 import com.vegas.sistema_gestion_operativa.common.exceptions.ApiException;
 import org.springframework.http.HttpStatus;

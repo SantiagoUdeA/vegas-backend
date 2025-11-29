@@ -2,9 +2,9 @@ package com.vegas.sistema_gestion_operativa.reports.application.service;
 
 import com.vegas.sistema_gestion_operativa.branches.IBranchApi;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
-import com.vegas.sistema_gestion_operativa.products_inventory.domain.exceptions.NoMovementsForReportGenerationException;
 import com.vegas.sistema_gestion_operativa.reports.application.dto.GenerateMovementReportDto;
 import com.vegas.sistema_gestion_operativa.reports.domain.entity.MovementReport;
+import com.vegas.sistema_gestion_operativa.reports.domain.exceptions.NoMovementsForReportGenerationException;
 import com.vegas.sistema_gestion_operativa.reports.domain.repository.IReportsRepository;
 import com.vegas.sistema_gestion_operativa.reports.infrastructure.builder.PdfBuilder;
 import lombok.RequiredArgsConstructor;

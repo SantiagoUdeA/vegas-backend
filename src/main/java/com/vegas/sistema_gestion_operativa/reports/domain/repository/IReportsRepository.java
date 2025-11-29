@@ -1,8 +1,8 @@
 package com.vegas.sistema_gestion_operativa.reports.domain.repository;
 
-import com.vegas.sistema_gestion_operativa.products_inventory.domain.exceptions.NoMovementsForReportGenerationException;
 import com.vegas.sistema_gestion_operativa.reports.domain.entity.MovementItem;
 import com.vegas.sistema_gestion_operativa.reports.domain.entity.MovementReport;
+import com.vegas.sistema_gestion_operativa.reports.domain.exceptions.NoMovementsForReportGenerationException;
 
 import java.time.LocalDateTime;
 import java.util.List;
