@@ -1,10 +1,12 @@
 package com.vegas.sistema_gestion_operativa.products_inventory.application.service;
 
 import com.vegas.sistema_gestion_operativa.branches.IBranchApi;
+import com.vegas.sistema_gestion_operativa.common.domain.MovementReason;
 import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 import com.vegas.sistema_gestion_operativa.common.exceptions.ApiException;
 import com.vegas.sistema_gestion_operativa.products.api.IProductApi;
+import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductNotFoundException;
 import com.vegas.sistema_gestion_operativa.products_inventory.IProductInventoryApi;
 import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.ProductAdjustmentDto;
 import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.ProductInventoryItemDto;
@@ -118,7 +120,7 @@ public class ProductInventoryService implements IProductInventoryApi {
      */
     @Transactional
     public ProductInventory doAdjustment(ProductAdjustmentDto dto, String userId)
-            throws NotEnoughProductStockException, ProductInventoryNotFoundException, AccessDeniedException {
+            throws NotEnoughProductStockException, ProductInventoryNotFoundException, AccessDeniedException, ProductNotFoundException {
 
         // Obtener el item de inventario
         var item = findInventoryItemByProductIdOrThrow(dto.productId());
@@ -128,6 +130,27 @@ public class ProductInventoryService implements IProductInventoryApi {
 
         // Reducir stock
         item.reduceStock(dto.quantity());
+
+        // Aumentar stock de materia prima si tiene receta
+        var recipe = productApi.getIngredientsForProductUnit(dto.productId());
+
+        if (recipe.isPresent())
+            this.rawMaterialInventoryApi.increaseStock(
+                    productApi.getIngredientsForProductUnit(dto.productId())
+                            .orElseThrow()
+                            .stream()
+                            .collect(
+                                    HashMap<Long, Quantity>::new,
+                                    (map, ingredient) -> map.put(
+                                            ingredient.getRawMaterialId(),
+                                            ingredient.getQuantity().multiply(dto.quantity())
+                                    ),
+                                    Map::putAll
+                            ),
+                    userId,
+                    MovementReason.RETORNO
+            );
+
 
         // Registrar movimiento
         productInventoryMovementRepository.save(

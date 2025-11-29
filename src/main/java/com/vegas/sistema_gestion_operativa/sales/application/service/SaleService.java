@@ -3,6 +3,7 @@ package com.vegas.sistema_gestion_operativa.sales.application.service;
 import com.vegas.sistema_gestion_operativa.branches.IBranchApi;
 import com.vegas.sistema_gestion_operativa.common.domain.Money;
 import com.vegas.sistema_gestion_operativa.common.exceptions.ApiException;
+import com.vegas.sistema_gestion_operativa.common.utils.DateTimeUtils;
 import com.vegas.sistema_gestion_operativa.products.api.IProductApi;
 import com.vegas.sistema_gestion_operativa.products.api.ProductDto;
 import com.vegas.sistema_gestion_operativa.products_inventory.IProductInventoryApi;
@@ -20,8 +21,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -50,7 +54,7 @@ public class SaleService {
 
         // Construir la venta
         Sale sale = Sale.builder()
-                .saleDate(LocalDateTime.now())
+                .saleDate(DateTimeUtils.nowInBogota())
                 .branchId(dto.branchId())
                 .employeeId(userId)
                 .build();

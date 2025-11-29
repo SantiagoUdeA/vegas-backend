@@ -2,13 +2,12 @@ package com.vegas.sistema_gestion_operativa.raw_material_inventory.application.f
 
 import com.vegas.sistema_gestion_operativa.common.domain.Money;
 import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
+import com.vegas.sistema_gestion_operativa.common.utils.DateTimeUtils;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.application.dto.RegisterRawMaterialBatchDto;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.application.dto.RegisterRawMaterialDto;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.entity.RawMaterialBatch;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.entity.RawMaterialInventory;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDateTime;
 
 @Component
 public class RawMaterialInventoryFactory {
@@ -27,7 +26,7 @@ public class RawMaterialInventoryFactory {
                 .rawMaterialId(dto.rawMaterialId())
                 .quantity(new Quantity(dto.quantity()))
                 .totalCost(new Money(dto.totalCost()))
-                .entryDate(LocalDateTime.now())
+                .entryDate(DateTimeUtils.nowInBogota())
                 .expirationDate(dto.expirationDate())
                 .providerId(dto.providerId())
                 .branchId(dto.branchId())

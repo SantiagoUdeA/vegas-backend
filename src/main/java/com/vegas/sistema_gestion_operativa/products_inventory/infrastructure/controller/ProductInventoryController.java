@@ -5,6 +5,7 @@ import com.vegas.sistema_gestion_operativa.common.dto.PaginationRequest;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 import com.vegas.sistema_gestion_operativa.common.exceptions.ApiException;
 import com.vegas.sistema_gestion_operativa.common.utils.PaginationUtils;
+import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductNotFoundException;
 import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.ProductAdjustmentDto;
 import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.ProductInventoryItemDto;
 import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.ProductInventoryResponseDto;
@@ -91,7 +92,7 @@ public class ProductInventoryController {
     @PreAuthorize("hasPermission(null, 'INVENTORY_EDIT')")
     public ResponseEntity<ProductInventory> doAdjustment(
             @RequestBody @Valid ProductAdjustmentDto dto
-    ) throws NotEnoughProductStockException, AccessDeniedException, ProductInventoryNotFoundException {
+    ) throws NotEnoughProductStockException, AccessDeniedException, ProductInventoryNotFoundException, ProductNotFoundException {
         return ResponseEntity.ok(
                 this.productInventoryService.doAdjustment(dto, AuthUtils.getUserIdFromToken())
         );
