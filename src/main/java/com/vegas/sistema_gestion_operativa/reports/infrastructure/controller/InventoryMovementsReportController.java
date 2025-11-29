@@ -24,12 +24,12 @@ import java.time.LocalDateTime;
 public class InventoryMovementsReportController {
 
     private final InventoryMovementsReportService inventoryMovementsReportService;
-    
+
     @GetMapping(
-            path = "/raw-material-movements",
+            path = "/product-movements",
             produces = {MediaType.APPLICATION_PDF_VALUE, MediaType.APPLICATION_JSON_VALUE}
     )
-    public ResponseEntity<byte[]> generateReport(
+    public ResponseEntity<byte[]> generateProductMovementsReport(
             @RequestParam
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
             LocalDateTime fromDate,
@@ -48,7 +48,7 @@ public class InventoryMovementsReportController {
                 DateTimeUtils.toEndOfDay(toDate)
         );
 
-        var report = inventoryMovementsReportService.generateReport(
+        var report = inventoryMovementsReportService.generateProductMovementsReport(
                 dto,
                 AuthUtils.getUserIdFromToken()
         );

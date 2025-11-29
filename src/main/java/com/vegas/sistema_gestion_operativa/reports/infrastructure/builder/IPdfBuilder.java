@@ -1,10 +1,11 @@
-package com.vegas.sistema_gestion_operativa.reports.utils;
+package com.vegas.sistema_gestion_operativa.reports.infrastructure.builder;
 
 import com.lowagie.text.*;
 import com.lowagie.text.Font;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
+import org.springframework.stereotype.Component;
 
 import java.awt.*;
 import java.io.ByteArrayOutputStream;
@@ -13,13 +14,14 @@ import java.util.List;
 /**
  * Builder para crear documentos PDF de manera sencilla.
  */
-public class PdfBuilder {
+@Component
+public class IPdfBuilder implements com.vegas.sistema_gestion_operativa.reports.domain.builder.IPdfBuilder {
 
     private final Document document;
     private final ByteArrayOutputStream outputStream;
     private String font = FontFactory.HELVETICA;
 
-    public PdfBuilder() {
+    public IPdfBuilder() {
         this.outputStream = new ByteArrayOutputStream();
         this.document = new Document();
         PdfWriter.getInstance(document, outputStream);
@@ -32,7 +34,8 @@ public class PdfBuilder {
      * @param font Nombre de la fuente (por ejemplo, FontFactory.HELVETICA)
      * @return El mismo PdfBuilder para encadenar llamadas.
      */
-    public PdfBuilder setFont(String font) {
+    @Override
+    public com.vegas.sistema_gestion_operativa.reports.domain.builder.IPdfBuilder setFont(String font) {
         this.font = font;
         return this;
     }
@@ -44,7 +47,8 @@ public class PdfBuilder {
      * @return El mismo PdfBuilder para encadenar llamadas.
      * @throws DocumentException Si ocurre un error al agregar el título.
      */
-    public PdfBuilder addTitle(String text) {
+    @Override
+    public com.vegas.sistema_gestion_operativa.reports.domain.builder.IPdfBuilder addTitle(String text) {
         Font titleFont = FontFactory.getFont(this.font, 22, Font.BOLD);
         Paragraph paragraph = new Paragraph(text, titleFont);
         paragraph.setAlignment(Element.ALIGN_CENTER);
@@ -54,7 +58,8 @@ public class PdfBuilder {
         return this;
     }
 
-    public PdfBuilder addSubtitle(String text) {
+    @Override
+    public com.vegas.sistema_gestion_operativa.reports.domain.builder.IPdfBuilder addSubtitle(String text) {
         Font subtitleFont = FontFactory.getFont(this.font, 16);
         Paragraph paragraph = new Paragraph(text, subtitleFont);
         paragraph.setSpacingAfter(4);
@@ -69,7 +74,8 @@ public class PdfBuilder {
      * @param text Texto del párrafo.
      * @return El mismo PdfBuilder para encadenar llamadas.
      */
-    public PdfBuilder addParagraph(String text) {
+    @Override
+    public com.vegas.sistema_gestion_operativa.reports.domain.builder.IPdfBuilder addParagraph(String text) {
         Font paragraphFont = FontFactory.getFont(this.font, 12);
         document.add(new Paragraph(text, paragraphFont));
         return this;
@@ -82,7 +88,8 @@ public class PdfBuilder {
      * @param description Descripción asociada a la etiqueta.
      * @return El mismo PdfBuilder para encadenar llamadas.
      */
-    public PdfBuilder addLabelAndDescription(String label, String description) {
+    @Override
+    public com.vegas.sistema_gestion_operativa.reports.domain.builder.IPdfBuilder addLabelAndDescription(String label, String description) {
         Font labelFont = FontFactory.getFont(this.font, 12, Font.BOLD);
         Font descriptionFont = FontFactory.getFont(this.font, 12);
         Paragraph paragraph = new Paragraph();
@@ -98,7 +105,8 @@ public class PdfBuilder {
      * @param lines Número de líneas de espacio en blanco a agregar.
      * @return El mismo PdfBuilder para encadenar llamadas.
      */
-    public PdfBuilder addSpace(int lines) {
+    @Override
+    public com.vegas.sistema_gestion_operativa.reports.domain.builder.IPdfBuilder addSpace(int lines) {
         for (int i = 0; i < lines; i++) {
             document.add(new Paragraph(" "));
         }
@@ -112,7 +120,8 @@ public class PdfBuilder {
      * @param table Tabla PDF a agregar.
      * @return El mismo PdfBuilder para encadenar llamadas.
      */
-    public PdfBuilder addTable(PdfPTable table) {
+    @Override
+    public com.vegas.sistema_gestion_operativa.reports.domain.builder.IPdfBuilder addTable(PdfPTable table) {
         document.add(table);
         return this;
     }
@@ -125,6 +134,7 @@ public class PdfBuilder {
      * @param columnWidths (Opcional) Anchos de columnas. Si es null, usa distribución uniforme.
      * @return PdfPTable generado.
      */
+    @Override
     public PdfPTable buildTable(List<String> headers, List<List<String>> rows, float[] columnWidths) {
         PdfPTable table = new PdfPTable(headers.size());
         table.setWidthPercentage(100);
@@ -171,6 +181,7 @@ public class PdfBuilder {
      *
      * @return Arreglo de bytes que representa el documento PDF.
      */
+    @Override
     public byte[] build() {
         document.close();
         return outputStream.toByteArray();
