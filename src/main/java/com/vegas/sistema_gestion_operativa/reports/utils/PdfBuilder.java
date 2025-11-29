@@ -1,4 +1,4 @@
-package com.vegas.sistema_gestion_operativa.common.utils;
+package com.vegas.sistema_gestion_operativa.reports.utils;
 
 import com.lowagie.text.*;
 import com.lowagie.text.Font;

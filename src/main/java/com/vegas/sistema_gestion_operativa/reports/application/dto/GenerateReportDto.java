@@ -1,4 +1,4 @@
-package com.vegas.sistema_gestion_operativa.products_inventory.application.dto;
+package com.vegas.sistema_gestion_operativa.reports.application.dto;
 
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.repository.query.Param;

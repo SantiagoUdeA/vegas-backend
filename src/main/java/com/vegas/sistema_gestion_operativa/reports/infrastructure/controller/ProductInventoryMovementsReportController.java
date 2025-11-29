@@ -1,10 +1,10 @@
-package com.vegas.sistema_gestion_operativa.products_inventory.infrastructure.controller;
+package com.vegas.sistema_gestion_operativa.reports.infrastructure.controller;
 
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 import com.vegas.sistema_gestion_operativa.common.utils.DateTimeUtils;
-import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.GenerateReportDto;
-import com.vegas.sistema_gestion_operativa.products_inventory.application.service.ProductInventoryMovementsReportService;
 import com.vegas.sistema_gestion_operativa.products_inventory.domain.exceptions.NoMovementsForReportGenerationException;
+import com.vegas.sistema_gestion_operativa.reports.application.dto.GenerateReportDto;
+import com.vegas.sistema_gestion_operativa.reports.application.service.ProductInventoryMovementsReportService;
 import com.vegas.sistema_gestion_operativa.security.AuthUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;

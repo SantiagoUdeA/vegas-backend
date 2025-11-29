@@ -1,15 +1,15 @@
-package com.vegas.sistema_gestion_operativa.products_inventory.application.service;
+package com.vegas.sistema_gestion_operativa.reports.application.service;
 
 import com.lowagie.text.pdf.PdfPTable;
 import com.vegas.sistema_gestion_operativa.branches.IBranchApi;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 import com.vegas.sistema_gestion_operativa.common.utils.DateTimeUtils;
-import com.vegas.sistema_gestion_operativa.common.utils.PdfBuilder;
-import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.GenerateReportDto;
 import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.ProductInventoryMovementDto;
-import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.ProductMovementsReportDto;
 import com.vegas.sistema_gestion_operativa.products_inventory.domain.exceptions.NoMovementsForReportGenerationException;
-import com.vegas.sistema_gestion_operativa.products_inventory.domain.repository.IProductInventoryMovementRepository;
+import com.vegas.sistema_gestion_operativa.reports.application.dto.GenerateReportDto;
+import com.vegas.sistema_gestion_operativa.reports.application.dto.ProductMovementsReportDto;
+import com.vegas.sistema_gestion_operativa.reports.domain.repository.IReportsRepository;
+import com.vegas.sistema_gestion_operativa.reports.utils.PdfBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductInventoryMovementsReportService {
 
-    private final IProductInventoryMovementRepository productInventoryMovementRepository;
+    private final IReportsRepository reportsRepository;
     private final IBranchApi branchApi;
 
     /**
@@ -36,7 +36,7 @@ public class ProductInventoryMovementsReportService {
         this.branchApi.assertUserHasAccessToBranch(userId, dto.branchId());
 
         // Fetch inventory movements based on the provided criteria
-        List<ProductInventoryMovementDto> movements = productInventoryMovementRepository.findMovementsForReport(
+        List<ProductInventoryMovementDto> movements = reportsRepository.findMovementsForReport(
                 dto.branchId(),
                 dto.categoryId(),
                 dto.fromDate(),
@@ -46,7 +46,7 @@ public class ProductInventoryMovementsReportService {
         if (movements.isEmpty())
             throw new NoMovementsForReportGenerationException("No se encontraron movimientos para los criterios proporcionados.");
 
-        ProductMovementsReportDto report = productInventoryMovementRepository.createMovementsReport(
+        ProductMovementsReportDto report = reportsRepository.createMovementsReport(
                 dto.branchId(),
                 dto.categoryId(),
                 dto.fromDate(),
