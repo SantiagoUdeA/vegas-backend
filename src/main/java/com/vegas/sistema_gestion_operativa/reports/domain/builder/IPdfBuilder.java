@@ -10,6 +10,8 @@ import java.util.List;
  */
 public interface IPdfBuilder {
 
+    IPdfBuilder init();
+
     /**
      * Establece la fuente predeterminada para el documento.
      *

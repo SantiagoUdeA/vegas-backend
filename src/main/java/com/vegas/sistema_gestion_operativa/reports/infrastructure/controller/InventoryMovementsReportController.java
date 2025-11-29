@@ -59,4 +59,37 @@ public class InventoryMovementsReportController {
                 .body(report);
     }
 
+    @GetMapping(
+            path = "/raw-material-movements",
+            produces = {MediaType.APPLICATION_PDF_VALUE, MediaType.APPLICATION_JSON_VALUE}
+    )
+    public ResponseEntity<byte[]> generateRawMaterialMovementsReport(
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            LocalDateTime fromDate,
+
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            LocalDateTime toDate,
+
+            @RequestParam Long branchId,
+            @RequestParam(required = false) Long categoryId
+    ) throws AccessDeniedException, NoMovementsForReportGenerationException {
+        var dto = new GenerateMovementReportDto(
+                branchId,
+                categoryId,
+                DateTimeUtils.toStartOfDay(fromDate),
+                DateTimeUtils.toEndOfDay(toDate)
+        );
+
+        var report = inventoryMovementsReportService.generateRawMaterialMovementsReport(
+                dto,
+                AuthUtils.getUserIdFromToken()
+        );
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline;")
+                .body(report);
+    }
 }

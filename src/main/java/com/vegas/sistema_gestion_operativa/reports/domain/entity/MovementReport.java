@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -34,6 +35,7 @@ public class MovementReport {
      */
     public byte[] generatePdf(IPdfBuilder pdfBuilder, String title) {
         pdfBuilder
+                .init()
                 .addTitle(title)
                 .addSubtitle("Resumen")
                 .addLabelAndDescription("Sucursal", branchName)
@@ -62,19 +64,27 @@ public class MovementReport {
         List<String> headers = List.of("Producto", "Categoria", "Tipo", "Cantidad", "Fecha");
 
         List<List<String>> rows = items.stream()
-                .map(item -> List.of(
-                        item.itemName(),
-                        item.itemCategoryName(),
-                        item.movementReason().toString(),
-                        String.valueOf(item.quantity().getValue().intValue()),
-                        DateTimeUtils.formatDateTime(item.movementDate())
-                ))
+                .map(item -> {
+                            BigDecimal value = item.quantity().getValue();
+
+                            String quantityString = value.stripTrailingZeros().toPlainString();
+
+                            String formattedQuantity = quantityString +
+                                    (item.unitOfMeasure() == null ? "" : item.unitOfMeasure().getSymbol());
+
+                            return List.of(
+                                    item.itemName(),
+                                    item.itemCategoryName(),
+                                    item.movementReason().toString(),
+                                    formattedQuantity,
+                                    DateTimeUtils.formatDateTime(item.movementDate())
+                            );
+                        }
+                )
                 .toList();
 
         float[] widths = new float[]{3f, 3f, 3f, 2f, 3f};
 
         return pdfBuilder.buildTable(headers, rows, widths);
     }
-
-
 }

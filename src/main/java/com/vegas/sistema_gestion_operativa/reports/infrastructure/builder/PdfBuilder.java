@@ -5,6 +5,7 @@ import com.lowagie.text.Font;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
+import com.vegas.sistema_gestion_operativa.reports.domain.builder.IPdfBuilder;
 import org.springframework.stereotype.Component;
 
 import java.awt.*;
@@ -15,17 +16,29 @@ import java.util.List;
  * Builder para crear documentos PDF de manera sencilla.
  */
 @Component
-public class IPdfBuilder implements com.vegas.sistema_gestion_operativa.reports.domain.builder.IPdfBuilder {
+public class PdfBuilder implements IPdfBuilder {
 
-    private final Document document;
-    private final ByteArrayOutputStream outputStream;
+    private Document document;
+    private ByteArrayOutputStream outputStream;
     private String font = FontFactory.HELVETICA;
 
-    public IPdfBuilder() {
+    public PdfBuilder() {
+    }
+
+    /**
+     * Inicializa el builder y prepara el documento PDF.
+     *
+     * @return
+     */
+    @Override
+    public IPdfBuilder init() {
         this.outputStream = new ByteArrayOutputStream();
         this.document = new Document();
+
         PdfWriter.getInstance(document, outputStream);
         document.open();
+
+        return this;
     }
 
     /**
@@ -35,7 +48,7 @@ public class IPdfBuilder implements com.vegas.sistema_gestion_operativa.reports.
      * @return El mismo PdfBuilder para encadenar llamadas.
      */
     @Override
-    public com.vegas.sistema_gestion_operativa.reports.domain.builder.IPdfBuilder setFont(String font) {
+    public IPdfBuilder setFont(String font) {
         this.font = font;
         return this;
     }
@@ -48,7 +61,7 @@ public class IPdfBuilder implements com.vegas.sistema_gestion_operativa.reports.
      * @throws DocumentException Si ocurre un error al agregar el título.
      */
     @Override
-    public com.vegas.sistema_gestion_operativa.reports.domain.builder.IPdfBuilder addTitle(String text) {
+    public IPdfBuilder addTitle(String text) {
         Font titleFont = FontFactory.getFont(this.font, 22, Font.BOLD);
         Paragraph paragraph = new Paragraph(text, titleFont);
         paragraph.setAlignment(Element.ALIGN_CENTER);
@@ -59,7 +72,7 @@ public class IPdfBuilder implements com.vegas.sistema_gestion_operativa.reports.
     }
 
     @Override
-    public com.vegas.sistema_gestion_operativa.reports.domain.builder.IPdfBuilder addSubtitle(String text) {
+    public IPdfBuilder addSubtitle(String text) {
         Font subtitleFont = FontFactory.getFont(this.font, 16);
         Paragraph paragraph = new Paragraph(text, subtitleFont);
         paragraph.setSpacingAfter(4);
@@ -75,7 +88,7 @@ public class IPdfBuilder implements com.vegas.sistema_gestion_operativa.reports.
      * @return El mismo PdfBuilder para encadenar llamadas.
      */
     @Override
-    public com.vegas.sistema_gestion_operativa.reports.domain.builder.IPdfBuilder addParagraph(String text) {
+    public IPdfBuilder addParagraph(String text) {
         Font paragraphFont = FontFactory.getFont(this.font, 12);
         document.add(new Paragraph(text, paragraphFont));
         return this;
@@ -89,7 +102,7 @@ public class IPdfBuilder implements com.vegas.sistema_gestion_operativa.reports.
      * @return El mismo PdfBuilder para encadenar llamadas.
      */
     @Override
-    public com.vegas.sistema_gestion_operativa.reports.domain.builder.IPdfBuilder addLabelAndDescription(String label, String description) {
+    public IPdfBuilder addLabelAndDescription(String label, String description) {
         Font labelFont = FontFactory.getFont(this.font, 12, Font.BOLD);
         Font descriptionFont = FontFactory.getFont(this.font, 12);
         Paragraph paragraph = new Paragraph();
@@ -106,7 +119,7 @@ public class IPdfBuilder implements com.vegas.sistema_gestion_operativa.reports.
      * @return El mismo PdfBuilder para encadenar llamadas.
      */
     @Override
-    public com.vegas.sistema_gestion_operativa.reports.domain.builder.IPdfBuilder addSpace(int lines) {
+    public IPdfBuilder addSpace(int lines) {
         for (int i = 0; i < lines; i++) {
             document.add(new Paragraph(" "));
         }
@@ -121,7 +134,7 @@ public class IPdfBuilder implements com.vegas.sistema_gestion_operativa.reports.
      * @return El mismo PdfBuilder para encadenar llamadas.
      */
     @Override
-    public com.vegas.sistema_gestion_operativa.reports.domain.builder.IPdfBuilder addTable(PdfPTable table) {
+    public IPdfBuilder addTable(PdfPTable table) {
         document.add(table);
         return this;
     }
