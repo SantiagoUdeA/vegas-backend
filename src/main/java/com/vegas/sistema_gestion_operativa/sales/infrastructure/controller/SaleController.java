@@ -77,4 +77,16 @@ public class SaleController {
                 saleService.getProductSalesStats(branchId, from, to)
         );
     }
+
+    @GetMapping("/stats/daily-sales")
+    @PreAuthorize("hasPermission(null, 'SALES_READ')")
+    public ResponseEntity<?> getDailySales(
+            @RequestParam(required = false) Long branchId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to
+    ) {
+        return ResponseEntity.ok(
+                saleService.getDailySales(branchId, from, to)
+        );
+    }
 }

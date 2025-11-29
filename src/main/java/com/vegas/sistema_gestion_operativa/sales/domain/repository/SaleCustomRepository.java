@@ -1,5 +1,6 @@
 package com.vegas.sistema_gestion_operativa.sales.domain.repository;
 
+import com.vegas.sistema_gestion_operativa.sales.application.dto.DailySalesAmountDto;
 import com.vegas.sistema_gestion_operativa.sales.application.dto.ProductSalesStatsDto;
 import com.vegas.sistema_gestion_operativa.sales.domain.entity.Sale;
 import org.springframework.data.domain.Page;
@@ -12,8 +13,7 @@ public interface SaleCustomRepository {
 
     Page<Sale> findAllFiltered(Long branchId, LocalDate from, LocalDate to, Pageable pageable);
 
-    List<ProductSalesStatsDto> findTopSellingProducts(Long branchId, LocalDate from, LocalDate to, int limit);
+    List<ProductSalesStatsDto> findAllProductsSalesStats(Long branchId, LocalDate from, LocalDate to);
 
-    List<ProductSalesStatsDto> findLeastSellingProducts(Long branchId, LocalDate from, LocalDate to, int limit);
-
+    List<DailySalesAmountDto> findDailySales(Long branchId, LocalDate from, LocalDate to);
 }

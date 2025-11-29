@@ -21,10 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -169,17 +166,38 @@ public class SaleService {
     public Map<String, List<ProductSalesStatsDto>> getProductSalesStats(
             Long branchId, LocalDate from, LocalDate to) {
 
-        List<ProductSalesStatsDto> top = saleRepository
-                .findTopSellingProducts(branchId, from, to, 5);
+        // Obtener todos los productos con su total vendido
+        List<ProductSalesStatsDto> all = saleRepository
+                .findAllProductsSalesStats(branchId, from, to);
 
-        List<ProductSalesStatsDto> low = saleRepository
-                .findLeastSellingProducts(branchId, from, to, 5);
+        if (all == null || all.isEmpty()) {
+            Map<String, List<ProductSalesStatsDto>> empty = new HashMap<>();
+            empty.put("top5", Collections.emptyList());
+            empty.put("bottom5", Collections.emptyList());
+            return empty;
+        }
 
+        // Ordenar de mayor a menor
+        all.sort((a, b) -> b.getTotalQuantitySold().compareTo(a.getTotalQuantitySold()));
+
+        // Tomar máximo 10 productos
+        int limit = Math.min(all.size(), 10);
+        List<ProductSalesStatsDto> limited = all.subList(0, limit);
+
+        // Dividir la lista
+        int mid = limit / 2;
+        List<ProductSalesStatsDto> top = limited.subList(0, mid);
+        List<ProductSalesStatsDto> bottom = limited.subList(mid, limit);
+
+        // Respuesta final
         Map<String, List<ProductSalesStatsDto>> result = new HashMap<>();
-        result.put("topSelling", top);
-        result.put("leastSelling", low);
+        result.put("top5", top);
+        result.put("bottom5", bottom);
 
         return result;
     }
 
+    public List<DailySalesAmountDto> getDailySales(Long branchId, LocalDate from, LocalDate to) {
+        return saleRepository.findDailySales(branchId, from, to);
+    }
 }
