@@ -61,7 +61,7 @@ public class MovementReport {
      * @return Tabla PDF con los movimientos
      */
     private PdfPTable buildMovementsTable(IPdfBuilder pdfBuilder) {
-        List<String> headers = List.of("Producto", "Categoria", "Tipo", "Cantidad", "Fecha");
+        List<String> headers = List.of("Item", "Categoria", "Tipo", "Cantidad", "Fecha");
 
         List<List<String>> rows = items.stream()
                 .map(item -> {
