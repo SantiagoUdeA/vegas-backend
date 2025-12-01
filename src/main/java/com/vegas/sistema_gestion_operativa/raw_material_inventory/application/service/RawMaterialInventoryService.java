@@ -5,6 +5,7 @@ import com.vegas.sistema_gestion_operativa.common.domain.Money;
 import com.vegas.sistema_gestion_operativa.common.domain.MovementReason;
 import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
+import com.vegas.sistema_gestion_operativa.raw_material.infrastructure.repository.IRawMaterialRepository;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.IRawMaterialInventoryApi;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.application.dto.*;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.application.factory.RawMaterialInventoryFactory;
@@ -37,15 +38,17 @@ public class RawMaterialInventoryService implements IRawMaterialInventoryApi {
     private final IBranchApi branchApi;
     private final IRawMateriaBatchRepository rawMateriaBatchRepository;
     private final IRawMaterialMovementRepository rawMaterialMovementRepository;
+    private final IRawMaterialRepository rawMaterialRepository;
 
     @Autowired
-    public RawMaterialInventoryService(IRawMaterialInventoryRepository rawMaterialInventoryRepository, RawMaterialInventoryFactory rawMaterialFactory, RawMaterialMovementFactory rawMaterialMovementFactory, IBranchApi branchApi, IRawMateriaBatchRepository rawMateriaBatchRepository, IRawMaterialMovementRepository rawMaterialMovementRepository) {
+    public RawMaterialInventoryService(IRawMaterialInventoryRepository rawMaterialInventoryRepository, RawMaterialInventoryFactory rawMaterialFactory, RawMaterialMovementFactory rawMaterialMovementFactory, IBranchApi branchApi, IRawMateriaBatchRepository rawMateriaBatchRepository, IRawMaterialMovementRepository rawMaterialMovementRepository , IRawMaterialRepository rawMaterialRepository) {
         this.rawMaterialInventoryRepository = rawMaterialInventoryRepository;
         this.rawMaterialFactory = rawMaterialFactory;
         this.rawMaterialMovementFactory = rawMaterialMovementFactory;
         this.branchApi = branchApi;
         this.rawMateriaBatchRepository = rawMateriaBatchRepository;
         this.rawMaterialMovementRepository = rawMaterialMovementRepository;
+        this.rawMaterialRepository = rawMaterialRepository;
     }
 
     /**
@@ -245,5 +248,31 @@ public class RawMaterialInventoryService implements IRawMaterialInventoryApi {
                                 0.0
                         )
                 ));
+    }
+
+    public List<RawMaterialLowStockAlertDto> getLowStockAlerts(Long branchId, Integer minStock) {
+        List<RawMaterialInventory> lowStockItems =
+                rawMaterialInventoryRepository.findLowStock(branchId, minStock);
+
+        return lowStockItems.stream()
+                .map(item -> {
+                    var rawMaterial = rawMaterialRepository.findById(item.getRawMaterialId())
+                            .orElseThrow(() -> new RuntimeException("Materia prima no encontrada"));
+
+                    String unitName = rawMaterial.getUnitOfMeasure() != null
+                            ? rawMaterial.getUnitOfMeasure().name()
+                            : null;
+
+                    return RawMaterialLowStockAlertDto.builder()
+                            .inventoryId(item.getId())
+                            .rawMaterialId(item.getRawMaterialId())
+                            .rawMaterialName(rawMaterial.getName())
+                            .unitName(unitName)
+                            .currentStock(item.getCurrentStock().getValue().doubleValue())
+                            .branchId(item.getBranchId())
+                            .updatedAt(item.getUpdatedAt() != null ? item.getUpdatedAt().toString() : null)
+                            .build();
+                })
+                .toList();
     }
 }

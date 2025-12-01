@@ -58,4 +58,14 @@ public interface IRawMaterialInventoryRepository extends JpaRepository<RawMateri
     List<RawMaterialInventory> findByRawMaterialIdIn(List<Long> rawMaterialIds);
 
     Optional<RawMaterialInventory> findByRawMaterialId(Long rawMaterialId);
+
+    @Query("""
+        SELECT r FROM RawMaterialInventory r
+        WHERE r.branchId = :branchId
+        AND r.currentStock.value < :minStock
+    """)
+    List<RawMaterialInventory> findLowStock(
+            @Param("branchId") Long branchId,
+            @Param("minStock") Integer minStock
+    );
 }

@@ -130,6 +130,4 @@ public class RawMaterialInventory {
         }
         this.currentStock = this.currentStock.subtract(quantity);
     }
-
-
 }

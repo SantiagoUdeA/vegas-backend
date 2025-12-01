@@ -10,7 +10,12 @@ public enum UnitOfMeasure {
     KILOGRAM("Kilogramo", "kg"),
     GRAM("Gramo", "g"),
     LITER("Litro", "L"),
-    METER("Metro", "m");
+    METER("Metro", "m"),
+
+    KILOGRAMO("Kilogramo", "kg"),
+    GRAMO("Gramo", "g"),
+    LIBRA("Litro", "L"),
+    METRO("Metro", "m");
 
     private final String name;
     private final String symbol;
