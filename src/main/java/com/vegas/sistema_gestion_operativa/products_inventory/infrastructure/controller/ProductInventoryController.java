@@ -97,5 +97,15 @@ public class ProductInventoryController {
                 this.productInventoryService.doAdjustment(dto, AuthUtils.getUserIdFromToken())
         );
     }
-}
 
+    @GetMapping("/low-stock")
+    @PreAuthorize("hasPermission(null, 'INVENTORY_VIEW')")
+    public ResponseEntity<?> getLowStockAlerts(
+            @RequestParam @NotNull Long branchId,
+            @RequestParam(defaultValue = "10") Integer minStock // valor fijo o configurable
+    ) {
+        return ResponseEntity.ok(
+                productInventoryService.getLowStockAlerts(branchId, minStock)
+        );
+    }
+}

@@ -7,11 +7,9 @@ import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedExcepti
 import com.vegas.sistema_gestion_operativa.common.exceptions.ApiException;
 import com.vegas.sistema_gestion_operativa.products.api.IProductApi;
 import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductNotFoundException;
+import com.vegas.sistema_gestion_operativa.products.domain.repository.IProductRepository;
 import com.vegas.sistema_gestion_operativa.products_inventory.IProductInventoryApi;
-import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.ProductAdjustmentDto;
-import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.ProductInventoryItemDto;
-import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.ProductInventoryResponseDto;
-import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.RegisterProductStockDto;
+import com.vegas.sistema_gestion_operativa.products_inventory.application.dto.*;
 import com.vegas.sistema_gestion_operativa.products_inventory.application.factory.ProductInventoryFactory;
 import com.vegas.sistema_gestion_operativa.products_inventory.application.factory.ProductInventoryMovementFactory;
 import com.vegas.sistema_gestion_operativa.products_inventory.application.mapper.ProductInventoryMapper;
@@ -28,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -46,6 +45,7 @@ public class ProductInventoryService implements IProductInventoryApi {
     private final IRawMaterialInventoryApi rawMaterialInventoryApi;
     private final ProductInventoryMovementFactory productInventoryMovementFactory;
     private final IProductInventoryMovementRepository productInventoryMovementRepository;
+    private final IProductRepository productRepository;
 
     /**
      * Retrieves a paginated list of inventory items for a given branch after
@@ -260,5 +260,28 @@ public class ProductInventoryService implements IProductInventoryApi {
                 .orElseThrow(() -> new ProductInventoryNotFoundException(
                         "No se ha encontrado el item de inventario para el producto con id: " + productId
                 ));
+    }
+
+    public List<ProductLowStockAlertDto> getLowStockAlerts(Long branchId, Integer minStock) {
+        List<ProductInventory> lowStockItems =
+                productInventoryRepository.findLowStock(branchId, minStock);
+
+        return lowStockItems.stream()
+                .map(item -> {
+
+                    var product = productRepository.findById(item.getProductId())
+                            .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+
+                    return ProductLowStockAlertDto.builder()
+                            .inventoryId(item.getId())
+                            .productId(item.getProductId())
+                            .productName(product.getName())
+                            .categoryName(product.getCategory().getName())
+                            .currentStock(item.getCurrentStock().getValue().doubleValue())
+                            .branchId(item.getBranchId())
+                            .updatedAt(item.getUpdatedAt())
+                            .build();
+                })
+                .toList();
     }
 }

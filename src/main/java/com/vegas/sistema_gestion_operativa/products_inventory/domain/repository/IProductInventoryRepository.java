@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface IProductInventoryRepository extends JpaRepository<ProductInventory, Long> {
@@ -59,4 +60,13 @@ public interface IProductInventoryRepository extends JpaRepository<ProductInvent
             Pageable pageable
     );
 
+    @Query("""
+    SELECT p FROM ProductInventory p
+    WHERE p.branchId = :branchId
+    AND p.currentStock.value < :minStock
+""")
+    List<ProductInventory> findLowStock(
+            @Param("branchId") Long branchId,
+            @Param("minStock") Integer minStock
+    );
 }
