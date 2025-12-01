@@ -2,6 +2,7 @@ package com.vegas.sistema_gestion_operativa.reports.infrastructure.controller;
 
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 import com.vegas.sistema_gestion_operativa.common.utils.DateTimeUtils;
+import com.vegas.sistema_gestion_operativa.reports.application.dto.GenerateInventoryReportDto;
 import com.vegas.sistema_gestion_operativa.reports.application.dto.GenerateMovementReportDto;
 import com.vegas.sistema_gestion_operativa.reports.application.service.InventoryMovementsReportService;
 import com.vegas.sistema_gestion_operativa.reports.domain.exceptions.NoMovementsForReportGenerationException;
@@ -83,6 +84,54 @@ public class InventoryMovementsReportController {
         );
 
         var report = inventoryMovementsReportService.generateRawMaterialMovementsReport(
+                dto,
+                AuthUtils.getUserIdFromToken()
+        );
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline;")
+                .body(report);
+    }
+
+    @GetMapping(
+            path = "/product-inventory",
+            produces = {MediaType.APPLICATION_PDF_VALUE, MediaType.APPLICATION_JSON_VALUE}
+    )
+    public ResponseEntity<byte[]> generateProductInventoryReport(
+            @RequestParam Long branchId,
+            @RequestParam(required = false) Long categoryId
+    ) throws AccessDeniedException {
+        var dto = new GenerateInventoryReportDto(
+                branchId,
+                categoryId
+        );
+
+        var report = inventoryMovementsReportService.generateProductInventoryReport(
+                dto,
+                AuthUtils.getUserIdFromToken()
+        );
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline;")
+                .body(report);
+    }
+
+    @GetMapping(
+            path = "/raw-material-inventory",
+            produces = {MediaType.APPLICATION_PDF_VALUE, MediaType.APPLICATION_JSON_VALUE}
+    )
+    public ResponseEntity<byte[]> generateRawMaterialInventoryReport(
+            @RequestParam Long branchId,
+            @RequestParam(required = false) Long categoryId
+    ) throws AccessDeniedException {
+        var dto = new GenerateInventoryReportDto(
+                branchId,
+                categoryId
+        );
+
+        var report = inventoryMovementsReportService.generateRawMaterialInventoryReport(
                 dto,
                 AuthUtils.getUserIdFromToken()
         );

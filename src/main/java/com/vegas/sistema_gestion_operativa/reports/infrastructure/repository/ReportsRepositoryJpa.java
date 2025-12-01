@@ -1,7 +1,6 @@
 package com.vegas.sistema_gestion_operativa.reports.infrastructure.repository;
 
-import com.vegas.sistema_gestion_operativa.reports.domain.entity.MovementItem;
-import com.vegas.sistema_gestion_operativa.reports.domain.entity.MovementReport;
+import com.vegas.sistema_gestion_operativa.reports.domain.entity.*;
 import com.vegas.sistema_gestion_operativa.reports.domain.exceptions.NoMovementsForReportGenerationException;
 import com.vegas.sistema_gestion_operativa.reports.domain.repository.IReportsRepository;
 import jakarta.persistence.EntityManager;
@@ -158,6 +157,75 @@ public class ReportsRepositoryJpa implements IReportsRepository {
         return buildMovementReport(summary, movements, fromDate, toDate);
     }
 
+    @Override
+    public ProductInventoryReport createProductInventoryReport(Long branchId, Long categoryId, String userId) {
+        // Obtener información del usuario y la sucursal directamente
+        String userInfoJpql = """
+                SELECT b.name, CONCAT(u.givenName, ' ', u.familyName), u.roleName
+                FROM User u
+                JOIN Branch b ON b.id = :branchId
+                WHERE u.id = :userId
+                """;
+
+        TypedQuery<Object[]> userInfoQuery = em.createQuery(userInfoJpql, Object[].class);
+        userInfoQuery.setParameter(PARAM_BRANCH_ID, branchId);
+        userInfoQuery.setParameter(PARAM_USER_ID, userId);
+        Object[] userInfo = userInfoQuery.getSingleResult();
+
+        String branchName = (String) userInfo[0];
+        String userName = (String) userInfo[1];
+        String userRole = (String) userInfo[2];
+
+        // Obtener items de inventario
+        List<ProductInventoryItem> inventoryItems = findProductInventoryItems(branchId, categoryId);
+
+        // Construir el reporte completo
+        return new ProductInventoryReport(
+                branchName,
+                userName,
+                userRole,
+                inventoryItems
+        );
+    }
+
+    /**
+     * Obtiene los items de inventario de productos.
+     */
+    private List<ProductInventoryItem> findProductInventoryItems(Long branchId, Long categoryId) {
+        String jpql = """
+                SELECT new com.vegas.sistema_gestion_operativa.reports.domain.entity.ProductInventoryItem(
+                    p.name,
+                    COALESCE(p.category.name, 'Sin categoría'),
+                    pi.currentStock,
+                    pi.updatedAt,
+                    new com.vegas.sistema_gestion_operativa.common.domain.Money(pi.averageCost)
+                )
+                FROM ProductInventory pi
+                    new com.vegas.sistema_gestion_operativa.common.domain.Money(
+                        COALESCE(
+                            (
+                                SELECT SUM(i.quantity.value * rmi.averageCost.value) / MAX(r.unitsProduced)
+                                FROM Recipe r
+                                JOIN Ingredient i ON i.recipe.id = r.id
+                                JOIN RawMaterialInventory rmi ON i.rawMaterial.id = rmi.rawMaterialId
+                                WHERE r.product.id = p.id
+                                  AND r.active = true
+                                  AND rmi.branchId = :branchId
+                            ),
+                            0.0
+                        )
+                    )
+                WHERE pi.branchId = :branchId
+                  AND (:categoryId IS NULL OR p.category.id = :categoryId)
+                ORDER BY p.name
+                """;
+
+        TypedQuery<ProductInventoryItem> query = em.createQuery(jpql, ProductInventoryItem.class);
+        query.setParameter(PARAM_BRANCH_ID, branchId);
+        query.setParameter(PARAM_CATEGORY_ID, categoryId);
+        return query.getResultList();
+    }
+
     /**
      * Establece los parámetros comunes para las consultas de movimientos.
      */
@@ -215,5 +283,62 @@ public class ReportsRepositoryJpa implements IReportsRepository {
                 toDate.toLocalDate(),
                 movements
         );
+    }
+
+    @Override
+    public RawMaterialInventoryReport createRawMaterialInventoryReport(Long branchId, Long categoryId, String userId) {
+        // Obtener información del usuario y la sucursal directamente
+        String userInfoJpql = """
+                SELECT b.name, CONCAT(u.givenName, ' ', u.familyName), u.roleName
+                FROM User u
+                JOIN Branch b ON b.id = :branchId
+                WHERE u.id = :userId
+                """;
+
+        TypedQuery<Object[]> userInfoQuery = em.createQuery(userInfoJpql, Object[].class);
+        userInfoQuery.setParameter(PARAM_BRANCH_ID, branchId);
+        userInfoQuery.setParameter(PARAM_USER_ID, userId);
+        Object[] userInfo = userInfoQuery.getSingleResult();
+
+        String branchName = (String) userInfo[0];
+        String userName = (String) userInfo[1];
+        String userRole = (String) userInfo[2];
+
+        // Obtener items de inventario de materias primas
+        List<RawMaterialInventoryItem> inventoryItems = findRawMaterialInventoryItems(branchId, categoryId);
+
+        // Construir el reporte completo
+        return new RawMaterialInventoryReport(
+                branchName,
+                userName,
+                userRole,
+                inventoryItems
+        );
+    }
+
+    /**
+     * Obtiene los items de inventario de materias primas.
+     */
+    private List<RawMaterialInventoryItem> findRawMaterialInventoryItems(Long branchId, Long categoryId) {
+        String jpql = """
+                SELECT new com.vegas.sistema_gestion_operativa.reports.domain.entity.RawMaterialInventoryItem(
+                    rm.name,
+                    COALESCE(rm.category.name, 'Sin categoría'),
+                    rmi.currentStock,
+                    rmi.updatedAt,
+                    new com.vegas.sistema_gestion_operativa.common.domain.Money(rmi.averageCost.value),
+                    rm.unitOfMeasure
+                )
+                FROM RawMaterialInventory rmi
+                JOIN RawMaterial rm ON rmi.rawMaterialId = rm.id
+                WHERE rmi.branchId = :branchId
+                  AND (:categoryId IS NULL OR rm.category.id = :categoryId)
+                ORDER BY rm.name
+                """;
+
+        TypedQuery<RawMaterialInventoryItem> query = em.createQuery(jpql, RawMaterialInventoryItem.class);
+        query.setParameter(PARAM_BRANCH_ID, branchId);
+        query.setParameter(PARAM_CATEGORY_ID, categoryId);
+        return query.getResultList();
     }
 }

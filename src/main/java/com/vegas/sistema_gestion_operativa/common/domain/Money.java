@@ -22,10 +22,13 @@ public class Money {
     }
 
     public Money(Double value) {
-        if (value == null || value < 0) {
+        if (value == null) {
+            this.value = BigDecimal.ZERO;
+        } else if (value < 0) {
             throw new IllegalArgumentException("La cantidad no puede ser negativa");
+        } else {
+            this.value = BigDecimal.valueOf(value).setScale(4, RoundingMode.HALF_UP);
         }
-        this.value = BigDecimal.valueOf(value).setScale(4, RoundingMode.HALF_UP);
     }
 
     public Money multiply(Quantity quantity) {
@@ -62,4 +65,7 @@ public class Money {
         return value;
     }
 
+    public String formatToCurrencyString() {
+        return "$" + this.value.setScale(2, RoundingMode.HALF_UP).toPlainString();
+    }
 }

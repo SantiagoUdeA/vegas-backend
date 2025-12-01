@@ -2,6 +2,7 @@ package com.vegas.sistema_gestion_operativa.reports.application.service;
 
 import com.vegas.sistema_gestion_operativa.branches.IBranchApi;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
+import com.vegas.sistema_gestion_operativa.reports.application.dto.GenerateInventoryReportDto;
 import com.vegas.sistema_gestion_operativa.reports.application.dto.GenerateMovementReportDto;
 import com.vegas.sistema_gestion_operativa.reports.domain.entity.MovementReport;
 import com.vegas.sistema_gestion_operativa.reports.domain.exceptions.NoMovementsForReportGenerationException;
@@ -83,4 +84,35 @@ public class InventoryMovementsReportService {
         return report.generatePdf(pdfBuilder.getObject(), "Reporte de Movimientos de Inventario de Materias Primas");
     }
 
+    public byte[] generateProductInventoryReport(GenerateInventoryReportDto dto, String userId) throws AccessDeniedException {
+        // Verify user access to the branch
+        this.branchApi.assertUserHasAccessToBranch(userId, dto.branchId());
+
+        var report = reportsRepository.createProductInventoryReport(
+                dto.branchId(),
+                dto.categoryId(),
+                userId
+        );
+
+        return report.generatePdf(
+                pdfBuilder.getObject(),
+                "Reporte de Inventario de Productos"
+        );
+    }
+
+    public byte[] generateRawMaterialInventoryReport(GenerateInventoryReportDto dto, String userId) throws AccessDeniedException {
+        // Verify user access to the branch
+        this.branchApi.assertUserHasAccessToBranch(userId, dto.branchId());
+
+        var report = reportsRepository.createRawMaterialInventoryReport(
+                dto.branchId(),
+                dto.categoryId(),
+                userId
+        );
+
+        return report.generatePdf(
+                pdfBuilder.getObject(),
+                "Reporte de Inventario de Materias Primas"
+        );
+    }
 }

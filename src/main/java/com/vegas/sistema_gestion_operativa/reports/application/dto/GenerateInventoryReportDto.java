@@ -1,0 +1,16 @@
+package com.vegas.sistema_gestion_operativa.reports.application.dto;
+
+import jakarta.validation.constraints.NotNull;
+import org.springframework.data.repository.query.Param;
+
+public record GenerateInventoryReportDto(
+
+        @Param("branchId")
+        @NotNull(message = "La sucursal no puede ser nula")
+        Long branchId,
+
+        @Param("categoryId")
+        Long categoryId
+
+) {
+}
