@@ -41,7 +41,7 @@ public class RawMaterialInventoryService implements IRawMaterialInventoryApi {
     private final IRawMaterialRepository rawMaterialRepository;
 
     @Autowired
-    public RawMaterialInventoryService(IRawMaterialInventoryRepository rawMaterialInventoryRepository, RawMaterialInventoryFactory rawMaterialFactory, RawMaterialMovementFactory rawMaterialMovementFactory, IBranchApi branchApi, IRawMateriaBatchRepository rawMateriaBatchRepository, IRawMaterialMovementRepository rawMaterialMovementRepository , IRawMaterialRepository rawMaterialRepository) {
+    public RawMaterialInventoryService(IRawMaterialInventoryRepository rawMaterialInventoryRepository, RawMaterialInventoryFactory rawMaterialFactory, RawMaterialMovementFactory rawMaterialMovementFactory, IBranchApi branchApi, IRawMateriaBatchRepository rawMateriaBatchRepository, IRawMaterialMovementRepository rawMaterialMovementRepository, IRawMaterialRepository rawMaterialRepository) {
         this.rawMaterialInventoryRepository = rawMaterialInventoryRepository;
         this.rawMaterialFactory = rawMaterialFactory;
         this.rawMaterialMovementFactory = rawMaterialMovementFactory;
@@ -105,15 +105,32 @@ public class RawMaterialInventoryService implements IRawMaterialInventoryApi {
 
 
     /**
-     * Obtiene el inventario de materias primas de una sede específica.
+     * Obtiene el inventario de materias primas de una sede específica con paginación.
+     * Verifica que el usuario tenga acceso a la sede antes de devolver los datos.
+     *
+     * @param branchId ID de la sede
+     * @param pageable configuración de paginación
+     * @param userId   ID del usuario que solicita el inventario
+     * @return Página de elementos del inventario de materias primas
+     * @throws AccessDeniedException si el usuario no tiene acceso a la sede
+     */
+    public Page<RawMaterialInventoryItemDto> getInventoryByBranchId(Long branchId, Pageable pageable, String userId) throws com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException {
+        branchApi.assertUserHasAccessToBranch(userId, branchId);
+        return rawMaterialInventoryRepository.findInventoryItemsByBranchIdPaginated(branchId, pageable);
+    }
+
+    /**
+     * Obtiene el inventario de materias primas de una sede específica (sin paginación).
      * Verifica que el usuario tenga acceso a la sede antes de devolver los datos.
      *
      * @param branchId ID de la sede
      * @param userId   ID del usuario que solicita el inventario
      * @return Lista de elementos del inventario de materias primas
      * @throws AccessDeniedException si el usuario no tiene acceso a la sede
+     * @deprecated Usar {@link #getInventoryByBranchId(Long, Pageable, String)} con paginación
      */
-    public List<RawMaterialInventoryItemDto> getInventoryByBranchId(Long branchId, String userId) throws com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException {
+    @Deprecated
+    public List<RawMaterialInventoryItemDto> getInventoryByBranchIdList(Long branchId, String userId) throws com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException {
         branchApi.assertUserHasAccessToBranch(userId, branchId);
         return rawMaterialInventoryRepository.findInventoryItemsByBranchId(branchId);
     }

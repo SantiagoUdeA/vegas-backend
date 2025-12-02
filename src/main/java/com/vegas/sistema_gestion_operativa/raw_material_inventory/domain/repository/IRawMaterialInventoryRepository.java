@@ -4,6 +4,8 @@ import com.vegas.sistema_gestion_operativa.raw_material_inventory.application.dt
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.application.dto.RawMaterialValuationItemDto;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.entity.RawMaterialInventory;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -31,6 +33,32 @@ public interface IRawMaterialInventoryRepository extends JpaRepository<RawMateri
                 WHERE rmi.branch_id = :branchId
             """, nativeQuery = true)
     List<RawMaterialInventoryItemDto> findInventoryItemsByBranchId(@Param("branchId") Long branchId);
+
+    // 🟩 NUEVO — CON PAGINACIÓN
+    @Query(value = """
+                SELECT
+                    rmi.id AS id,
+                    rm.name AS rawMaterialName,
+                    rmc.name AS categoryName,
+                    rm.unit_of_measure AS unitOfMeasure,
+                    rmi.current_stock AS currentStock,
+                    rmi.average_cost AS averageCost,
+                    rmi.updated_at AS updatedAt
+                FROM raw_material_inventory rmi
+                JOIN raw_material rm ON rmi.raw_material_id = rm.id
+                JOIN raw_material_category rmc ON rm.category_id = rmc.id
+                WHERE rmi.branch_id = :branchId
+            """,
+            countQuery = """
+                        SELECT COUNT(*)
+                        FROM raw_material_inventory rmi
+                        WHERE rmi.branch_id = :branchId
+                    """,
+            nativeQuery = true)
+    Page<RawMaterialInventoryItemDto> findInventoryItemsByBranchIdPaginated(
+            @Param("branchId") Long branchId,
+            Pageable pageable
+    );
 
 
     // 🟩 NUEVO — PARA VALUACIÓN
@@ -60,10 +88,10 @@ public interface IRawMaterialInventoryRepository extends JpaRepository<RawMateri
     Optional<RawMaterialInventory> findByRawMaterialId(Long rawMaterialId);
 
     @Query("""
-        SELECT r FROM RawMaterialInventory r
-        WHERE r.branchId = :branchId
-        AND r.currentStock.value < :minStock
-    """)
+                SELECT r FROM RawMaterialInventory r
+                WHERE r.branchId = :branchId
+                AND r.currentStock.value < :minStock
+            """)
     List<RawMaterialInventory> findLowStock(
             @Param("branchId") Long branchId,
             @Param("minStock") Integer minStock
