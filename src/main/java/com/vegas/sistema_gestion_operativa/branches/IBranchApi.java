@@ -6,4 +6,6 @@ import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedExcepti
 public interface IBranchApi {
 
     void assertUserHasAccessToBranch(String userId, Long branchId) throws AccessDeniedException;
+
+    Long getFranchiseIdForBranch(Long branchId);
 }

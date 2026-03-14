@@ -1,5 +1,6 @@
 package com.vegas.sistema_gestion_operativa.products.application.service;
 
+import com.vegas.sistema_gestion_operativa.common.context.FranchiseContext;
 import com.vegas.sistema_gestion_operativa.products.api.ProductCategoryDto;
 import com.vegas.sistema_gestion_operativa.products.application.dto.CreateProductCategoryDto;
 import com.vegas.sistema_gestion_operativa.products.application.dto.UpdateProductCategoryDto;
@@ -36,11 +37,12 @@ public class ProductCategoryService {
     }
 
     public ProductCategoryDto create(CreateProductCategoryDto dto) throws ProductCategoryNameAlreadyExistsException {
-        var category = this.categoryRepository.findByName(dto.name());
+        Long franchiseId = FranchiseContext.getCurrentFranchiseId();
+        var category = this.categoryRepository.findByNameAndFranchiseId(dto.name(), franchiseId);
         if (category.isPresent())
             throw new ProductCategoryNameAlreadyExistsException("Ya existe una categoría con el nombre: " + dto.name());
 
-        ProductCategory newCategory = this.categoryRepository.save(this.categoryFactory.createFromDto(dto));
+        ProductCategory newCategory = this.categoryRepository.save(this.categoryFactory.createFromDto(dto, franchiseId));
         return categoryMapper.toResponseDto(newCategory);
     }
 

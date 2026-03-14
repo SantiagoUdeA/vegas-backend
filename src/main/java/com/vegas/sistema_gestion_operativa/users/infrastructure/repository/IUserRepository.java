@@ -20,6 +20,9 @@ public interface IUserRepository extends JpaRepository<User, String> {
 
     Page<User> findAllByRoleName(String roleName, Pageable pageable);
 
+    @Query("SELECT u.franchiseId FROM User u WHERE u.id = :userId")
+    Long findFranchiseIdByUserId(@Param("userId") String userId);
+
     /**
      * Finds users that have one of the specified roles and belong to branches
      * where the specified userId also belongs.
@@ -58,5 +61,28 @@ public interface IUserRepository extends JpaRepository<User, String> {
             Pageable pageable
     ) throws InvalidDataAccessApiUsageException;
 
+    @Query(
+            value = """
+                        SELECT u.id, u.email,
+                               u.given_name   AS givenName,
+                               u.family_name  AS familyName,
+                               u.id_type      AS idType,
+                               u.id_number    AS idNumber,
+                               u.phone_number AS phoneNumber,
+                               u.is_active    AS active,
+                               u.role_name    AS roleName,
+                               u.franchise_id AS franchiseId,
+                               f.name         AS franchiseName
+                        FROM users u
+                        LEFT JOIN franchises f ON u.franchise_id = f.id
+                        WHERE u.role_name = :roleName
+                    """,
+            countQuery = "SELECT COUNT(*) FROM users WHERE role_name = :roleName",
+            nativeQuery = true
+    )
+    Page<UserWithFranchiseView> findAllByRoleNameWithFranchise(
+            @Param("roleName") String roleName,
+            Pageable pageable
+    );
 
 }

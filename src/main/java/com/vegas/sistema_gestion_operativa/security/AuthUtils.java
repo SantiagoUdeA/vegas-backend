@@ -1,5 +1,6 @@
 package com.vegas.sistema_gestion_operativa.security;
 
+import com.vegas.sistema_gestion_operativa.common.context.FranchiseContext;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,5 +26,9 @@ public class AuthUtils {
             return jwt.getClaimAsString("role");
         }
         throw new AccessDeniedException("El usuario no está autenticado");
+    }
+
+    public static Long getFranchiseIdFromContext() {
+        return FranchiseContext.getCurrentFranchiseId();
     }
 }

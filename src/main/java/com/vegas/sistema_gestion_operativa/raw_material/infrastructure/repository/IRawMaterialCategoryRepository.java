@@ -7,6 +7,6 @@ import java.util.Optional;
 
 
 public interface IRawMaterialCategoryRepository extends JpaRepository<RawMaterialCategory, Long> {
-    Optional<RawMaterialCategory> findByName(String name);
+    Optional<RawMaterialCategory> findByNameAndFranchiseId(String name, Long franchiseId);
 }
 

@@ -39,6 +39,9 @@ public record CreateUserDto(
         String roleName,
 
         @Nullable
-        Long branchId
+        Long branchId,
+
+        @Nullable
+        Long franchiseId
 ) {
 }

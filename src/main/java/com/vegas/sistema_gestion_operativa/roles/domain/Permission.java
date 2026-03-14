@@ -73,7 +73,13 @@ public enum Permission {
     SALES_DELETE,
 
     // Dashboard
-    DASHBOARD_VIEW;
+    DASHBOARD_VIEW,
+
+    // Franquicias
+    FRANCHISES_CREATE,
+    FRANCHISES_EDIT,
+    FRANCHISES_DELETE,
+    FRANCHISES_VIEW;
 
     @JsonCreator
     public static Permission fromValue(String value) throws IllegalArgumentException {

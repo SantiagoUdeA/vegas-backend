@@ -7,11 +7,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProductCategoryFactory {
 
-    public ProductCategory createFromDto(CreateProductCategoryDto dto) {
+    public ProductCategory createFromDto(CreateProductCategoryDto dto, Long franchiseId) {
         return ProductCategory.builder()
                 .name(dto.name())
                 .description(dto.description())
                 .active(true)
+                .franchiseId(franchiseId)
                 .build();
     }
 }

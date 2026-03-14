@@ -7,12 +7,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProviderFactory {
 
-    public Provider createFromDto(CreateProviderDto dto) {
+    public Provider createFromDto(CreateProviderDto dto, Long franchiseId) {
         return Provider.builder()
                 .nit(dto.nit())
                 .name(dto.name())
                 .phoneNumber(dto.phoneNumber())
                 .active(true)
+                .franchiseId(franchiseId)
                 .build();
     }
 }

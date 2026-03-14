@@ -63,7 +63,8 @@ public enum Role {
     ROOT(
             "Acceso total e irrestricto a todas las funcionalidades del sistema, incluyendo configuración avanzada y auditorías.",
             Set.of(
-                    OWNERS_CREATE, OWNERS_EDIT, OWNERS_DEACTIVATE, OWNERS_VIEW
+                    OWNERS_CREATE, OWNERS_EDIT, OWNERS_DEACTIVATE, OWNERS_VIEW,
+                    FRANCHISES_CREATE, FRANCHISES_EDIT, FRANCHISES_DELETE, FRANCHISES_VIEW
             )
     );
 

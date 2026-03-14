@@ -1,5 +1,6 @@
 package com.vegas.sistema_gestion_operativa.raw_material.application.service;
 
+import com.vegas.sistema_gestion_operativa.common.context.FranchiseContext;
 import com.vegas.sistema_gestion_operativa.raw_material.application.dto.CreateRawMaterialCategoryDto;
 import com.vegas.sistema_gestion_operativa.raw_material.application.dto.RawMaterialCategoryResponseDto;
 import com.vegas.sistema_gestion_operativa.raw_material.application.dto.UpdateRawMaterialCategoryDto;
@@ -36,11 +37,12 @@ public class RawMaterialCategoryService {
     }
 
     public RawMaterialCategoryResponseDto create(CreateRawMaterialCategoryDto dto) throws RawMaterialCategoryNameAlreadyExistsException {
-        var category = this.categoryRepository.findByName(dto.name());
+        Long franchiseId = FranchiseContext.getCurrentFranchiseId();
+        var category = this.categoryRepository.findByNameAndFranchiseId(dto.name(), franchiseId);
         if (category.isPresent())
             throw new RawMaterialCategoryNameAlreadyExistsException("Ya existe una categoría con el nombre: " + dto.name());
 
-        RawMaterialCategory newCategory = this.categoryRepository.save(this.categoryFactory.createFromDto(dto));
+        RawMaterialCategory newCategory = this.categoryRepository.save(this.categoryFactory.createFromDto(dto, franchiseId));
         return categoryMapper.toResponseDto(newCategory);
     }
 

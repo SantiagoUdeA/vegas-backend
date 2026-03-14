@@ -8,11 +8,12 @@ public class BranchFactory {
     private BranchFactory() {
     }
 
-    public static Branch createBranch(CreateBranchDto dto) {
+    public static Branch createBranch(CreateBranchDto dto, Long franchiseId) {
         return Branch.builder()
                 .name(dto.name())
                 .address(dto.address())
                 .phoneNumber(dto.phoneNumber())
+                .franchiseId(franchiseId)
                 .build();
     }
 }

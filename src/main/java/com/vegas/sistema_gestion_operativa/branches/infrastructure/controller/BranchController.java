@@ -56,6 +56,9 @@ public class BranchController {
 
     @GetMapping("/user-branches")
     public ResponseEntity<List<Branch>> findAllBranchesByUserId() {
+        if ("ROOT".equals(AuthUtils.getRoleNameFromToken())) {
+            return ResponseEntity.ok(List.of());
+        }
         List<Branch> branches = branchService.findAllBranchesByUserId(AuthUtils.getUserIdFromToken());
         return ResponseEntity.ok(branches);
     }

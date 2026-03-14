@@ -7,10 +7,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class RawMaterialCategoryFactory {
 
-    public RawMaterialCategory createFromDto(CreateRawMaterialCategoryDto dto) {
+    public RawMaterialCategory createFromDto(CreateRawMaterialCategoryDto dto, Long franchiseId) {
         return RawMaterialCategory.builder()
                 .name(dto.name())
                 .description(dto.description())
+                .active(true)
+                .franchiseId(franchiseId)
                 .build();
     }
 }

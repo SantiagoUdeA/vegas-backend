@@ -1,5 +1,6 @@
 package com.vegas.sistema_gestion_operativa.users.application.service;
 
+import com.vegas.sistema_gestion_operativa.common.context.FranchiseContext;
 import com.vegas.sistema_gestion_operativa.common.exceptions.InvalidPropertyFilterException;
 import com.vegas.sistema_gestion_operativa.roles.IRoleApi;
 import com.vegas.sistema_gestion_operativa.users.IUserApi;
@@ -7,6 +8,7 @@ import com.vegas.sistema_gestion_operativa.users.application.dto.CreateUserDto;
 import com.vegas.sistema_gestion_operativa.users.application.dto.UpdateUserDto;
 import com.vegas.sistema_gestion_operativa.users.application.factory.UserFactory;
 import com.vegas.sistema_gestion_operativa.users.application.mapper.IUserMapper;
+import com.vegas.sistema_gestion_operativa.users.domain.entity.IdType;
 import com.vegas.sistema_gestion_operativa.users.domain.entity.User;
 import com.vegas.sistema_gestion_operativa.users.domain.events.UserCreatedEvent;
 import com.vegas.sistema_gestion_operativa.users.domain.exceptions.UserAlreadyActiveException;
@@ -49,7 +51,20 @@ public class UserService implements IUserApi {
     public Page<User> findAll(String userId, String userRoleName, Pageable pageable) throws InvalidPropertyFilterException {
         try {
             if (this.roleApi.isRootRole(userRoleName)) {
-                return userRepository.findAllByRoleName("OWNER", pageable);
+                return userRepository.findAllByRoleNameWithFranchise("OWNER", pageable)
+                        .map(v -> User.builder()
+                                .id(v.getId())
+                                .email(v.getEmail())
+                                .givenName(v.getGivenName())
+                                .familyName(v.getFamilyName())
+                                .idType(IdType.valueOf(v.getIdType()))
+                                .idNumber(v.getIdNumber())
+                                .phoneNumber(v.getPhoneNumber())
+                                .isActive(v.isActive())
+                                .roleName(v.getRoleName())
+                                .franchiseId(v.getFranchiseId())
+                                .franchiseName(v.getFranchiseName())
+                                .build());
             } else if (this.roleApi.isAdminRole(userRoleName)) {
                 return userRepository.findUsersByRolesInBranchesWithUser(List.of("CASHIER"), userId, pageable);
             } else if (this.roleApi.isOwnerRole(userRoleName))
@@ -90,7 +105,11 @@ public class UserService implements IUserApi {
                     newUser.idNumber()
             );
 
-            var userToSave = userFactory.createFromDto(newUser, newUserId);
+            Long franchiseId = this.roleApi.isRootRole(userRoleName)
+                    ? newUser.franchiseId()
+                    : FranchiseContext.getCurrentFranchiseId();
+
+            var userToSave = userFactory.createFromDto(newUser, newUserId, franchiseId);
             savedUser = userRepository.saveAndFlush(userToSave);
 
         } catch (Exception ex) {

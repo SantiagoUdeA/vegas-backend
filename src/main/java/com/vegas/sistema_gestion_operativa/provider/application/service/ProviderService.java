@@ -1,5 +1,6 @@
 package com.vegas.sistema_gestion_operativa.provider.application.service;
 
+import com.vegas.sistema_gestion_operativa.common.context.FranchiseContext;
 import com.vegas.sistema_gestion_operativa.provider.application.dto.CreateProviderDto;
 import com.vegas.sistema_gestion_operativa.provider.application.dto.UpdateProviderDto;
 import com.vegas.sistema_gestion_operativa.provider.application.factory.ProviderFactory;
@@ -31,7 +32,8 @@ public class ProviderService {
     }
 
     public Provider create(CreateProviderDto dto) {
-        return this.providerRepository.save(this.providerFactory.createFromDto(dto));
+        Long franchiseId = FranchiseContext.getCurrentFranchiseId();
+        return this.providerRepository.save(this.providerFactory.createFromDto(dto, franchiseId));
     }
 
     public Provider update(Long providerId, UpdateProviderDto dto) throws ProviderNotFoundException {

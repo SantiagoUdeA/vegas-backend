@@ -9,6 +9,7 @@ import com.vegas.sistema_gestion_operativa.branches.domain.entity.Branch;
 import com.vegas.sistema_gestion_operativa.branches.domain.exception.BranchNameAlreadyExistsException;
 import com.vegas.sistema_gestion_operativa.branches.domain.exception.BranchNotFoundException;
 import com.vegas.sistema_gestion_operativa.branches.infrastructure.repository.IBranchRepository;
+import com.vegas.sistema_gestion_operativa.common.context.FranchiseContext;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -36,7 +37,7 @@ public class BranchService implements IBranchApi {
     public Branch create(CreateBranchDto dto, String ownerId) throws BranchNameAlreadyExistsException {
         if (this.branchRepository.existsByNameAndUserBranches_Id_UserId(dto.name(), ownerId))
             throw new BranchNameAlreadyExistsException("Ya existe una sede con el nombre: " + dto.name());
-        var branch = BranchFactory.createBranch(dto);
+        var branch = BranchFactory.createBranch(dto, FranchiseContext.getCurrentFranchiseId());
         branch.assignFounder(ownerId);
         return branchRepository.save(branch);
     }
@@ -78,5 +79,11 @@ public class BranchService implements IBranchApi {
 
     public List<Branch> findAllBranchesByUserId(String userIdFromToken) {
         return branchRepository.findBranchesByUserId(userIdFromToken);
+    }
+
+    @Override
+    public Long getFranchiseIdForBranch(Long branchId) {
+        var branch = this.retrieveBranch(branchId);
+        return branch.getFranchiseId();
     }
 }

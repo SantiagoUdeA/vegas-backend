@@ -3,6 +3,7 @@ package com.vegas.sistema_gestion_operativa.branches.domain.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Filter;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,6 +19,7 @@ import java.util.Set;
 @Table(name = "branches")
 @Getter
 @Setter
+@Filter(name = "franchiseFilter", condition = "franchise_id = :franchiseId")
 public class Branch {
 
     @Id
@@ -32,6 +34,10 @@ public class Branch {
 
     @Column(nullable = false)
     private String phoneNumber;
+
+    @Column(name = "franchise_id", updatable = false,
+            columnDefinition = "BIGINT REFERENCES franchises(id)")
+    private Long franchiseId;
 
     @JsonIgnore
     @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL, orphanRemoval = true)

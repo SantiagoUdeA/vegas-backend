@@ -17,7 +17,7 @@ public class UserFactory {
      * @param id   the unique identifier for the user
      * @return a User entity
      */
-    public User createFromDto(CreateUserDto user, String id) {
+    public User createFromDto(CreateUserDto user, String id, Long franchiseId) {
         return User.builder()
                 .id(id)
                 .email(user.email())
@@ -28,6 +28,7 @@ public class UserFactory {
                 .idNumber(user.idNumber())
                 .phoneNumber(user.phoneNumber())
                 .roleName(user.roleName())
+                .franchiseId(franchiseId)
                 .build();
     }
 }
