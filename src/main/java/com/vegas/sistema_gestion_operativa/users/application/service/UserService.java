@@ -1,6 +1,7 @@
 package com.vegas.sistema_gestion_operativa.users.application.service;
 
 import com.vegas.sistema_gestion_operativa.common.context.FranchiseContext;
+import com.vegas.sistema_gestion_operativa.common.exceptions.BadRequestException;
 import com.vegas.sistema_gestion_operativa.common.exceptions.InvalidPropertyFilterException;
 import com.vegas.sistema_gestion_operativa.roles.IRoleApi;
 import com.vegas.sistema_gestion_operativa.users.IUserApi;
@@ -67,8 +68,13 @@ public class UserService implements IUserApi {
                                 .build());
             } else if (this.roleApi.isAdminRole(userRoleName)) {
                 return userRepository.findUsersByRolesInBranchesWithUser(List.of("CASHIER"), userId, pageable);
-            } else if (this.roleApi.isOwnerRole(userRoleName))
-                return userRepository.findUsersByRolesInBranchesWithUser(List.of("ADMIN", "CASHIER"), userId, pageable);
+            } else if (this.roleApi.isOwnerRole(userRoleName)) {
+                return userRepository.findAllByRoleNameInAndFranchiseId(
+                        List.of("OWNER", "ADMIN", "CASHIER"),
+                        FranchiseContext.getCurrentFranchiseId(),
+                        pageable
+                );
+            }
         } catch (InvalidDataAccessApiUsageException e) {
             throw new InvalidPropertyFilterException(e);
         }
@@ -83,7 +89,7 @@ public class UserService implements IUserApi {
      * @return the created user
      */
     @Transactional
-    public User create(CreateUserDto newUser, String userRoleName) throws UserAlreadyExistsException {
+    public User create(CreateUserDto newUser, String userRoleName) throws BadRequestException {
 
         // Verificar si el usuario tiene permisos para crear un usuario con el rol especificado
         if (!this.roleApi.canManageUserWithRole(userRoleName, newUser.roleName()))
@@ -121,7 +127,13 @@ public class UserService implements IUserApi {
         }
 
         eventPublisher.publishEvent(
-                new UserCreatedEvent(newUserId, Optional.ofNullable(newUser.branchId()), newUser.roleName())
+                new UserCreatedEvent(
+                        newUserId,
+                        Optional.ofNullable(newUser.branchId()),
+                        Optional.ofNullable(savedUser.getFranchiseId()),
+                        newUser.roleName(),
+                        userRoleName
+                )
         );
 
         return savedUser;

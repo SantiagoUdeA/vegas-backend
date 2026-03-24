@@ -3,6 +3,7 @@ package com.vegas.sistema_gestion_operativa.products.infrastructure.controller;
 import com.vegas.sistema_gestion_operativa.common.dto.PageResponse;
 import com.vegas.sistema_gestion_operativa.common.dto.PaginationRequest;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
+import com.vegas.sistema_gestion_operativa.common.exceptions.BadRequestException;
 import com.vegas.sistema_gestion_operativa.common.utils.PaginationUtils;
 import com.vegas.sistema_gestion_operativa.products.api.ProductDto;
 import com.vegas.sistema_gestion_operativa.products.application.dto.CreateProductDto;
@@ -68,7 +69,7 @@ public class ProductController {
     @PreAuthorize("hasPermission(null, 'PRODUCTS_CREATE')")
     public ResponseEntity<ProductDto> create(
             @RequestBody @Valid CreateProductDto dto
-    ) throws ProductCategoryNotFoundException, ProductNameAlreadyExists, AccessDeniedException {
+    ) throws ProductCategoryNotFoundException, ProductNameAlreadyExists, AccessDeniedException, BadRequestException {
         ProductDto product = productService.create(dto, AuthUtils.getUserIdFromToken());
         return ResponseEntity.ok(product);
     }
@@ -85,7 +86,7 @@ public class ProductController {
     public ResponseEntity<ProductDto> update(
             @PathVariable Long productId,
             @RequestBody @Valid UpdateProductDto dto
-    ) throws ProductNotFoundException, ProductCategoryNotFoundException, AccessDeniedException {
+    ) throws ProductNotFoundException, ProductCategoryNotFoundException, AccessDeniedException, BadRequestException {
         ProductDto updated = productService.update(productId, dto, AuthUtils.getUserIdFromToken());
         return ResponseEntity.ok(updated);
     }

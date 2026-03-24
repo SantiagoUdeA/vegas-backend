@@ -3,16 +3,14 @@ package com.vegas.sistema_gestion_operativa.provider.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Filter;
 
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"nit", "franchise_id"}))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"nit", "branch_id"}))
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Filter(name = "franchiseFilter", condition = "franchise_id = :franchiseId")
 public class Provider {
 
     @Id
@@ -30,9 +28,9 @@ public class Provider {
     @Column(columnDefinition = "boolean default true")
     private boolean active;
 
-    @Column(name = "franchise_id", updatable = false,
-            columnDefinition = "BIGINT REFERENCES franchises(id)")
-    private Long franchiseId;
+    @Column(name = "branch_id", updatable = false, nullable = false,
+            columnDefinition = "BIGINT REFERENCES branches(id)")
+    private Long branchId;
 
     public void deactivate() {
         this.active = false;

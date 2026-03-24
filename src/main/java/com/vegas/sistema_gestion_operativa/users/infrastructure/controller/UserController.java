@@ -2,6 +2,7 @@ package com.vegas.sistema_gestion_operativa.users.infrastructure.controller;
 
 import com.vegas.sistema_gestion_operativa.common.dto.PageResponse;
 import com.vegas.sistema_gestion_operativa.common.dto.PaginationRequest;
+import com.vegas.sistema_gestion_operativa.common.exceptions.BadRequestException;
 import com.vegas.sistema_gestion_operativa.common.exceptions.InvalidPropertyFilterException;
 import com.vegas.sistema_gestion_operativa.common.utils.PaginationUtils;
 import com.vegas.sistema_gestion_operativa.security.AuthUtils;
@@ -10,7 +11,6 @@ import com.vegas.sistema_gestion_operativa.users.application.dto.UpdateUserDto;
 import com.vegas.sistema_gestion_operativa.users.application.service.UserService;
 import com.vegas.sistema_gestion_operativa.users.domain.entity.User;
 import com.vegas.sistema_gestion_operativa.users.domain.exceptions.UserAlreadyActiveException;
-import com.vegas.sistema_gestion_operativa.users.domain.exceptions.UserAlreadyExistsException;
 import com.vegas.sistema_gestion_operativa.users.domain.exceptions.UserAlreadyInactiveException;
 import com.vegas.sistema_gestion_operativa.users.domain.exceptions.UserNotFoundException;
 import jakarta.validation.Valid;
@@ -63,7 +63,7 @@ public class UserController {
      * @return created user
      */
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody @Valid CreateUserDto dto) throws UserAlreadyExistsException {
+    public ResponseEntity<User> createUser(@RequestBody @Valid CreateUserDto dto) throws BadRequestException {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(userService.create(dto, AuthUtils.getRoleNameFromToken()));

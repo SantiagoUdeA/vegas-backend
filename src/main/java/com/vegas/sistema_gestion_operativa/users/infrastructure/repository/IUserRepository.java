@@ -20,6 +20,8 @@ public interface IUserRepository extends JpaRepository<User, String> {
 
     Page<User> findAllByRoleName(String roleName, Pageable pageable);
 
+    Page<User> findAllByRoleNameInAndFranchiseId(List<String> roleNames, Long franchiseId, Pageable pageable);
+
     @Query("SELECT u.franchiseId FROM User u WHERE u.id = :userId")
     Long findFranchiseIdByUserId(@Param("userId") String userId);
 

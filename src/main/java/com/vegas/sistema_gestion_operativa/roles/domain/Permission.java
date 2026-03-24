@@ -79,7 +79,11 @@ public enum Permission {
     FRANCHISES_CREATE,
     FRANCHISES_EDIT,
     FRANCHISES_DELETE,
-    FRANCHISES_VIEW;
+    FRANCHISES_VIEW,
+
+    // Suscripciones
+    SUBSCRIPTIONS_VIEW,
+    SUBSCRIPTIONS_EDIT;
 
     @JsonCreator
     public static Permission fromValue(String value) throws IllegalArgumentException {

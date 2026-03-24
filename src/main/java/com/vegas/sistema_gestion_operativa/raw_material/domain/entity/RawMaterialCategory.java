@@ -2,7 +2,6 @@ package com.vegas.sistema_gestion_operativa.raw_material.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Filter;
 
 @Entity
 @NoArgsConstructor
@@ -10,7 +9,6 @@ import org.hibernate.annotations.Filter;
 @Getter
 @Setter
 @Builder
-@Filter(name = "franchiseFilter", condition = "franchise_id = :franchiseId")
 public class RawMaterialCategory {
 
     @Id
@@ -26,9 +24,9 @@ public class RawMaterialCategory {
     @Column(columnDefinition = "boolean default true")
     private boolean active;
 
-    @Column(name = "franchise_id", updatable = false,
-            columnDefinition = "BIGINT REFERENCES franchises(id)")
-    private Long franchiseId;
+    @Column(name = "branch_id", updatable = false, nullable = false,
+            columnDefinition = "BIGINT REFERENCES branches(id)")
+    private Long branchId;
 
     public void deactivate() {
         this.active = false;

@@ -2,12 +2,14 @@ package com.vegas.sistema_gestion_operativa.provider.infrastructure.controller;
 
 import com.vegas.sistema_gestion_operativa.common.dto.PageResponse;
 import com.vegas.sistema_gestion_operativa.common.dto.PaginationRequest;
+import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 import com.vegas.sistema_gestion_operativa.common.utils.PaginationUtils;
 import com.vegas.sistema_gestion_operativa.provider.application.dto.CreateProviderDto;
 import com.vegas.sistema_gestion_operativa.provider.application.dto.UpdateProviderDto;
 import com.vegas.sistema_gestion_operativa.provider.application.service.ProviderService;
 import com.vegas.sistema_gestion_operativa.provider.domain.entity.Provider;
 import com.vegas.sistema_gestion_operativa.provider.domain.exceptions.ProviderNotFoundException;
+import com.vegas.sistema_gestion_operativa.security.AuthUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -32,18 +34,25 @@ public class ProviderController {
     }
 
     /**
-     * Retrieves the list of all providers.
+     * Retrieves the list of all providers for a branch.
      *
      * @param paginationRequest pagination parameters
+     * @param branchId          branch identifier
      * @return paginated list of providers
      */
     @GetMapping
     @PreAuthorize("hasPermission(null, 'PROVIDERS_VIEW')")
-    public ResponseEntity<PageResponse<Provider>> findAll(PaginationRequest paginationRequest) {
+    public ResponseEntity<PageResponse<Provider>> findAll(
+            PaginationRequest paginationRequest,
+            @RequestParam Long branchId
+    ) throws AccessDeniedException {
         Pageable pageable = PaginationUtils.getPageable(paginationRequest);
-        Page<Provider> providerPage = providerService.findAll(pageable);
-        var response = PageResponse.from(providerPage);
-        return ResponseEntity.ok(response);
+        Page<Provider> providerPage = providerService.findAll(
+                pageable,
+                AuthUtils.getUserIdFromToken(),
+                branchId
+        );
+        return ResponseEntity.ok(PageResponse.from(providerPage));
     }
 
     /**
@@ -54,8 +63,9 @@ public class ProviderController {
      */
     @PostMapping
     @PreAuthorize("hasPermission(null, 'PROVIDERS_CREATE')")
-    public ResponseEntity<Provider> create(@RequestBody @Valid CreateProviderDto dto) {
-        Provider provider = providerService.create(dto);
+    public ResponseEntity<Provider> create(@RequestBody @Valid CreateProviderDto dto)
+            throws AccessDeniedException {
+        Provider provider = providerService.create(dto, AuthUtils.getUserIdFromToken());
         return ResponseEntity.ok(provider);
     }
 
@@ -71,8 +81,8 @@ public class ProviderController {
     public ResponseEntity<Provider> update(
             @PathVariable Long providerId,
             @RequestBody @Valid UpdateProviderDto dto
-    ) throws ProviderNotFoundException {
-        Provider updated = providerService.update(providerId, dto);
+    ) throws ProviderNotFoundException, AccessDeniedException {
+        Provider updated = providerService.update(providerId, dto, AuthUtils.getUserIdFromToken());
         return ResponseEntity.ok(updated);
     }
 
@@ -84,8 +94,9 @@ public class ProviderController {
      */
     @DeleteMapping("/{providerId}")
     @PreAuthorize("hasPermission(null, 'PROVIDERS_DELETE')")
-    public ResponseEntity<Provider> delete(@PathVariable Long providerId) throws ProviderNotFoundException {
-        Provider deleted = providerService.delete(providerId);
+    public ResponseEntity<Provider> delete(@PathVariable Long providerId)
+            throws ProviderNotFoundException, AccessDeniedException {
+        Provider deleted = providerService.delete(providerId, AuthUtils.getUserIdFromToken());
         return ResponseEntity.ok(deleted);
     }
 }

@@ -3,6 +3,7 @@ package com.vegas.sistema_gestion_operativa.raw_material.infrastructure.controll
 import com.vegas.sistema_gestion_operativa.common.dto.PageResponse;
 import com.vegas.sistema_gestion_operativa.common.dto.PaginationRequest;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
+import com.vegas.sistema_gestion_operativa.common.exceptions.BadRequestException;
 import com.vegas.sistema_gestion_operativa.common.utils.PaginationUtils;
 import com.vegas.sistema_gestion_operativa.raw_material.application.dto.CreateRawMaterialDto;
 import com.vegas.sistema_gestion_operativa.raw_material.application.dto.RawMaterialResponseDto;
@@ -66,7 +67,7 @@ public class RawMaterialController {
     @PreAuthorize("hasPermission(null, 'RAW_MATERIALS_CREATE')")
     public ResponseEntity<RawMaterialResponseDto> create(
             @RequestBody @Valid CreateRawMaterialDto dto
-    ) throws RawMaterialCategoryNotFoundException, RawMaterialNameAlreadyExists, AccessDeniedException {
+    ) throws RawMaterialCategoryNotFoundException, RawMaterialNameAlreadyExists, AccessDeniedException, BadRequestException {
         RawMaterialResponseDto rawMaterial = rawMaterialService.create(dto, AuthUtils.getUserIdFromToken());
         return ResponseEntity.ok(rawMaterial);
     }
@@ -83,7 +84,7 @@ public class RawMaterialController {
     public ResponseEntity<RawMaterialResponseDto> update(
             @PathVariable Long rawMaterialId,
             @RequestBody @Valid UpdateRawMaterialDto dto
-    ) throws RawMaterialNotFoundException, RawMaterialCategoryNotFoundException, AccessDeniedException {
+    ) throws RawMaterialNotFoundException, RawMaterialCategoryNotFoundException, AccessDeniedException, BadRequestException {
         RawMaterialResponseDto updated = rawMaterialService.update(rawMaterialId, dto, AuthUtils.getUserIdFromToken());
         return ResponseEntity.ok(updated);
     }

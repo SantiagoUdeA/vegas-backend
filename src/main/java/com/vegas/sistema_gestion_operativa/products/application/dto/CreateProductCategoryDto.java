@@ -9,7 +9,10 @@ public record CreateProductCategoryDto(
         String name,
 
         @Length(max = 255, message = "La descripción no puede exceder 255 caracteres")
-        String description
+        String description,
+
+        @NotNull(message = "El ID de la sede es obligatorio")
+        Long branchId
 ) {
 }
 

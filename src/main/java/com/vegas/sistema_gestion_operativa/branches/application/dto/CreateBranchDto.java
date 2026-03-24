@@ -17,6 +17,9 @@ public record CreateBranchDto(
         // TODO Centralizar logica de validación del numero teléfonico
         @Nullable
         @Length(min = 7, max = 20, message = "El número de teléfono debe tener entre 7 y 20 caracteres")
-        String phoneNumber
+        String phoneNumber,
+
+        @Nullable
+        Long franchiseId
 ) {
 }

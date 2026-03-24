@@ -13,6 +13,9 @@ public record CreateProviderDto(
         String nit,
 
         @Length(max = 20, message = "El número de teléfono no puede exceder 20 caracteres")
-        String phoneNumber
+        String phoneNumber,
+
+        @NotNull(message = "El ID de la sede es obligatorio")
+        Long branchId
 ) {
 }

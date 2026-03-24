@@ -7,8 +7,11 @@ import com.vegas.sistema_gestion_operativa.franchise.application.dto.CreateFranc
 import com.vegas.sistema_gestion_operativa.franchise.application.dto.FranchiseResponseDto;
 import com.vegas.sistema_gestion_operativa.franchise.application.dto.UpdateFranchiseDto;
 import com.vegas.sistema_gestion_operativa.franchise.application.service.FranchiseService;
+import com.vegas.sistema_gestion_operativa.franchise.domain.exception.FranchiseAccessDeniedException;
 import com.vegas.sistema_gestion_operativa.franchise.domain.exception.FranchiseNameAlreadyExistsException;
 import com.vegas.sistema_gestion_operativa.franchise.domain.exception.FranchiseNotFoundException;
+import com.vegas.sistema_gestion_operativa.subscription.domain.exception.FranchiseLimitExceededException;
+import com.vegas.sistema_gestion_operativa.subscription.domain.exception.NoActiveSubscriptionException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -38,13 +41,15 @@ public class FranchiseController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasPermission(null, 'FRANCHISES_VIEW')")
-    public ResponseEntity<FranchiseResponseDto> findById(@PathVariable Long id) throws FranchiseNotFoundException {
+    public ResponseEntity<FranchiseResponseDto> findById(@PathVariable Long id)
+            throws FranchiseNotFoundException, FranchiseAccessDeniedException {
         return ResponseEntity.ok(franchiseService.findById(id));
     }
 
     @PostMapping
     @PreAuthorize("hasPermission(null, 'FRANCHISES_CREATE')")
-    public ResponseEntity<FranchiseResponseDto> create(@RequestBody @Valid CreateFranchiseDto dto) throws FranchiseNameAlreadyExistsException {
+    public ResponseEntity<FranchiseResponseDto> create(@RequestBody @Valid CreateFranchiseDto dto)
+            throws FranchiseNameAlreadyExistsException, NoActiveSubscriptionException, FranchiseLimitExceededException {
         return ResponseEntity.ok(franchiseService.create(dto));
     }
 
@@ -53,13 +58,14 @@ public class FranchiseController {
     public ResponseEntity<FranchiseResponseDto> update(
             @PathVariable Long id,
             @RequestBody @Valid UpdateFranchiseDto dto
-    ) throws FranchiseNotFoundException {
+    ) throws FranchiseNotFoundException, FranchiseAccessDeniedException {
         return ResponseEntity.ok(franchiseService.update(id, dto));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasPermission(null, 'FRANCHISES_DELETE')")
-    public ResponseEntity<FranchiseResponseDto> delete(@PathVariable Long id) throws FranchiseNotFoundException {
+    public ResponseEntity<FranchiseResponseDto> delete(@PathVariable Long id)
+            throws FranchiseNotFoundException, FranchiseAccessDeniedException {
         return ResponseEntity.ok(franchiseService.delete(id));
     }
 }

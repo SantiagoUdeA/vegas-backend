@@ -42,11 +42,10 @@ public enum Role {
     ),
 
     OWNER(
-            "Dueño de una sede.",
+            "Dueño de una franquicia. Gestiona sus franquicias, sedes, usuarios y operaciones.",
             Set.of(
                     ADMINS_CREATE, ADMINS_EDIT, ADMINS_DEACTIVATE, ADMINS_VIEW,
                     CASHIERS_CREATE, CASHIERS_EDIT, CASHIERS_DEACTIVATE, CASHIERS_VIEW,
-                    OWNERS_CREATE, OWNERS_EDIT, OWNERS_DEACTIVATE, OWNERS_VIEW,
                     FORMULAS_CREATE, FORMULAS_EDIT, FORMULAS_VIEW,
                     INVENTORY_CREATE, INVENTORY_EDIT, INVENTORY_DELETE, INVENTORY_VIEW,
                     PRODUCTS_CREATE, PRODUCTS_EDIT, PRODUCTS_DELETE, PRODUCTS_VIEW,
@@ -56,7 +55,9 @@ public enum Role {
                     ALERTS_VIEW, ALERTS_CONFIGURE,
                     DASHBOARD_VIEW,
                     BRANCHES_CREATE, BRANCHES_EDIT, BRANCHES_DELETE, BRANCHES_VIEW,
-                    SALES_CREATE, SALES_READ, SALES_DELETE
+                    SALES_CREATE, SALES_READ, SALES_DELETE,
+                    FRANCHISES_CREATE, FRANCHISES_EDIT, FRANCHISES_DELETE, FRANCHISES_VIEW,
+                    SUBSCRIPTIONS_VIEW
             )
     ),
 
@@ -64,7 +65,7 @@ public enum Role {
             "Acceso total e irrestricto a todas las funcionalidades del sistema, incluyendo configuración avanzada y auditorías.",
             Set.of(
                     OWNERS_CREATE, OWNERS_EDIT, OWNERS_DEACTIVATE, OWNERS_VIEW,
-                    FRANCHISES_CREATE, FRANCHISES_EDIT, FRANCHISES_DELETE, FRANCHISES_VIEW
+                    SUBSCRIPTIONS_VIEW, SUBSCRIPTIONS_EDIT
             )
     );
 

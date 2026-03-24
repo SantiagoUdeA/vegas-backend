@@ -2,6 +2,7 @@ package com.vegas.sistema_gestion_operativa.raw_material.infrastructure.controll
 
 import com.vegas.sistema_gestion_operativa.common.dto.PageResponse;
 import com.vegas.sistema_gestion_operativa.common.dto.PaginationRequest;
+import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 import com.vegas.sistema_gestion_operativa.common.utils.PaginationUtils;
 import com.vegas.sistema_gestion_operativa.raw_material.application.dto.CreateRawMaterialCategoryDto;
 import com.vegas.sistema_gestion_operativa.raw_material.application.dto.RawMaterialCategoryResponseDto;
@@ -9,6 +10,7 @@ import com.vegas.sistema_gestion_operativa.raw_material.application.dto.UpdateRa
 import com.vegas.sistema_gestion_operativa.raw_material.application.service.RawMaterialCategoryService;
 import com.vegas.sistema_gestion_operativa.raw_material.domain.exceptions.RawMaterialCategoryNameAlreadyExistsException;
 import com.vegas.sistema_gestion_operativa.raw_material.domain.exceptions.RawMaterialCategoryNotFoundException;
+import com.vegas.sistema_gestion_operativa.security.AuthUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -33,17 +35,25 @@ public class RawMaterialCategoryController {
     }
 
     /**
-     * Retrieves the list of all raw material categories.
+     * Retrieves the list of all raw material categories for a branch.
      *
-     * @return list of raw material categories
+     * @param paginationRequest pagination parameters
+     * @param branchId          branch identifier
+     * @return paginated list of raw material categories
      */
     @GetMapping
     @PreAuthorize("hasPermission(null, 'RAW_MATERIALS_VIEW')")
-    public ResponseEntity<PageResponse<RawMaterialCategoryResponseDto>> findAll(PaginationRequest paginationRequest) {
+    public ResponseEntity<PageResponse<RawMaterialCategoryResponseDto>> findAll(
+            PaginationRequest paginationRequest,
+            @RequestParam Long branchId
+    ) throws AccessDeniedException {
         Pageable pageable = PaginationUtils.getPageable(paginationRequest);
-        Page<RawMaterialCategoryResponseDto> categoryPage = categoryService.findAll(pageable);
-        var response = PageResponse.from(categoryPage);
-        return ResponseEntity.ok(response);
+        Page<RawMaterialCategoryResponseDto> categoryPage = categoryService.findAll(
+                pageable,
+                AuthUtils.getUserIdFromToken(),
+                branchId
+        );
+        return ResponseEntity.ok(PageResponse.from(categoryPage));
     }
 
     /**
@@ -54,8 +64,9 @@ public class RawMaterialCategoryController {
      */
     @PostMapping
     @PreAuthorize("hasPermission(null, 'RAW_MATERIALS_CREATE')")
-    public ResponseEntity<RawMaterialCategoryResponseDto> create(@RequestBody @Valid CreateRawMaterialCategoryDto dto) throws RawMaterialCategoryNameAlreadyExistsException {
-        RawMaterialCategoryResponseDto category = categoryService.create(dto);
+    public ResponseEntity<RawMaterialCategoryResponseDto> create(@RequestBody @Valid CreateRawMaterialCategoryDto dto)
+            throws RawMaterialCategoryNameAlreadyExistsException, AccessDeniedException {
+        RawMaterialCategoryResponseDto category = categoryService.create(dto, AuthUtils.getUserIdFromToken());
         return ResponseEntity.ok(category);
     }
 
@@ -71,8 +82,8 @@ public class RawMaterialCategoryController {
     public ResponseEntity<RawMaterialCategoryResponseDto> update(
             @PathVariable Long categoryId,
             @RequestBody @Valid UpdateRawMaterialCategoryDto dto
-    ) throws RawMaterialCategoryNotFoundException {
-        RawMaterialCategoryResponseDto updated = categoryService.update(categoryId, dto);
+    ) throws RawMaterialCategoryNotFoundException, AccessDeniedException {
+        RawMaterialCategoryResponseDto updated = categoryService.update(categoryId, dto, AuthUtils.getUserIdFromToken());
         return ResponseEntity.ok(updated);
     }
 
@@ -84,9 +95,9 @@ public class RawMaterialCategoryController {
      */
     @DeleteMapping("/{categoryId}")
     @PreAuthorize("hasPermission(null, 'RAW_MATERIALS_DELETE')")
-    public ResponseEntity<RawMaterialCategoryResponseDto> delete(@PathVariable Long categoryId) throws RawMaterialCategoryNotFoundException {
-        RawMaterialCategoryResponseDto deleted = categoryService.delete(categoryId);
+    public ResponseEntity<RawMaterialCategoryResponseDto> delete(@PathVariable Long categoryId)
+            throws RawMaterialCategoryNotFoundException, AccessDeniedException {
+        RawMaterialCategoryResponseDto deleted = categoryService.delete(categoryId, AuthUtils.getUserIdFromToken());
         return ResponseEntity.ok(deleted);
     }
 }
-

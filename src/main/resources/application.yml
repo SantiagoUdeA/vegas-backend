@@ -24,6 +24,11 @@ spring:
       resourceserver:
         jwt:
           jwk-set-uri: ${JWK_URI}
+
+app:
+  subscription:
+    default-max-franchises: ${SUBSCRIPTION_DEFAULT_MAX_FRANCHISES:3}
+
 aws:
   region: ${COGNITO_REGION}
   cognito:

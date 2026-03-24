@@ -41,7 +41,8 @@ public class RoleService implements IRoleApi {
         return switch (userRole) {
             case ROOT -> targetRole.equals(Role.OWNER); // ROOT solo puede gestionar OWNER
             case OWNER ->
-                    targetRole.equals(Role.ADMIN) || targetRole.equals(Role.CASHIER); // OWNER puede gestionar ADMIN y CASHIER
+                    // OWNER puede gestionar OWNER (sub-owners), ADMIN y CASHIER
+                    targetRole.equals(Role.OWNER) || targetRole.equals(Role.ADMIN) || targetRole.equals(Role.CASHIER);
             case ADMIN -> targetRole.equals(Role.CASHIER); // ADMIN solo puede gestionar CASHIER
             default -> false;
         };

@@ -1,6 +1,7 @@
 package com.vegas.sistema_gestion_operativa.provider.application.service;
 
-import com.vegas.sistema_gestion_operativa.common.context.FranchiseContext;
+import com.vegas.sistema_gestion_operativa.branches.IBranchApi;
+import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 import com.vegas.sistema_gestion_operativa.provider.application.dto.CreateProviderDto;
 import com.vegas.sistema_gestion_operativa.provider.application.dto.UpdateProviderDto;
 import com.vegas.sistema_gestion_operativa.provider.application.factory.ProviderFactory;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProviderService {
@@ -19,31 +21,45 @@ public class ProviderService {
     private final ProviderFactory providerFactory;
     private final IProviderRepository providerRepository;
     private final IProviderMapper providerMapper;
+    private final IBranchApi branchApi;
 
     @Autowired
-    public ProviderService(ProviderFactory providerFactory, IProviderRepository providerRepository, IProviderMapper providerMapper) {
+    public ProviderService(ProviderFactory providerFactory,
+                           IProviderRepository providerRepository,
+                           IProviderMapper providerMapper,
+                           IBranchApi branchApi) {
         this.providerFactory = providerFactory;
         this.providerRepository = providerRepository;
         this.providerMapper = providerMapper;
+        this.branchApi = branchApi;
     }
 
-    public Page<Provider> findAll(Pageable pageable) {
-        return providerRepository.findAllByActiveTrue(pageable);
+    @Transactional(readOnly = true)
+    public Page<Provider> findAll(Pageable pageable, String userId, Long branchId)
+            throws AccessDeniedException {
+        branchApi.assertUserHasAccessToBranch(userId, branchId);
+        return providerRepository.findAllByActiveTrueAndBranchId(branchId, pageable);
     }
 
-    public Provider create(CreateProviderDto dto) {
-        Long franchiseId = FranchiseContext.getCurrentFranchiseId();
-        return this.providerRepository.save(this.providerFactory.createFromDto(dto, franchiseId));
+    public Provider create(CreateProviderDto dto, String userId) throws AccessDeniedException {
+        branchApi.assertUserHasAccessToBranch(userId, dto.branchId());
+        return this.providerRepository.save(this.providerFactory.createFromDto(dto, dto.branchId()));
     }
 
-    public Provider update(Long providerId, UpdateProviderDto dto) throws ProviderNotFoundException {
+    public Provider update(Long providerId, UpdateProviderDto dto, String userId)
+            throws ProviderNotFoundException, AccessDeniedException {
         var provider = this.retrieveProviderById(providerId);
+        branchApi.assertUserHasAccessToBranch(userId, provider.getBranchId());
+
         var updatedProvider = this.providerMapper.partialUpdate(dto, provider);
         return this.providerRepository.save(updatedProvider);
     }
 
-    public Provider delete(Long providerId) throws ProviderNotFoundException {
+    public Provider delete(Long providerId, String userId)
+            throws ProviderNotFoundException, AccessDeniedException {
         var provider = this.retrieveProviderById(providerId);
+        branchApi.assertUserHasAccessToBranch(userId, provider.getBranchId());
+
         provider.deactivate();
         this.providerRepository.save(provider);
         return provider;

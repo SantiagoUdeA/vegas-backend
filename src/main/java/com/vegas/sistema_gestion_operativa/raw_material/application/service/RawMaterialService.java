@@ -2,6 +2,7 @@ package com.vegas.sistema_gestion_operativa.raw_material.application.service;
 
 import com.vegas.sistema_gestion_operativa.branches.IBranchApi;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
+import com.vegas.sistema_gestion_operativa.common.exceptions.BadRequestException;
 import com.vegas.sistema_gestion_operativa.raw_material.application.dto.CreateRawMaterialDto;
 import com.vegas.sistema_gestion_operativa.raw_material.application.dto.RawMaterialResponseDto;
 import com.vegas.sistema_gestion_operativa.raw_material.application.dto.UpdateRawMaterialDto;
@@ -41,15 +42,18 @@ public class RawMaterialService {
     public RawMaterialResponseDto create(
             CreateRawMaterialDto dto,
             String userId
-    ) throws RawMaterialCategoryNotFoundException, RawMaterialNameAlreadyExists, AccessDeniedException {
+    ) throws RawMaterialCategoryNotFoundException, RawMaterialNameAlreadyExists, AccessDeniedException, BadRequestException {
         branchApi.assertUserHasAccessToBranch(userId, dto.branchId());
         if (this.rawMaterialRepository.findByNameAndActiveTrueAndBranchId(dto.name(), dto.branchId()).isPresent()) {
             throw new RawMaterialNameAlreadyExists(dto.name());
         }
 
         if (dto.categoryId() != null) {
-            categoryRepository.findById(dto.categoryId())
+            var category = categoryRepository.findById(dto.categoryId())
                     .orElseThrow(() -> new RawMaterialCategoryNotFoundException(dto.categoryId()));
+            if (!category.getBranchId().equals(dto.branchId())) {
+                throw new BadRequestException("La categoría no pertenece a esta sede");
+            }
         }
 
         RawMaterial rawMaterial = this.rawMaterialRepository.save(this.rawMaterialFactory.createFromDto(dto));
@@ -60,13 +64,17 @@ public class RawMaterialService {
             Long rawMaterialId,
             UpdateRawMaterialDto dto,
             String userId
-    ) throws RawMaterialNotFoundException, RawMaterialCategoryNotFoundException, AccessDeniedException {
+    ) throws RawMaterialNotFoundException, RawMaterialCategoryNotFoundException, AccessDeniedException, BadRequestException {
         var rawMaterial = this.retrieveRawMaterialById(rawMaterialId);
 
         branchApi.assertUserHasAccessToBranch(userId, rawMaterial.getBranchId());
 
         var category = this.categoryRepository.findById(dto.categoryId())
                 .orElseThrow(() -> new RawMaterialCategoryNotFoundException(dto.categoryId()));
+
+        if (!category.getBranchId().equals(rawMaterial.getBranchId())) {
+            throw new BadRequestException("La categoría no pertenece a esta sede");
+        }
 
         var updatedRawMaterial = this.rawMaterialMapper.partialUpdate(dto, category, rawMaterial);
         updatedRawMaterial.setActive(true);

@@ -2,6 +2,7 @@ package com.vegas.sistema_gestion_operativa.products.infrastructure.controller;
 
 import com.vegas.sistema_gestion_operativa.common.dto.PageResponse;
 import com.vegas.sistema_gestion_operativa.common.dto.PaginationRequest;
+import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 import com.vegas.sistema_gestion_operativa.common.utils.PaginationUtils;
 import com.vegas.sistema_gestion_operativa.products.api.ProductCategoryDto;
 import com.vegas.sistema_gestion_operativa.products.application.dto.CreateProductCategoryDto;
@@ -9,6 +10,7 @@ import com.vegas.sistema_gestion_operativa.products.application.dto.UpdateProduc
 import com.vegas.sistema_gestion_operativa.products.application.service.ProductCategoryService;
 import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductCategoryNameAlreadyExistsException;
 import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductCategoryNotFoundException;
+import com.vegas.sistema_gestion_operativa.security.AuthUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -33,18 +35,25 @@ public class ProductCategoryController {
     }
 
     /**
-     * Retrieves the list of all product categories.
+     * Retrieves the list of all product categories for a branch.
      *
      * @param paginationRequest pagination parameters
+     * @param branchId          branch identifier
      * @return paginated list of product categories
      */
     @GetMapping
     @PreAuthorize("hasPermission(null, 'PRODUCTS_VIEW')")
-    public ResponseEntity<PageResponse<ProductCategoryDto>> findAll(PaginationRequest paginationRequest) {
+    public ResponseEntity<PageResponse<ProductCategoryDto>> findAll(
+            PaginationRequest paginationRequest,
+            @RequestParam Long branchId
+    ) throws AccessDeniedException {
         Pageable pageable = PaginationUtils.getPageable(paginationRequest);
-        Page<ProductCategoryDto> categoryPage = categoryService.findAll(pageable);
-        var response = PageResponse.from(categoryPage);
-        return ResponseEntity.ok(response);
+        Page<ProductCategoryDto> categoryPage = categoryService.findAll(
+                pageable,
+                AuthUtils.getUserIdFromToken(),
+                branchId
+        );
+        return ResponseEntity.ok(PageResponse.from(categoryPage));
     }
 
     /**
@@ -55,8 +64,9 @@ public class ProductCategoryController {
      */
     @PostMapping
     @PreAuthorize("hasPermission(null, 'PRODUCTS_CREATE')")
-    public ResponseEntity<ProductCategoryDto> create(@RequestBody @Valid CreateProductCategoryDto dto) throws ProductCategoryNameAlreadyExistsException {
-        ProductCategoryDto category = categoryService.create(dto);
+    public ResponseEntity<ProductCategoryDto> create(@RequestBody @Valid CreateProductCategoryDto dto)
+            throws ProductCategoryNameAlreadyExistsException, AccessDeniedException {
+        ProductCategoryDto category = categoryService.create(dto, AuthUtils.getUserIdFromToken());
         return ResponseEntity.ok(category);
     }
 
@@ -72,8 +82,8 @@ public class ProductCategoryController {
     public ResponseEntity<ProductCategoryDto> update(
             @PathVariable Long categoryId,
             @RequestBody @Valid UpdateProductCategoryDto dto
-    ) throws ProductCategoryNotFoundException {
-        ProductCategoryDto updated = categoryService.update(categoryId, dto);
+    ) throws ProductCategoryNotFoundException, AccessDeniedException {
+        ProductCategoryDto updated = categoryService.update(categoryId, dto, AuthUtils.getUserIdFromToken());
         return ResponseEntity.ok(updated);
     }
 
@@ -85,9 +95,9 @@ public class ProductCategoryController {
      */
     @DeleteMapping("/{categoryId}")
     @PreAuthorize("hasPermission(null, 'PRODUCTS_DELETE')")
-    public ResponseEntity<ProductCategoryDto> delete(@PathVariable Long categoryId) throws ProductCategoryNotFoundException {
-        ProductCategoryDto deleted = categoryService.delete(categoryId);
+    public ResponseEntity<ProductCategoryDto> delete(@PathVariable Long categoryId)
+            throws ProductCategoryNotFoundException, AccessDeniedException {
+        ProductCategoryDto deleted = categoryService.delete(categoryId, AuthUtils.getUserIdFromToken());
         return ResponseEntity.ok(deleted);
     }
 }
-

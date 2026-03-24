@@ -4,6 +4,7 @@ import com.vegas.sistema_gestion_operativa.branches.IBranchApi;
 import com.vegas.sistema_gestion_operativa.common.domain.Quantity;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 import com.vegas.sistema_gestion_operativa.common.exceptions.ApiException;
+import com.vegas.sistema_gestion_operativa.common.exceptions.BadRequestException;
 import com.vegas.sistema_gestion_operativa.products.api.IProductApi;
 import com.vegas.sistema_gestion_operativa.products.api.IngredientDto;
 import com.vegas.sistema_gestion_operativa.products.api.ProductDto;
@@ -65,16 +66,20 @@ public class ProductService implements IProductApi {
     public ProductDto create(
             CreateProductDto dto,
             String userId
-    ) throws ProductCategoryNotFoundException, ProductNameAlreadyExists, AccessDeniedException {
+    ) throws ProductCategoryNotFoundException, ProductNameAlreadyExists, AccessDeniedException, BadRequestException {
         branchApi.assertUserHasAccessToBranch(userId, dto.branchId());
 
         if (this.productRepository.findByNameAndActiveTrueAndBranchId(dto.name(), dto.branchId()).isPresent()) {
             throw new ProductNameAlreadyExists("El producto con nombre " + dto.name() + " ya existe en esta sede");
         }
 
-        categoryRepository.findById(dto.categoryId())
+        ProductCategory category = categoryRepository.findById(dto.categoryId())
                 .orElseThrow(() -> new ProductCategoryNotFoundException(
                         "La categoría con id " + dto.categoryId() + " no fue encontrada"));
+
+        if (!category.getBranchId().equals(dto.branchId())) {
+            throw new BadRequestException("La categoría no pertenece a esta sede");
+        }
 
         Product product = this.productRepository.save(this.productFactory.createFromDto(dto));
         return productMapper.toResponseDto(product);
@@ -84,7 +89,7 @@ public class ProductService implements IProductApi {
             Long productId,
             UpdateProductDto dto,
             String userId
-    ) throws ProductNotFoundException, ProductCategoryNotFoundException, AccessDeniedException {
+    ) throws ProductNotFoundException, ProductCategoryNotFoundException, AccessDeniedException, BadRequestException {
 
         var product = this.retrieveProductById(productId);
 
@@ -93,6 +98,9 @@ public class ProductService implements IProductApi {
         ProductCategory category = product.getCategory();
         if (dto.categoryId() != null) {
             category = this.retrieveProductCategoryByIdOrThrow(dto.categoryId());
+            if (!category.getBranchId().equals(product.getBranchId())) {
+                throw new BadRequestException("La categoría no pertenece a esta sede");
+            }
         }
 
         return productMapper.toResponseDto(

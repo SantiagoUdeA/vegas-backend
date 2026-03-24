@@ -1,5 +1,6 @@
 package com.vegas.sistema_gestion_operativa.branches.infrastructure.controller;
 
+import com.vegas.sistema_gestion_operativa.branches.application.dto.BranchResponseDto;
 import com.vegas.sistema_gestion_operativa.branches.application.dto.CreateBranchDto;
 import com.vegas.sistema_gestion_operativa.branches.application.dto.UpdateBranchDto;
 import com.vegas.sistema_gestion_operativa.branches.application.service.BranchService;
@@ -9,12 +10,17 @@ import com.vegas.sistema_gestion_operativa.common.dto.PageResponse;
 import com.vegas.sistema_gestion_operativa.common.dto.PaginationRequest;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
 import com.vegas.sistema_gestion_operativa.common.utils.PaginationUtils;
+import com.vegas.sistema_gestion_operativa.franchise.domain.exception.FranchiseAccessDeniedException;
+import com.vegas.sistema_gestion_operativa.franchise.domain.exception.FranchiseNotFoundException;
 import com.vegas.sistema_gestion_operativa.security.AuthUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +28,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/branches")
 public class BranchController {
+
+    private static final Logger log = LoggerFactory.getLogger(BranchController.class);
 
     private final BranchService branchService;
 
@@ -32,16 +40,17 @@ public class BranchController {
 
     @PostMapping
     @PreAuthorize("hasPermission(null, 'BRANCHES_CREATE')")
-    public ResponseEntity<Branch> create(@RequestBody @Valid CreateBranchDto dto) throws BranchNameAlreadyExistsException {
+    public ResponseEntity<Branch> create(@RequestBody @Valid CreateBranchDto dto)
+            throws BranchNameAlreadyExistsException, FranchiseNotFoundException, FranchiseAccessDeniedException {
         Branch branch = branchService.create(dto, AuthUtils.getUserIdFromToken());
         return ResponseEntity.ok(branch);
     }
 
     @GetMapping
     @PreAuthorize("hasPermission(null, 'BRANCHES_VIEW')")
-    public ResponseEntity<PageResponse<Branch>> findAll(PaginationRequest paginationRequest) {
+    public ResponseEntity<PageResponse<BranchResponseDto>> findAll(PaginationRequest paginationRequest) {
         Pageable pageable = PaginationUtils.getPageable(paginationRequest);
-        PageResponse<Branch> response = PageResponse.from(
+        PageResponse<BranchResponseDto> response = PageResponse.from(
                 branchService.findOwnerBranches(AuthUtils.getUserIdFromToken(), pageable)
         );
         return ResponseEntity.ok(response);
@@ -55,11 +64,18 @@ public class BranchController {
     }
 
     @GetMapping("/user-branches")
-    public ResponseEntity<List<Branch>> findAllBranchesByUserId() {
+    public ResponseEntity<List<BranchResponseDto>> findAllBranchesByUserId() {
         if ("ROOT".equals(AuthUtils.getRoleNameFromToken())) {
             return ResponseEntity.ok(List.of());
         }
-        List<Branch> branches = branchService.findAllBranchesByUserId(AuthUtils.getUserIdFromToken());
-        return ResponseEntity.ok(branches);
+        try {
+            List<BranchResponseDto> branches = branchService.findAllBranchesByUserId(AuthUtils.getUserIdFromToken());
+            return ResponseEntity.ok(branches);
+        } catch (InvalidDataAccessResourceUsageException e) {
+            // Si la tabla branches no existe aún (primera ejecución) o hay un problema
+            // de acceso a los datos, retornamos una lista vacía para permitir el login
+            log.warn("No se pudieron cargar las branches del usuario: {}", e.getMessage());
+            return ResponseEntity.ok(List.of());
+        }
     }
 }

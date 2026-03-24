@@ -5,5 +5,11 @@ import org.jmolecules.event.annotation.DomainEvent;
 import java.util.Optional;
 
 @DomainEvent
-public record UserCreatedEvent(String userId, Optional<Long> branchId, String roleName) {
+public record UserCreatedEvent(
+        String userId,
+        Optional<Long> branchId,
+        Optional<Long> franchiseId,
+        String roleName,
+        String issuerRoleName
+) {
 }
