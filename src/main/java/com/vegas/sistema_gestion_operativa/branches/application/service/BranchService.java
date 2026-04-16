@@ -23,6 +23,7 @@ import com.vegas.sistema_gestion_operativa.franchise.IFranchiseApi;
 import com.vegas.sistema_gestion_operativa.franchise.domain.exception.FranchiseAccessDeniedException;
 import com.vegas.sistema_gestion_operativa.franchise.domain.exception.FranchiseNotFoundException;
 import com.vegas.sistema_gestion_operativa.users.IUserApi;
+import com.vegas.sistema_gestion_operativa.users.domain.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -150,28 +151,31 @@ public class BranchService implements IBranchApi {
     /**
      * Assigns a new co-owner (non-founder) to a branch.
      * The requester must already be an owner of the branch.
-     * The target user must have the OWNER role and not already be assigned.
+     * The target user is identified by their registered email.
+     * They must have the OWNER role and not already be assigned to the branch.
      *
      * @param requesterId the user performing the action
      * @param branchId    the branch to assign the new owner to
-     * @param dto         contains the ID of the user to assign
-     * @throws AccessDeniedException             if the requester is not an owner of this branch
-     * @throws UserNotOwnerRoleException          if the target user is not an OWNER
-     * @throws BranchOwnerAlreadyAssignedException if the target user is already assigned
+     * @param dto         contains the email of the user to assign
+     * @throws UserNotFoundException               if no user exists with the given email
+     * @throws AccessDeniedException               if the requester is not an owner of this branch
+     * @throws UserNotOwnerRoleException            if the target user is not an OWNER
+     * @throws BranchOwnerAlreadyAssignedException  if the target user is already assigned
      */
     @Transactional
     public void addOwnerToBranch(String requesterId, Long branchId, AssignBranchOwnerDto dto)
-            throws AccessDeniedException, UserNotOwnerRoleException, BranchOwnerAlreadyAssignedException {
+            throws AccessDeniedException, UserNotFoundException, UserNotOwnerRoleException, BranchOwnerAlreadyAssignedException {
 
         assertUserIsBranchOwner(requesterId, branchId);
 
-        String targetUserId = dto.targetUserId();
+        // Resolve email → userId
+        String targetUserId = userApi.getIdByEmail(dto.email());
 
         // Validate that the target user has the OWNER role
         String targetRole = userApi.getRoleById(targetUserId);
         if (!"OWNER".equals(targetRole)) {
             throw new UserNotOwnerRoleException(
-                    "El usuario con ID '%s' no tiene el rol OWNER (tiene: %s)".formatted(targetUserId, targetRole));
+                    "El usuario con correo '%s' no tiene el rol Dueño".formatted(dto.email()));
         }
 
         // Validate that the user is not already assigned to this branch

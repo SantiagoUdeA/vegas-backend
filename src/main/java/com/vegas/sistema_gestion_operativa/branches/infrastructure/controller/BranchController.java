@@ -18,6 +18,7 @@ import com.vegas.sistema_gestion_operativa.common.utils.PaginationUtils;
 import com.vegas.sistema_gestion_operativa.franchise.domain.exception.FranchiseAccessDeniedException;
 import com.vegas.sistema_gestion_operativa.franchise.domain.exception.FranchiseNotFoundException;
 import com.vegas.sistema_gestion_operativa.security.AuthUtils;
+import com.vegas.sistema_gestion_operativa.users.domain.exceptions.UserNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -105,14 +106,14 @@ public class BranchController {
     /**
      * Assigns a new co-owner to a branch.
      * The requester must already be an owner of the branch.
-     * The target user must have the OWNER role.
+     * The target user is identified by their registered email and must have the OWNER role.
      */
     @PostMapping("/{branchId}/owners")
     @PreAuthorize("hasPermission(null, 'BRANCHES_EDIT')")
     public ResponseEntity<Void> addBranchOwner(
             @PathVariable Long branchId,
             @RequestBody @Valid AssignBranchOwnerDto dto)
-            throws AccessDeniedException, UserNotOwnerRoleException, BranchOwnerAlreadyAssignedException {
+            throws AccessDeniedException, UserNotFoundException, UserNotOwnerRoleException, BranchOwnerAlreadyAssignedException {
         String requesterId = AuthUtils.getUserIdFromToken();
         branchService.addOwnerToBranch(requesterId, branchId, dto);
         return ResponseEntity.status(HttpStatus.CREATED).build();

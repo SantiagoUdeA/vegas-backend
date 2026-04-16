@@ -231,4 +231,13 @@ public class UserService implements IUserApi {
                 .map(User::getRoleName)
                 .orElse("Rol desconocido");
     }
+
+    @Override
+    public String getIdByEmail(String email) throws UserNotFoundException {
+        return userRepository.findByEmail(email)
+                .map(User::getId)
+                .orElseThrow(() -> new UserNotFoundException(
+                        "No existe un usuario registrado con el correo: " + email));
+    }
 }
+
