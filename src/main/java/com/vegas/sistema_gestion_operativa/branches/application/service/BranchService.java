@@ -59,7 +59,7 @@ public class BranchService implements IBranchApi {
 
     @Transactional
     public Branch create(CreateBranchDto dto, String ownerId)
-            throws BranchNameAlreadyExistsException, FranchiseNotFoundException, FranchiseAccessDeniedException {
+            throws BranchNameAlreadyExistsException, FranchiseNotFoundException, FranchiseAccessDeniedException, BranchDuplicateInformationException {
         // Si no viene franchiseId, obtenerla del contexto (para OWNERs sin suscripción)
         Long franchiseId = dto.franchiseId();
         if (franchiseId == null) {

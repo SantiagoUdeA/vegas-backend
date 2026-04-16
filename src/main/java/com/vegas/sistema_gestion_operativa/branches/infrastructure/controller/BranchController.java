@@ -7,10 +7,7 @@ import com.vegas.sistema_gestion_operativa.branches.application.dto.CreateBranch
 import com.vegas.sistema_gestion_operativa.branches.application.dto.UpdateBranchDto;
 import com.vegas.sistema_gestion_operativa.branches.application.service.BranchService;
 import com.vegas.sistema_gestion_operativa.branches.domain.entity.Branch;
-import com.vegas.sistema_gestion_operativa.branches.domain.exception.BranchMustHaveAtLeastOneOwnerException;
-import com.vegas.sistema_gestion_operativa.branches.domain.exception.BranchNameAlreadyExistsException;
-import com.vegas.sistema_gestion_operativa.branches.domain.exception.BranchOwnerAlreadyAssignedException;
-import com.vegas.sistema_gestion_operativa.branches.domain.exception.UserNotOwnerRoleException;
+import com.vegas.sistema_gestion_operativa.branches.domain.exception.*;
 import com.vegas.sistema_gestion_operativa.common.dto.PageResponse;
 import com.vegas.sistema_gestion_operativa.common.dto.PaginationRequest;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
@@ -48,7 +45,7 @@ public class BranchController {
     @PostMapping
     @PreAuthorize("hasPermission(null, 'BRANCHES_CREATE')")
     public ResponseEntity<Branch> create(@RequestBody @Valid CreateBranchDto dto)
-            throws BranchNameAlreadyExistsException, FranchiseNotFoundException, FranchiseAccessDeniedException {
+            throws BranchNameAlreadyExistsException, FranchiseNotFoundException, FranchiseAccessDeniedException, BranchDuplicateInformationException {
         Branch branch = branchService.create(dto, AuthUtils.getUserIdFromToken());
         return ResponseEntity.ok(branch);
     }
