@@ -14,4 +14,6 @@ public interface IFranchiseRepository extends JpaRepository<Franchise, Long> {
     Optional<Franchise> findBySlug(String slug);
 
     Page<Franchise> findByIdIn(Set<Long> ids, Pageable pageable);
+
+    boolean existsByNameAndIdIn(String name, Set<Long> ids);
 }

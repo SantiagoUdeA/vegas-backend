@@ -10,6 +10,7 @@ import com.vegas.sistema_gestion_operativa.branches.application.factory.BranchFa
 import com.vegas.sistema_gestion_operativa.branches.application.mapper.IBranchMapper;
 import com.vegas.sistema_gestion_operativa.branches.domain.entity.Branch;
 import com.vegas.sistema_gestion_operativa.branches.domain.entity.UserBranchId;
+import com.vegas.sistema_gestion_operativa.branches.domain.exception.BranchDuplicateInformationException;
 import com.vegas.sistema_gestion_operativa.branches.domain.exception.BranchMustHaveAtLeastOneOwnerException;
 import com.vegas.sistema_gestion_operativa.branches.domain.exception.BranchNameAlreadyExistsException;
 import com.vegas.sistema_gestion_operativa.branches.domain.exception.BranchNotFoundException;
@@ -73,6 +74,16 @@ public class BranchService implements IBranchApi {
 
         if (this.branchRepository.existsByNameAndUserBranches_Id_UserId(dto.name(), ownerId))
             throw new BranchNameAlreadyExistsException("Ya existe una sede con el nombre: " + dto.name());
+
+        if (dto.address() != null && !dto.address().isBlank() &&
+            this.branchRepository.existsByFranchiseIdAndAddressIgnoreCase(franchiseId, dto.address())) {
+            throw new BranchDuplicateInformationException("La dirección ya está registrada en otra sede de esta franquicia.");
+        }
+
+        if (dto.phoneNumber() != null && !dto.phoneNumber().isBlank() &&
+            this.branchRepository.existsByFranchiseIdAndPhoneNumber(franchiseId, dto.phoneNumber())) {
+            throw new BranchDuplicateInformationException("El teléfono ya está registrado en otra sede de esta franquicia.");
+        }
 
         var branch = BranchFactory.createBranch(dto, franchiseId);
         branch.assignFounder(ownerId);

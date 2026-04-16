@@ -15,6 +15,10 @@ public interface IBranchRepository extends JpaRepository<Branch, Long> {
 
     boolean existsByNameAndUserBranches_Id_UserId(String name, String ownerId);
 
+    boolean existsByFranchiseIdAndAddressIgnoreCase(Long franchiseId, String address);
+
+    boolean existsByFranchiseIdAndPhoneNumber(Long franchiseId, String phoneNumber);
+
     @Query("SELECT b.id FROM Branch b JOIN b.userBranches ub WHERE ub.id.userId = :userId")
     List<Long> findBranchIdsByUserId(@Param("userId") String userId);
 

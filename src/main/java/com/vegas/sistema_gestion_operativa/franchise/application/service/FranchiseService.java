@@ -70,12 +70,13 @@ public class FranchiseService implements IFranchiseApi {
         String ownerId = AuthUtils.getUserIdFromToken();
 
         // Validar límite de franquicias ANTES de crear
-        int currentCount = ownerFranchiseRepository.findFranchiseIdsByOwnerId(ownerId).size();
+        Set<Long> ownerFranchiseIds = ownerFranchiseRepository.findFranchiseIdsByOwnerId(ownerId);
+        int currentCount = ownerFranchiseIds.size();
         subscriptionApi.validateFranchiseLimit(ownerId, currentCount);
 
-        var existing = franchiseRepository.findByName(dto.name());
-        if (existing.isPresent())
+        if (!ownerFranchiseIds.isEmpty() && franchiseRepository.existsByNameAndIdIn(dto.name(), ownerFranchiseIds)) {
             throw new FranchiseNameAlreadyExistsException(dto.name());
+        }
         if (Optional.ofNullable(dto.slug()).isEmpty() || dto.slug().isBlank()) {
             dto = new CreateFranchiseDto(dto.name(), dto.name().toLowerCase().replaceAll("\\s+", "-"));
         }
