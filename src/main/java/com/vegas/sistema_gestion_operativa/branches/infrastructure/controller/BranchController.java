@@ -1,11 +1,16 @@
 package com.vegas.sistema_gestion_operativa.branches.infrastructure.controller;
 
+import com.vegas.sistema_gestion_operativa.branches.application.dto.AssignBranchOwnerDto;
+import com.vegas.sistema_gestion_operativa.branches.application.dto.BranchOwnerResponseDto;
 import com.vegas.sistema_gestion_operativa.branches.application.dto.BranchResponseDto;
 import com.vegas.sistema_gestion_operativa.branches.application.dto.CreateBranchDto;
 import com.vegas.sistema_gestion_operativa.branches.application.dto.UpdateBranchDto;
 import com.vegas.sistema_gestion_operativa.branches.application.service.BranchService;
 import com.vegas.sistema_gestion_operativa.branches.domain.entity.Branch;
+import com.vegas.sistema_gestion_operativa.branches.domain.exception.BranchMustHaveAtLeastOneOwnerException;
 import com.vegas.sistema_gestion_operativa.branches.domain.exception.BranchNameAlreadyExistsException;
+import com.vegas.sistema_gestion_operativa.branches.domain.exception.BranchOwnerAlreadyAssignedException;
+import com.vegas.sistema_gestion_operativa.branches.domain.exception.UserNotOwnerRoleException;
 import com.vegas.sistema_gestion_operativa.common.dto.PageResponse;
 import com.vegas.sistema_gestion_operativa.common.dto.PaginationRequest;
 import com.vegas.sistema_gestion_operativa.common.exceptions.AccessDeniedException;
@@ -16,6 +21,7 @@ import com.vegas.sistema_gestion_operativa.security.AuthUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.slf4j.Logger;
@@ -77,5 +83,54 @@ public class BranchController {
             log.warn("No se pudieron cargar las branches del usuario: {}", e.getMessage());
             return ResponseEntity.ok(List.of());
         }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // HU06 — Branch owner management endpoints
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Lists all owners (founder and co-owners) of a branch.
+     * Only accessible to users who are already owners of the branch.
+     */
+    @GetMapping("/{branchId}/owners")
+    @PreAuthorize("hasPermission(null, 'BRANCHES_VIEW')")
+    public ResponseEntity<List<BranchOwnerResponseDto>> getBranchOwners(
+            @PathVariable Long branchId) throws AccessDeniedException {
+        String requesterId = AuthUtils.getUserIdFromToken();
+        List<BranchOwnerResponseDto> owners = branchService.getOwnersOfBranch(requesterId, branchId);
+        return ResponseEntity.ok(owners);
+    }
+
+    /**
+     * Assigns a new co-owner to a branch.
+     * The requester must already be an owner of the branch.
+     * The target user must have the OWNER role.
+     */
+    @PostMapping("/{branchId}/owners")
+    @PreAuthorize("hasPermission(null, 'BRANCHES_EDIT')")
+    public ResponseEntity<Void> addBranchOwner(
+            @PathVariable Long branchId,
+            @RequestBody @Valid AssignBranchOwnerDto dto)
+            throws AccessDeniedException, UserNotOwnerRoleException, BranchOwnerAlreadyAssignedException {
+        String requesterId = AuthUtils.getUserIdFromToken();
+        branchService.addOwnerToBranch(requesterId, branchId, dto);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    /**
+     * Removes a co-owner from a branch.
+     * Founders cannot be removed through this endpoint.
+     * At least one owner must remain.
+     */
+    @DeleteMapping("/{branchId}/owners/{targetUserId}")
+    @PreAuthorize("hasPermission(null, 'BRANCHES_EDIT')")
+    public ResponseEntity<Void> removeBranchOwner(
+            @PathVariable Long branchId,
+            @PathVariable String targetUserId)
+            throws AccessDeniedException, BranchMustHaveAtLeastOneOwnerException {
+        String requesterId = AuthUtils.getUserIdFromToken();
+        branchService.removeOwnerFromBranch(requesterId, branchId, targetUserId);
+        return ResponseEntity.noContent().build();
     }
 }

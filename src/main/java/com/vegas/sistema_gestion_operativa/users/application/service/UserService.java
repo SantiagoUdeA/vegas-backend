@@ -69,9 +69,13 @@ public class UserService implements IUserApi {
             } else if (this.roleApi.isAdminRole(userRoleName)) {
                 return userRepository.findUsersByRolesInBranchesWithUser(List.of("CASHIER"), userId, pageable);
             } else if (this.roleApi.isOwnerRole(userRoleName)) {
+                Long franchiseId = FranchiseContext.getCurrentFranchiseId();
+                if (franchiseId == null) {
+                    return Page.empty(pageable);
+                }
                 return userRepository.findAllByRoleNameInAndFranchiseId(
                         List.of("OWNER", "ADMIN", "CASHIER"),
-                        FranchiseContext.getCurrentFranchiseId(),
+                        franchiseId,
                         pageable
                 );
             }
