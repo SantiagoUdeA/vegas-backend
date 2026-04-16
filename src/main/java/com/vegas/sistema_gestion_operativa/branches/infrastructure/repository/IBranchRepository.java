@@ -21,12 +21,16 @@ public interface IBranchRepository extends JpaRepository<Branch, Long> {
     @Query("""
         SELECT DISTINCT b FROM Branch b
         LEFT JOIN b.userBranches ub
-        WHERE ub.id.userId = :userId
-           OR EXISTS (
-                SELECT 1 FROM OwnerFranchise of
-                WHERE of.ownerId = :userId
-                  AND of.franchiseId = b.franchiseId
-           )
+        LEFT JOIN Franchise f ON f.id = b.franchiseId
+        WHERE (f IS NULL OR f.active = true)
+          AND (
+               ub.id.userId = :userId
+               OR EXISTS (
+                    SELECT 1 FROM OwnerFranchise of
+                    WHERE of.ownerId = :userId
+                      AND of.franchiseId = b.franchiseId
+               )
+          )
         ORDER BY b.id
         """)
     List<Branch> findBranchesByUserId(@Param("userId") String userId);
