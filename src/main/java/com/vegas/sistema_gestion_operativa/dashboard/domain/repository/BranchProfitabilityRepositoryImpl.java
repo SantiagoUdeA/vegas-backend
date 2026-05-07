@@ -19,13 +19,7 @@ public class BranchProfitabilityRepositoryImpl implements IBranchProfitabilityRe
     private EntityManager entityManager;
 
     @Override
-    @SuppressWarnings("unchecked")
-    public List<BranchProfitabilityResponseDto> getBranchProfitability(
-            String userId,
-            Long franchiseId,
-            LocalDateTime from,
-            LocalDateTime to) {
-
+    public List<BranchProfitabilityResponseDto> getBranchProfitability(Long franchiseId, LocalDateTime from, LocalDateTime to) {
         String sql = """
             SELECT
               b.id                              AS branch_id,
@@ -33,10 +27,6 @@ public class BranchProfitabilityRepositoryImpl implements IBranchProfitabilityRe
               COALESCE(s.total_sales, 0)        AS total_sales,
               COALESCE(c.total_cost, 0)         AS total_cost
             FROM branches b
-            JOIN user_branch ub
-                   ON ub.branch_id = b.id
-                  AND ub.user_id = :userId
-                  AND ub.founder = true
             LEFT JOIN (
               SELECT branch_id, SUM(total) AS total_sales
               FROM sale
@@ -46,7 +36,7 @@ public class BranchProfitabilityRepositoryImpl implements IBranchProfitabilityRe
             LEFT JOIN (
               SELECT s.branch_id, SUM(sd.quantity * pi.average_cost) AS total_cost
               FROM sale s
-              JOIN sale_detail sd       ON sd.sale_id = s.id
+              JOIN sale_detail sd       ON sd.sale_id = s.sale_id
               JOIN product_inventory pi ON pi.product_id = sd.product_id
                                        AND pi.branch_id  = s.branch_id
               WHERE s.sale_date BETWEEN :from AND :to
@@ -57,7 +47,6 @@ public class BranchProfitabilityRepositoryImpl implements IBranchProfitabilityRe
         """;
 
         Query query = entityManager.createNativeQuery(sql)
-                .setParameter("userId", userId)
                 .setParameter("franchiseId", franchiseId)
                 .setParameter("from", from)
                 .setParameter("to", to);
@@ -70,10 +59,10 @@ public class BranchProfitabilityRepositoryImpl implements IBranchProfitabilityRe
             String branchName = (String) row[1];
             BigDecimal totalSales = new BigDecimal(row[2].toString());
             BigDecimal totalCost = new BigDecimal(row[3].toString());
-            
+
             BigDecimal grossMargin = totalSales.subtract(totalCost);
             BigDecimal marginPercentage = BigDecimal.ZERO;
-            
+
             if (totalSales.signum() > 0) {
                 marginPercentage = grossMargin.divide(totalSales, 4, RoundingMode.HALF_UP).multiply(new BigDecimal("100"));
             }

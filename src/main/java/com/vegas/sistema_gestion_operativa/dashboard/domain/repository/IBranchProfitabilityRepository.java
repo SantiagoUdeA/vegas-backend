@@ -6,7 +6,6 @@ import java.util.List;
 
 public interface IBranchProfitabilityRepository {
     List<BranchProfitabilityResponseDto> getBranchProfitability(
-            String userId,
             Long franchiseId,
             LocalDateTime from,
             LocalDateTime to

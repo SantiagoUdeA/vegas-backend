@@ -20,9 +20,8 @@ public class BranchProfitabilityService {
 
     @Transactional(readOnly = true)
     public List<BranchProfitabilityResponseDto> getBranchProfitability(LocalDate fromDate, LocalDate toDate) {
-        String userId = AuthUtils.getUserIdFromToken();
         Long franchiseId = AuthUtils.getFranchiseIdFromContext();
-        
+
         if (franchiseId == null) {
             throw new IllegalStateException("Active franchise not set");
         }
@@ -33,6 +32,6 @@ public class BranchProfitabilityService {
         LocalDateTime fromDateTime = from.atStartOfDay();
         LocalDateTime toDateTime = to.atTime(23, 59, 59);
 
-        return repository.getBranchProfitability(userId, franchiseId, fromDateTime, toDateTime);
+        return repository.getBranchProfitability(franchiseId, fromDateTime, toDateTime);
     }
 }

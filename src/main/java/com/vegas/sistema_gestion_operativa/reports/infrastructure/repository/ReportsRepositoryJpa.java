@@ -201,20 +201,7 @@ public class ReportsRepositoryJpa implements IReportsRepository {
                     new com.vegas.sistema_gestion_operativa.common.domain.Money(pi.averageCost)
                 )
                 FROM ProductInventory pi
-                    new com.vegas.sistema_gestion_operativa.common.domain.Money(
-                        COALESCE(
-                            (
-                                SELECT SUM(i.quantity.value * rmi.averageCost.value) / MAX(r.unitsProduced)
-                                FROM Recipe r
-                                JOIN Ingredient i ON i.recipe.id = r.id
-                                JOIN RawMaterialInventory rmi ON i.rawMaterial.id = rmi.rawMaterialId
-                                WHERE r.product.id = p.id
-                                  AND r.active = true
-                                  AND rmi.branchId = :branchId
-                            ),
-                            0.0
-                        )
-                    )
+                JOIN Product p ON pi.productId = p.id
                 WHERE pi.branchId = :branchId
                   AND (:categoryId IS NULL OR p.category.id = :categoryId)
                 ORDER BY p.name

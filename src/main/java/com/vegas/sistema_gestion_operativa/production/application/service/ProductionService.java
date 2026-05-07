@@ -156,6 +156,7 @@ public class ProductionService {
 
         // Step 5: Consume MP per batch (FIFO)
         List<RawMaterialConsumptionDetailDto> consumptionDetails = new ArrayList<>();
+        double totalProductionCost = 0.0;
 
         for (Map.Entry<Long, BigDecimal> entry : requiredByRawMaterial.entrySet()) {
             Long rawMaterialId = entry.getKey();
@@ -203,6 +204,7 @@ public class ProductionService {
                     .findByRawMaterialIdAndBranchId(rawMaterialId, dto.branchId())
                     .orElseThrow(() -> new RuntimeException("Inventario de materia prima no encontrado: " + rawMaterialId));
             inventory.setCurrentStock(inventory.getCurrentStock().subtract(new Quantity(totalRequired)));
+            totalProductionCost += inventory.getAverageCost().getValue().doubleValue() * totalRequired.doubleValue();
             rawMaterialInventoryRepository.save(inventory);
 
             consumptionDetails.add(RawMaterialConsumptionDetailDto.builder()
@@ -225,6 +227,8 @@ public class ProductionService {
                                 .build()
                 ));
 
+        double costPerUnit = qty.doubleValue() > 0 ? totalProductionCost / qty.doubleValue() : 0.0;
+        productInventory.updateAverageCost(costPerUnit, qty.doubleValue());
         productInventory.addStock(new Quantity(qty));
         productInventoryRepository.save(productInventory);
 
