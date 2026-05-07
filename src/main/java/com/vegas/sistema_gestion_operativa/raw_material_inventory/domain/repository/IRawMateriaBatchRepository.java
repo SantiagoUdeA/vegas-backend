@@ -1,5 +1,7 @@
 package com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.repository;
 
+import com.vegas.sistema_gestion_operativa.raw_material_inventory.application.dto.BatchDetailDto;
+import com.vegas.sistema_gestion_operativa.raw_material_inventory.application.dto.BatchSearchResultDto;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.application.dto.RawMaterialBatchDto;
 import com.vegas.sistema_gestion_operativa.raw_material_inventory.domain.entity.RawMaterialBatch;
 import org.springframework.data.domain.Page;
@@ -10,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 public interface IRawMateriaBatchRepository extends JpaRepository<RawMaterialBatch, Long> {
 
@@ -55,5 +58,62 @@ public interface IRawMateriaBatchRepository extends JpaRepository<RawMaterialBat
             WHERE rm.branchId = :branchId
             """)
     Page<RawMaterialBatchDto> findByBranchId(@Param("branchId") Long branchId, Pageable pageable);
-}
 
+    // ── HU13 ────────────────────────────────────────────────────────────────
+
+    /**
+     * Returns full batch detail with resolved names (raw material + provider).
+     * Used by the batch history endpoint.
+     */
+    @Query("""
+            SELECT new com.vegas.sistema_gestion_operativa.raw_material_inventory.application.dto.BatchDetailDto(
+                b.id,
+                b.batchNumber,
+                b.rawMaterialId,
+                rm.name,
+                rm.unitOfMeasure,
+                b.quantity,
+                b.availableQuantity,
+                b.totalCost,
+                b.entryDate,
+                b.expirationDate,
+                b.providerId,
+                p.name,
+                b.branchId
+            )
+            FROM RawMaterialBatch b
+            JOIN com.vegas.sistema_gestion_operativa.raw_material.domain.entity.RawMaterial rm ON b.rawMaterialId = rm.id
+            JOIN com.vegas.sistema_gestion_operativa.provider.domain.entity.Provider p ON b.providerId = p.id
+            WHERE b.id = :batchId
+            """)
+    Optional<BatchDetailDto> findBatchDetailById(@Param("batchId") Long batchId);
+
+    /**
+     * Case-insensitive partial search by batchNumber scoped to a branch.
+     * Used by the batch search endpoint.
+     */
+    @Query("""
+            SELECT new com.vegas.sistema_gestion_operativa.raw_material_inventory.application.dto.BatchSearchResultDto(
+                b.id,
+                b.batchNumber,
+                rm.name,
+                rm.unitOfMeasure,
+                b.quantity,
+                b.availableQuantity,
+                b.entryDate,
+                b.expirationDate,
+                p.name
+            )
+            FROM RawMaterialBatch b
+            JOIN com.vegas.sistema_gestion_operativa.raw_material.domain.entity.RawMaterial rm ON b.rawMaterialId = rm.id
+            JOIN com.vegas.sistema_gestion_operativa.provider.domain.entity.Provider p ON b.providerId = p.id
+            WHERE b.branchId = :branchId
+              AND LOWER(b.batchNumber) LIKE LOWER(CONCAT('%', :query, '%'))
+            ORDER BY b.entryDate DESC
+            """)
+    Page<BatchSearchResultDto> searchByBatchNumber(
+            @Param("branchId") Long branchId,
+            @Param("query") String query,
+            Pageable pageable
+    );
+}

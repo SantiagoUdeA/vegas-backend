@@ -1,6 +1,7 @@
 package com.vegas.sistema_gestion_operativa.production.infrastructure.controller;
 
 import com.vegas.sistema_gestion_operativa.common.exceptions.ApiException;
+import com.vegas.sistema_gestion_operativa.production.application.dto.ProductionRecordDto;
 import com.vegas.sistema_gestion_operativa.production.application.dto.ProductionResponseDto;
 import com.vegas.sistema_gestion_operativa.production.application.dto.RawMaterialShortageDto;
 import com.vegas.sistema_gestion_operativa.production.application.dto.RegisterProductionDto;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +28,15 @@ public class ProductionController {
     @Autowired
     public ProductionController(ProductionService productionService) {
         this.productionService = productionService;
+    }
+
+    @GetMapping
+    @PreAuthorize("hasPermission(null, 'INVENTORY_VIEW')")
+    public ResponseEntity<List<ProductionRecordDto>> getProductions(
+            @RequestParam @NotNull Long branchId
+    ) throws ApiException {
+        String userId = AuthUtils.getUserIdFromToken();
+        return ResponseEntity.ok(productionService.getProductionsByBranch(branchId, userId));
     }
 
     @PostMapping

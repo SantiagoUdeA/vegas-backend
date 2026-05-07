@@ -14,6 +14,7 @@ import com.vegas.sistema_gestion_operativa.production.domain.entity.ProductionBa
 import com.vegas.sistema_gestion_operativa.production.domain.exceptions.InsufficientRawMaterialException;
 import com.vegas.sistema_gestion_operativa.production.domain.repository.IProductionBatchConsumptionRepository;
 import com.vegas.sistema_gestion_operativa.production.domain.repository.IProductionRepository;
+import com.vegas.sistema_gestion_operativa.products.domain.exceptions.ProductNotFoundException;
 import com.vegas.sistema_gestion_operativa.products_inventory.domain.entity.ProductInventory;
 import com.vegas.sistema_gestion_operativa.products_inventory.domain.entity.ProductInventoryMovement;
 import com.vegas.sistema_gestion_operativa.products_inventory.domain.repository.IProductInventoryMovementRepository;
@@ -69,6 +70,24 @@ public class ProductionService {
         this.rawMaterialMovementFactory = rawMaterialMovementFactory;
         this.productInventoryRepository = productInventoryRepository;
         this.productInventoryMovementRepository = productInventoryMovementRepository;
+    }
+
+    public List<ProductionRecordDto> getProductionsByBranch(Long branchId, String userId) throws ApiException {
+        branchApi.assertUserHasAccessToBranch(userId, branchId);
+        return productionRepository.findByBranchIdOrderByProductionDateDesc(branchId).stream()
+                .map(p -> {
+                    try {
+                        return ProductionRecordDto.builder()
+                                .id(p.getId())
+                                .productName(productApi.getProductNameById(p.getProductId()))
+                                .quantityProduced(p.getQuantityProduced().getValue())
+                                .productionDate(p.getProductionDate())
+                                .build();
+                    } catch (ProductNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .toList();
     }
 
     @Transactional
