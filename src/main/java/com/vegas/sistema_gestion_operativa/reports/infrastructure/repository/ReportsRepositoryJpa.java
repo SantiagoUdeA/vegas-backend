@@ -341,4 +341,109 @@ public class ReportsRepositoryJpa implements IReportsRepository {
         query.setParameter(PARAM_CATEGORY_ID, categoryId);
         return query.getResultList();
     }
+
+    @Override
+    public WasteReport createWasteReport(Long branchId, LocalDateTime fromDate, LocalDateTime toDate, String userId) throws NoMovementsForReportGenerationException {
+        // Obtener información del usuario y la sucursal directamente
+        String userInfoJpql = """
+                SELECT b.name, CONCAT(u.givenName, ' ', u.familyName), u.roleName
+                FROM User u
+                JOIN Branch b ON b.id = :branchId
+                WHERE u.id = :userId
+                """;
+
+        TypedQuery<Object[]> userInfoQuery = em.createQuery(userInfoJpql, Object[].class);
+        userInfoQuery.setParameter(PARAM_BRANCH_ID, branchId);
+        userInfoQuery.setParameter(PARAM_USER_ID, userId);
+        Object[] userInfo;
+        try {
+            userInfo = userInfoQuery.getSingleResult();
+        } catch (Exception e) {
+            throw new NoMovementsForReportGenerationException("Usuario o sucursal no encontrada");
+        }
+
+        String branchName = (String) userInfo[0];
+        String userName = (String) userInfo[1];
+        String userRole = (String) userInfo[2];
+
+        String productJpql = """
+                SELECT new com.vegas.sistema_gestion_operativa.reports.domain.entity.WasteItem(
+                    p.name,
+                    'Producto',
+                    pim.movementReason,
+                    pim.quantity,
+                    null,
+                    new com.vegas.sistema_gestion_operativa.common.domain.Money(pim.quantity.value * pi.averageCost),
+                    pim.justification,
+                    pim.movementDate
+                )
+                FROM ProductInventoryMovement pim
+                JOIN Product p ON pim.productId = p.id
+                JOIN ProductInventory pi ON pi.productId = p.id AND pi.branchId = :branchId
+                WHERE p.branchId = :branchId
+                  AND pim.movementDate BETWEEN :fromDate AND :toDate
+                  AND pim.movementReason IN ('AJUSTE_POR_MERMA', 'AJUSTE_POR_PERDIDA_POR_ROBO', 'AJUSTE_POR_ERROR_DE_CONTEO')
+                """;
+        TypedQuery<WasteItem> prodQuery = em.createQuery(productJpql, WasteItem.class);
+        prodQuery.setParameter(PARAM_BRANCH_ID, branchId);
+        prodQuery.setParameter(PARAM_FROM_DATE, fromDate);
+        prodQuery.setParameter(PARAM_TO_DATE, toDate);
+        List<WasteItem> productItems = prodQuery.getResultList();
+
+        String rawMaterialJpql = """
+                SELECT new com.vegas.sistema_gestion_operativa.reports.domain.entity.WasteItem(
+                    rm.name,
+                    'Materia Prima',
+                    rmm.movementReason,
+                    rmm.quantity,
+                    rm.unitOfMeasure,
+                    new com.vegas.sistema_gestion_operativa.common.domain.Money(rmm.quantity.value * rmi.averageCost.value),
+                    rmm.justification,
+                    rmm.movementDate
+                )
+                FROM RawMaterialMovement rmm
+                JOIN RawMaterial rm ON rmm.rawMaterialId = rm.id
+                JOIN RawMaterialInventory rmi ON rmi.rawMaterialId = rm.id AND rmi.branchId = :branchId
+                WHERE rm.branchId = :branchId
+                  AND rmm.movementDate BETWEEN :fromDate AND :toDate
+                  AND rmm.movementReason IN ('AJUSTE_POR_MERMA', 'AJUSTE_POR_PERDIDA_POR_ROBO', 'AJUSTE_POR_ERROR_DE_CONTEO')
+                """;
+        TypedQuery<WasteItem> rmQuery = em.createQuery(rawMaterialJpql, WasteItem.class);
+        rmQuery.setParameter(PARAM_BRANCH_ID, branchId);
+        rmQuery.setParameter(PARAM_FROM_DATE, fromDate);
+        rmQuery.setParameter(PARAM_TO_DATE, toDate);
+        List<WasteItem> rawMaterialItems = rmQuery.getResultList();
+
+        List<WasteItem> allItems = new java.util.ArrayList<>();
+        allItems.addAll(productItems);
+        allItems.addAll(rawMaterialItems);
+
+        if (allItems.isEmpty()) {
+            throw new NoMovementsForReportGenerationException("No se encontraron mermas ni ajustes para los criterios proporcionados.");
+        }
+
+        allItems.sort((a, b) -> b.movementDate().compareTo(a.movementDate()));
+
+        double totalWastesVal = 0.0;
+        double totalAdjustVal = 0.0;
+
+        for (WasteItem item : allItems) {
+            if (item.movementReason().name().equals("AJUSTE_POR_MERMA")) {
+                totalWastesVal += item.totalValue().getValue().doubleValue();
+            } else {
+                totalAdjustVal += item.totalValue().getValue().doubleValue();
+            }
+        }
+
+        return new WasteReport(
+                branchName,
+                userName,
+                userRole,
+                fromDate.toLocalDate(),
+                toDate.toLocalDate(),
+                new com.vegas.sistema_gestion_operativa.common.domain.Money(totalWastesVal),
+                new com.vegas.sistema_gestion_operativa.common.domain.Money(totalAdjustVal),
+                allItems
+        );
+    }
 }

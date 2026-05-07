@@ -4,6 +4,8 @@ import com.vegas.sistema_gestion_operativa.reports.domain.entity.MovementItem;
 import com.vegas.sistema_gestion_operativa.reports.domain.entity.MovementReport;
 import com.vegas.sistema_gestion_operativa.reports.domain.entity.ProductInventoryReport;
 import com.vegas.sistema_gestion_operativa.reports.domain.entity.RawMaterialInventoryReport;
+import com.vegas.sistema_gestion_operativa.reports.domain.entity.WasteReport;
+import com.vegas.sistema_gestion_operativa.reports.domain.entity.WasteItem;
 import com.vegas.sistema_gestion_operativa.reports.domain.exceptions.NoMovementsForReportGenerationException;
 import jakarta.validation.constraints.NotNull;
 
@@ -53,4 +55,11 @@ public interface IReportsRepository {
             Long categoryId,
             String userId
     );
+
+    WasteReport createWasteReport(
+            Long branchId,
+            LocalDateTime fromDate,
+            LocalDateTime toDate,
+            String userId
+    ) throws NoMovementsForReportGenerationException;
 }
