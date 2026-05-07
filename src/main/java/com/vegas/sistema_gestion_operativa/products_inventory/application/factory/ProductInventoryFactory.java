@@ -13,6 +13,7 @@ public class ProductInventoryFactory {
                 .productId(dto.productId())
                 .currentStock(new Quantity(0.0))
                 .branchId(dto.branchId())
+                .averageCost(0.0)
                 .build();
     }
 }
