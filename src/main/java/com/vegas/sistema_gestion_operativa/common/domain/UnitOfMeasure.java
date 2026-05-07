@@ -16,7 +16,7 @@ public enum UnitOfMeasure {
     GRAMO("Gramo", "g"),
     LIBRA("Litro", "L"),
     METRO("Metro", "m"),
-    OTROS("Otros", "u");
+    OTROS("Unidad", "u");
 
     private final String name;
     private final String symbol;
