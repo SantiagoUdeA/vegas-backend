@@ -16,7 +16,9 @@ public enum MovementReason {
     AJUSTE_POR_ERROR_DE_CONTEO,
 
 
-    PRODUCT_ENTRY;
+    PRODUCT_ENTRY,
+
+    SALIDA_POR_PRODUCCION;
 
     @JsonCreator
     public static MovementReason fromValue(String value) {

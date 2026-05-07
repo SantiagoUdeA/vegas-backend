@@ -41,4 +41,16 @@ public class RawMaterialMovementFactory {
                 .justification(justification)
                 .build();
     }
+
+    public RawMaterialMovement createProductionMovement(Long rawMaterialId, Long batchId, Quantity quantity, Long productionId, String userId) {
+        return RawMaterialMovement.builder()
+                .movementReason(MovementReason.SALIDA_POR_PRODUCCION)
+                .rawMaterialId(rawMaterialId)
+                .rawMaterialBatchId(batchId)
+                .quantity(quantity)
+                .productionId(productionId)
+                .userId(userId)
+                .movementDate(DateTimeUtils.nowInBogota())
+                .build();
+    }
 }

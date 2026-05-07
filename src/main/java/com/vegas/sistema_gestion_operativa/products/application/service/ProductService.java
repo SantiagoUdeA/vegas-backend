@@ -151,6 +151,9 @@ public class ProductService implements IProductApi {
         return Optional.of(recipe.getIngredients().stream().map(ingredient -> IngredientDto.builder()
                 .id(ingredient.getId())
                 .rawMaterialId(ingredient.getRawMaterialId())
+                .rawMaterialName(ingredient.getRawMaterial() != null ? ingredient.getRawMaterial().getName() : null)
+                .rawMaterialUnitOfMeasure(ingredient.getRawMaterial() != null && ingredient.getRawMaterial().getUnitOfMeasure() != null
+                        ? ingredient.getRawMaterial().getUnitOfMeasure().name() : null)
                 .quantity(ingredient.getQuantity().divide(new Quantity(recipe.getUnitsProduced())))
                 .build()).toList());
     }
@@ -160,5 +163,16 @@ public class ProductService implements IProductApi {
         var product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException("Producto " + productId + " no encontrado"));
         return product.getName();
+    }
+
+    @Override
+    public void assertProductBelongsToBranch(Long productId, Long branchId) throws ApiException {
+        var product = retrieveProductById(productId);
+        if (!branchId.equals(product.getBranchId())) {
+            throw new BadRequestException("El producto con id " + productId + " no pertenece a la sede " + branchId);
+        }
+        if (!product.isActive()) {
+            throw new BadRequestException("El producto con id " + productId + " no está activo");
+        }
     }
 }

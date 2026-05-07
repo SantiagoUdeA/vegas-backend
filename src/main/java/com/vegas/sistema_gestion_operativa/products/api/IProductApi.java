@@ -21,8 +21,9 @@ public interface IProductApi {
             @NotNull(message = "El ID del producto es obligatorio") Long productId
     ) throws ProductNotFoundException;
 
-    // 🔥 Nuevo: obtener nombre del producto
     String getProductNameById(
             @NotNull(message = "El ID del producto es obligatorio") Long productId
     ) throws ProductNotFoundException;
+
+    void assertProductBelongsToBranch(Long productId, Long branchId) throws ApiException;
 }

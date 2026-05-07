@@ -8,7 +8,34 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 public interface IRawMateriaBatchRepository extends JpaRepository<RawMaterialBatch, Long> {
+
+    @Query("""
+            SELECT b FROM RawMaterialBatch b
+            WHERE b.rawMaterialId = :rawMaterialId
+              AND b.branchId = :branchId
+              AND b.availableQuantity.value > 0
+            ORDER BY b.entryDate ASC, b.id ASC
+            """)
+    List<RawMaterialBatch> findAvailableBatchesFifo(
+            @Param("rawMaterialId") Long rawMaterialId,
+            @Param("branchId") Long branchId
+    );
+
+    @Query("""
+            SELECT COALESCE(SUM(b.availableQuantity.value), 0)
+            FROM RawMaterialBatch b
+            WHERE b.rawMaterialId = :rawMaterialId
+              AND b.branchId = :branchId
+              AND b.availableQuantity.value > 0
+            """)
+    BigDecimal sumAvailableByRawMaterialAndBranch(
+            @Param("rawMaterialId") Long rawMaterialId,
+            @Param("branchId") Long branchId
+    );
 
     @Query("""
             SELECT new com.vegas.sistema_gestion_operativa.raw_material_inventory.application.dto.RawMaterialBatchDto(

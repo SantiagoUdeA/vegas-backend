@@ -61,4 +61,11 @@ public class RawMaterialBatch {
             columnDefinition = "BIGINT REFERENCES provider(id)"
     )
     private Long providerId;
+
+    @Embedded
+    @AttributeOverride(
+            name = "value",
+            column = @Column(name = "available_quantity", precision = 19, scale = 4, nullable = false)
+    )
+    private Quantity availableQuantity;
 }

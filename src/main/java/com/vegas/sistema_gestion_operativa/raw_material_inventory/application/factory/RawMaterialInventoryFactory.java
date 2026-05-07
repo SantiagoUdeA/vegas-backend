@@ -22,9 +22,11 @@ public class RawMaterialInventoryFactory {
     }
 
     public RawMaterialBatch createBatchFromDto(RegisterRawMaterialBatchDto dto) {
+        Quantity qty = new Quantity(dto.quantity());
         return RawMaterialBatch.builder()
                 .rawMaterialId(dto.rawMaterialId())
-                .quantity(new Quantity(dto.quantity()))
+                .quantity(qty)
+                .availableQuantity(qty)
                 .totalCost(new Money(dto.totalCost()))
                 .entryDate(DateTimeUtils.nowInBogota())
                 .expirationDate(dto.expirationDate())

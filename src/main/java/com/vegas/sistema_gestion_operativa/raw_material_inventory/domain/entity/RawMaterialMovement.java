@@ -55,4 +55,7 @@ public class RawMaterialMovement {
             columnDefinition = "VARCHAR(255) REFERENCES users(id)"
     )
     private String userId;
+
+    @Column(name = "production_id")
+    private Long productionId;
 }
